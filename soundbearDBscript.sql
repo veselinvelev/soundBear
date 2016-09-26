@@ -5,6 +5,9 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
 -- Schema soundbear
 -- -----------------------------------------------------
 
@@ -21,8 +24,8 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`artists` (
   `artist_id` INT(11) NOT NULL AUTO_INCREMENT,
   `artist` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`artist_id`),
-  INDEX `artist` (`artist` ASC),
-  UNIQUE INDEX `artist_UNIQUE` (`artist` ASC))
+  UNIQUE INDEX `artist_UNIQUE` (`artist` ASC),
+  INDEX `artist` (`artist` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -32,7 +35,12 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soundbear`.`users` (
   `user_id` INT(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`user_id`))
+  `usename` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC),
+  UNIQUE INDEX `usename_UNIQUE` (`usename` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -78,6 +86,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soundbear`.`playlists` (
   `playlist_id` INT(11) NOT NULL,
+  `playlist_name` VARCHAR(45) NOT NULL,
   `user_id` INT(11) NOT NULL,
   PRIMARY KEY (`playlist_id`),
   INDEX `fk_playlists_users1_idx` (`user_id` ASC),
