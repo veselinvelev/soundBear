@@ -25,7 +25,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-12 col-md-pull-5">
+            <div class="col-md-12">
 
                 <div class="wrap">
                     <p class="form-title">
