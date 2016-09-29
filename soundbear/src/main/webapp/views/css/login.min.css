@@ -7,6 +7,16 @@ body {
 	background-size: cover
 }
 
+span.username-success, span.email-success, span.password-success {
+	display: none;
+	color: lime;
+}
+
+span.username-error, span.email-error, span.password-error {
+	display: none;
+	color: red;
+}
+
 .wrap {
 	width: 100%;
 	height: 100%;

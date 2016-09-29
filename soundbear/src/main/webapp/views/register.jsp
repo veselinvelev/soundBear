@@ -18,6 +18,92 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    
+    <script >
+    	function validate() {
+			var username = $("#username").val();
+			var email = $("#email").val();
+			var password1 = $("#password1").val();
+			var password2 = $("#password2").val();
+					
+			var validateUsername;
+			var validateEmail;
+			var validatePassword;
+			
+			$.ajax({ 
+				url: "http://localhost:8080/soundbear/RegisterServlet?username=" + username + "&email=" + email, 
+				type: 'GET', 
+                dataType:'json',
+                async:false,
+                success: function (data) { 
+                	var json = $.parseJSON(JSON.stringify(data));
+
+					if(username){
+						if(json.validUsername){
+							validateUsername = true;
+							
+							$(".username-success").show();$(".username-error").hide();
+						}
+						else{
+							validateUsername = false;
+							
+							$(".username-error").show();$(".username-success").hide();
+						}
+					}
+					else{
+						validateUsername = true;
+						
+						$(".username-success").hide();$(".username-error").hide();
+					}
+                	
+					if(email){
+						if(json.validEmail){
+							validateEmail = true
+							
+							$(".email-success").show();$(".email-error").hide();
+						}
+						else{
+							validateEmail = false;
+							
+							$(".email-error").show();$(".email-success").hide();
+						}
+					}
+					else{
+						validateEmail = true;
+						
+						$(".email-success").hide();$(".email-error").hide();
+					}
+                }
+            });
+			
+			if(password1 == password2){
+				validatePassword = true;
+				
+				$(".password-success").show();$(".password-error").hide();
+			}
+			else{
+				validatePassword = false;
+				
+				$(".password-error").show();$(".password-success").hide();
+			}
+			
+			if(!password1 && !password2){
+				validatePassword = true;
+				
+				$(".password-success").hide();$(".password-error").hide();
+			}
+			
+			if(validateUsername && validateEmail && validatePassword){
+				$("#signup").attr("disabled", false);
+			}
+			else{
+				$("#signup").attr("disabled", true);
+			}
+    	}
+    
+    </script>
+    
+    
 </head>
 
 <body>
@@ -30,16 +116,30 @@
                 <div class="wrap">
                     <p class="form-title">
                         Sign Up</p>
-                    <form class="login">
-                        <input type="text" placeholder="Your Name" required="required" />
-                        <input type="text" placeholder="Your Email" required="required" />
-                        <input type="text" placeholder="Username" required="required" />
-                        <input type="password" placeholder="Password" required="required" />
-                        <input type="password" placeholder="Confirm Your Password" required="required" />
-                        <input type="submit" value="Sign Up" class="btn btn-success btn-sm" />
-                        <div class="remember-forgot">
+                    <form class="login" method = "post">
+                    
+                        <input type="text" id = "username" placeholder="Username" required="required" onblur = "validate()" />
+                        
+                        <span class= "username-error" >Username taken. </span> 
+						<span class= "username-success" >Username available. </span>
+                        
+                        <input type="text" id = "email" placeholder="Email" required="required" onblur = "validate()"/>
+                        
+                        <span class= "email-error" >Email taken. </span> 
+						<span class= "email-success" >Email available. </span>
+                        
+                        
+                        <input type="password" id = "password1" placeholder="Password" required="required" onblur = "validate()" />
+                        <input type="password" id = "password2" placeholder="Confirm Password" required="required" onblur = "validate()"/>
+                        
+                        <span class= "password-error" >Passwords don't match. </span> 
+						<span class= "password-success" >Passwords match. </span>
+                        
+                        
+                        <input type="submit" id = "signup" value="Sign Up" class="btn btn-success btn-sm" />
+                       
+                        <div class="remember-forgot">  </div>
 
-                        </div>
                         <div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"></div>
                         <div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"></div>
                     </form>

@@ -1,5 +1,6 @@
 package model.user;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -14,6 +15,8 @@ public class UserJDBCTemplate implements UserDAO {
 	private static final String LIST_USERS_SQL = "SELECT * FROM users";
 	private static final String GET_USER_SQL = "SELECT * FROM users WHERE username = ? AND password = md5(?)";
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?))";
+	private static final String VALID_USERNAME_SQL = "SELECT * FROM users WHERE username = ?";
+	private static final String VALID_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
 
 	// private DataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
@@ -68,4 +71,25 @@ public class UserJDBCTemplate implements UserDAO {
 		jdbcTemplateObject.update(DELETE_USERS_SQL);
 	}
 
+	public boolean isValidUsername(String username) {
+		try {
+			jdbcTemplateObject.queryForObject(VALID_USERNAME_SQL, new Object[] { username }, new UserMapper());
+		}
+		catch (EmptyResultDataAccessException e) {
+			return true;
+		}
+
+		return false;
+	}
+	
+	public boolean isValidEmail(String email){
+		try {
+			jdbcTemplateObject.queryForObject(VALID_EMAIL_SQL, new Object[] { email }, new UserMapper());
+		}
+		catch (EmptyResultDataAccessException e) {
+			return true;
+		}
+
+		return false;
+	}
 }
