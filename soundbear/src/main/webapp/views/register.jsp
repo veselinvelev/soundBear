@@ -31,7 +31,7 @@
 			var validatePassword;
 			
 			$.ajax({ 
-				url: "http://localhost:8080/soundbear/RegisterServlet?username=" + username + "&email=" + email, 
+				url: "../Register?username=" + username + "&email=" + email, 
 				type: 'GET', 
                 dataType:'json',
                 async:false,
@@ -101,13 +101,31 @@
 			}
     	}
     
+    	function register(){
+    		var username = $("#username").val();
+			var email = $("#email").val();
+			var password = $("#password1").val();
+    		
+			if(username && email && password){
+				var userJson = {"username" : username, "email" : email, "password" : password};
+				
+	    		$.ajax({
+	    			url : '../Register',
+	    			type : 'POST',
+	    			dataType : 'json',
+	    			data : userJson,
+
+	    			success : window.location = './play.jsp'
+	    		});
+			}
+    	}
+    	
     </script>
     
     
 </head>
 
 <body>
-
 
     <div class="container">
         <div class="row">
@@ -116,7 +134,7 @@
                 <div class="wrap">
                     <p class="form-title">
                         Sign Up</p>
-                    <form class="login" method = "post">
+                    <div class="login">
                     
                         <input type="text" id = "username" placeholder="Username" required="required" onblur = "validate()" />
                         
@@ -125,7 +143,7 @@
                         
                         <input type="text" id = "email" placeholder="Email" required="required" onblur = "validate()"/>
                         
-                        <span class= "email-error" >Email taken. </span> 
+                        <span class= "email-error" >Email taken or invalid. </span> 
 						<span class= "email-success" >Email available. </span>
                         
                         
@@ -136,13 +154,19 @@
 						<span class= "password-success" >Passwords match. </span>
                         
                         
-                        <input type="submit" id = "signup" value="Sign Up" class="btn btn-success btn-sm" />
+                       	<div class="btn-group btn-group-justified">
+							<div class="btn-group">
+							
+								<button id = "signup" class="btn btn-primary btn-success btn-sm" onclick="register()">SIGN UP</button>
+									
+							</div>
+						</div>
                        
                         <div class="remember-forgot">  </div>
 
                         <div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"></div>
                         <div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"></div>
-                    </form>
+                    </div>
 
                     <div id="fb-root"></div>
 

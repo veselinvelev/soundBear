@@ -26,16 +26,18 @@
 		var username = $("#username").val();
 		var password = $("#password").val();
 
-		$.ajax({
-			url : '../Login',
-			type : 'POST',
-			data : JSON.stringify({
-				"username" : username,
-				"password" : password
-			}),
+		if(username && password){
+			$.ajax({
+				url : '../Login',
+				type : 'POST',
+				data : JSON.stringify({
+					"username" : username,
+					"password" : password
+				}),
 
-			success : window.location = './register.jsp'
-		});
+				success : window.location = './play.jsp'
+			});
+		}
 	}
 </script>
 
@@ -69,7 +71,7 @@
 						<div class="btn-group btn-group-justified">
 							<div class="btn-group">
 								<button class="btn btn-primary btn-success btn-sm"
-									onclick="login()">Sing In</button>
+									onclick="login()">SIGN IN</button>
 							</div>
 						</div>
 

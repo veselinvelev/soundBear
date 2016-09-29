@@ -87,7 +87,7 @@ p.form-title {
 	margin-bottom: 10px;
 }
 
-.login label, form.login a {
+.login label, div.login a {
 	font-size: 12px;
 	font-weight: 400;
 	color: #FFFFFF;
@@ -179,12 +179,12 @@ input::-webkit-input-placeholder {
 color: white !important;
 }
  
-input:-moz-placeholder { /* Firefox 18- */
+input:-moz-placeholder { / Firefox 18- /
 color: white !important; 
 opacity: 1; 
 }
  
-input::-moz-placeholder {  /* Firefox 19+ */
+input::-moz-placeholder {  / Firefox 19+ /
 color: white !important;  
 opacity: 1;
 }
