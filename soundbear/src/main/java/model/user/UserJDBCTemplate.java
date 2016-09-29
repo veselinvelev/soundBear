@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class UserJDBCTemplate implements UserDAO {
@@ -28,8 +29,23 @@ public class UserJDBCTemplate implements UserDAO {
 
 	public User getUser(String username, String password) {
 
-		User user = jdbcTemplateObject.queryForObject(GET_USER_SQL, new Object[] { username, password },
-				new UserMapper());
+		System.out.println("===========================");
+		System.out.println(username);
+		System.out.println(password);
+		System.out.println(jdbcTemplateObject);
+
+		User user = null;
+
+		try {
+			user = jdbcTemplateObject.queryForObject(GET_USER_SQL, new Object[] { username, password },
+					new UserMapper());
+
+		} catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			return user;
+		}
+
+		System.out.println(user);
 
 		return user;
 	}

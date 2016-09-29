@@ -7,3 +7,5 @@
          $(".pr-wrap").removeClass("show-pass-reset");
      });
  });
+
+ 

@@ -28,12 +28,12 @@ p.form-title {
 	letter-spacing: 4px;
 }
 
-form {
+.login {
 	width: 250px;
 	margin: 0 auto;
 }
 
-form.login input[type="text"], form.login input[type="password"] {
+.login input[type="text"], .login input[type="password"] {
 	width: 100%;
 	margin: 0;
 	padding: 5px 10px;
@@ -50,7 +50,7 @@ form.login input[type="text"], form.login input[type="password"] {
 	outline: 0;
 }
 
-form.login input[type="submit"] {
+.login input[type="submit"] {
 	width: 100%;
 	font-size: 14px;
 	text-transform: uppercase;
@@ -61,33 +61,33 @@ form.login input[type="submit"] {
 	letter-spacing: 1px;
 }
 
-form.login input[type="submit"]:hover {
+.login input[type="submit"]:hover {
 	transition: background-color 0.5s ease;
 }
 
-form.login .remember-forgot {
+.login .remember-forgot {
 	float: left;
 	width: 100%;
 	margin: 10px 0 0 0;
 }
 
-form.login .forgot-pass-content {
+.login .forgot-pass-content {
 	min-height: 20px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
 
-form.login label, form.login a {
+.login label, form.login a {
 	font-size: 12px;
 	font-weight: 400;
 	color: #FFFFFF;
 }
 
-form.login a {
+.login a {
 	transition: color 0.5s ease;
 }
 
-form.login a:hover {
+.login a:hover {
 	color: #2ecc71;
 }
 
@@ -163,4 +163,22 @@ form.login a:hover {
 	background-color: rgba(0, 0, 0, 0.66);
 	padding: 10px;
 	left: 45%;
+}
+
+input::-webkit-input-placeholder {
+color: white !important;
+}
+ 
+input:-moz-placeholder { /* Firefox 18- */
+color: white !important; 
+opacity: 1; 
+}
+ 
+input::-moz-placeholder {  /* Firefox 19+ */
+color: white !important;  
+opacity: 1;
+}
+ 
+input:-ms-input-placeholder {  
+color: white !important;  
 }
