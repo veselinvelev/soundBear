@@ -1,5 +1,7 @@
 package model.user;
 
+import java.util.UUID;
+
 public class User {
 	private int userId;
 	private String username;
@@ -49,6 +51,14 @@ public class User {
 	public String toString() {
 		return "User [userId=" + userId + ", username=" + username + ", email=" + email + ", password=" + password
 				+ "]";
+	}
+	
+	public static String genPassword() {
+		
+		String password = UUID.randomUUID().toString();
+
+		
+		return password;
 	}
 
 }

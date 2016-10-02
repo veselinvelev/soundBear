@@ -9,6 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class UserJDBCTemplate implements UserDAO {
+	private static final String UPDATE_PASSWORD_SQL = "UPDATE users SET password = md5(?) WHERE email = ?";
 	private static final String UPDATE_USER = "UPDATE users SET username = ?, email = ?, password = md5(?) WHERE username = ?";
 	private static final String DELETE_USERS_SQL = "DELETE FROM users";
 	private static final String DELETE_USER_SQL = "DELETE FROM users WHERE username = ?";
@@ -31,11 +32,6 @@ public class UserJDBCTemplate implements UserDAO {
 	}
 
 	public User getUser(String username, String password) {
-
-		System.out.println("===========================");
-		System.out.println(username);
-		System.out.println(password);
-		System.out.println(jdbcTemplateObject);
 
 		User user = null;
 
@@ -65,6 +61,14 @@ public class UserJDBCTemplate implements UserDAO {
 
 	public void updateUser(String username, User user) {
 		jdbcTemplateObject.update(UPDATE_USER, user.getUsername(), user.getEmail(), user.getPassword(), username);
+	}
+	
+	public void updatePassword(String email , String password) {
+		
+		if (email != null && !email.equals("") && password != null && !password.equals("")) {
+			jdbcTemplateObject.update(UPDATE_PASSWORD_SQL, password, email);
+		}
+		
 	}
 
 	public void deleteUsers() {

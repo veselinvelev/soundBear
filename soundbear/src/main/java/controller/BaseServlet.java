@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class BaseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	protected static final String LOGGED_USER = "loggedUser";
+	protected static final String RESPONSE_STATUS = "status";
+	protected static final String RESPONSE_STATUS_OK = "ok";
+	protected static final String RESPONSE_STATUS_NOT = "no";
 
 
 

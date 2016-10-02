@@ -12,10 +12,11 @@ span.username-success, span.email-success, span.password-success {
 	color: lime;
 }
 
-span.username-error, span.email-error, span.password-error {
+span.username-error, span.email-error, span.password-error, .login-error, .email-not-found {
 	display: none;
 	color: red;
 }
+
 
 .wrap {
 	width: 100%;
