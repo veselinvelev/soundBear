@@ -26,8 +26,7 @@
 
 <script type="text/javascript"
 	src="<c:url value="/script/jquery-3.1.1.min.js"/>"></script>
-	<script type="text/javascript"
-	src="<c:url value="/script/login.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/script/login.js"/>"></script>
 
 <script type="text/javascript">
 	function login() {
@@ -42,8 +41,8 @@
 					"username" : username,
 					"password1" : password
 				}),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
 				success : function(data) {
 
 					if (data.status === 'OK') {
@@ -59,7 +58,6 @@
 			});
 		}
 	}
-	
 
 	function restorePassword() {
 
@@ -72,7 +70,7 @@
 				data : JSON.stringify({
 					"email" : email,
 				}),
-				contentType: "application/json; charset=utf-8",
+				contentType : "application/json; charset=utf-8",
 				dataType : 'json',
 				success : function(data) {
 					alert(data.status);
@@ -88,7 +86,7 @@
 					alert(data);
 				}
 
-	});
+			});
 		}
 
 	}
@@ -124,7 +122,8 @@
 					<p class="form-title">Sign In</p>
 					<div class="login">
 						<input id="username" name="username" type="text"
-							placeholder="Username" required="required" /> <input
+							placeholder="Username" required="required" /> 
+							<input
 							id="password" name="password" type="password"
 							placeholder="Password" required="required" />
 						<div class="btn-group btn-group-justified">
@@ -171,9 +170,9 @@
 	<script src="<c:url value = "/script/bootstrap.min.js"/>"></script>
 
 
-		
-	
-	
+
+
+
 
 </body>
 

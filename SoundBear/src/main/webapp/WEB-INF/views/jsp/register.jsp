@@ -40,11 +40,11 @@
 				"username" : username,
 				"email" : email
 			}),
-			contentType: "application/json; charset=utf-8",
+			contentType : "application/json; charset=utf-8",
 			dataType : 'json',
 			async : false,
 			success : function(data) {
-				
+
 				if (username) {
 					if (data.isValidUsername) {
 						isValidUsername = true;
@@ -128,10 +128,10 @@
 				data : JSON.stringify({
 					"username" : username,
 					"email" : email,
-					"password1":password1,
-					"password2":password2
+					"password1" : password1,
+					"password2" : password2
 				}),
-				contentType: "application/json; charset=utf-8",
+				contentType : "application/json; charset=utf-8",
 				dataType : 'json',
 				success : function(data) {
 
@@ -146,8 +146,6 @@
 				error : function(data) {
 					alert(data);
 				}
-					
-
 			});
 		} else {
 			$(".fields-required").show();

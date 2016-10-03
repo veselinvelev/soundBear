@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,9 +25,14 @@ import com.soundbear.model.json.request.LoginRequest;
 import com.soundbear.model.json.request.ResetPasswordRequest;
 import com.soundbear.repository.UserRepository;
 import com.soundbear.utils.EmailUtil;
+import com.soundbear.utils.EncryptionUtil;
 
 @Controller
 public class UserController {
+	private static final String ACC_ACTIVATION = "SoundBear Activation";
+
+	private static final String ACTIVATION_MSG = "To activate the account: ";
+
 	private static final String REGISTRATION_FAILED = "We can not register you right now. Please tyr again later";
 
 	private static final String REGISTRATION_SUCCESSFUL = "Registration successful. Please check your email for account activation.";
@@ -87,7 +93,7 @@ public class UserController {
 		return response;
 
 	}
-
+	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody BaseResponse login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 		ResponseStatus status = null;
@@ -96,7 +102,7 @@ public class UserController {
 
 		if (request != null) {
 			username = request.getUsername();
-			
+
 			password = request.getPassword1();
 		}
 
@@ -123,41 +129,24 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/registerSubmit", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse register(@RequestBody LoginRequest request) {
+	public @ResponseBody BaseResponse register(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
-		// String username = request.getParameter("username").trim();
-		// String email = request.getParameter("email").trim();
-		// String password = request.getParameter("password").trim();
-		//
-		// if (isStringValid(username) && isStringValid(email) &&
-		// isStringValid(password)
-		// && username.length() <= VALID_STRING_LENGTH && email.length() <=
-		// VALID_STRING_LENGTH
-		// && password.length() <= VALID_STRING_LENGTH) {
-		//
-		// userRepository.addUser(new User(0, username, email, password));
+		// if (request != null) {
+		String username = request.getUsername();
+		String password1 = request.getPassword1();
+		String password2 = request.getPassword2();
+		String email = request.getEmail();
 		// }
 
-		String username = null;
-		String password1 = null;
-		String password2 = null;
-		String email = null;
-
-		if (request != null) {
-			username = request.getUsername();
-			password1 = request.getPassword1();
-			password2 = request.getPassword2();
-			email = request.getEmail();
-		}
-		
-		//TODO
+		// TODO
 		// Check if all chars are latin or digits
 
 		BaseResponse response = new BaseResponse();
 		ResponseStatus status;
 		String msg = null;
 
-		if (!isStringValid(username) || !isStringValid(password1) || !isStringValid(password2) || !isStringValid(email)) {
+		if (!isStringValid(username) || !isStringValid(password1) || !isStringValid(password2)
+				|| !isStringValid(email)) {
 			response.setStatus(ResponseStatus.NO);
 			response.setMsg(THERE_ARE_EMPTY_FIELDS);
 			return response;
@@ -168,23 +157,36 @@ public class UserController {
 			response.setMsg("Passwords are different");
 			return response;
 		}
-		
+
 		if (username.length() < MIN_USERNAME_LENGTH) {
-			
+
 			response.setStatus(ResponseStatus.NO);
 			response.setMsg("The username is too short");
 			return response;
 		}
-		
-		//TODO 
-		//VALIDATE PASSWORD FORMAT AND LENGTH
-		
+
+		// TODO
+		// VALIDATE PASSWORD FORMAT AND LENGTH
+
 		int success = userRepository.addUser(new User(0, username, email, password1));
-		
+
 		if (success != 0) {
 			status = ResponseStatus.OK;
 			msg = REGISTRATION_SUCCESSFUL;
-		}else{
+			String activationURL = generateActivationURL(httpRequest,username);
+			new Thread() {
+				public void run() {
+					try {
+						EmailUtil.sendEmail(email, ACTIVATION_MSG + activationURL, ACC_ACTIVATION);
+					} catch (AddressException e) {
+						e.printStackTrace();
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				};
+			}.start();
+
+		} else {
 			status = ResponseStatus.NO;
 			msg = REGISTRATION_FAILED;
 		}
@@ -226,7 +228,30 @@ public class UserController {
 
 		return response;
 	}
-
+	
+	@RequestMapping(value = "/activation", method = RequestMethod.GET)
+	public String activateAcc(HttpServletRequest request) {
+		
+		String encryptUsername = request.getParameter("data");
+		String username = EncryptionUtil.decrypt(encryptUsername);
+		
+		System.err.println(username);
+		String returnValue = null;
+		
+		boolean isUsernameFree = userRepository.isValidUsername(username);
+		
+		
+		//TODO
+		if (!isUsernameFree) {
+			//Update DB
+			returnValue = "play";
+		}else{
+			returnValue = "register";
+		}
+		
+	
+		return returnValue;
+	}
 	private boolean isStringValid(String str) {
 		boolean isValid;
 		if (str != null && str.length() > 0) {
@@ -245,4 +270,13 @@ public class UserController {
 		return RandomStringUtils.random(length, useLetters, useNumbers);
 	}
 
+
+	private String generateActivationURL(HttpServletRequest httpRequest, String username) {
+		String activationURL = httpRequest.getRequestURL().toString();
+		activationURL = activationURL.replace(httpRequest.getRequestURI(), httpRequest.getContextPath());
+
+		activationURL += "/activation?data=" + EncryptionUtil.encrypt(username);
+
+		return activationURL;
+	}
 }
