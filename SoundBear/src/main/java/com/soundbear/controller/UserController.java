@@ -242,10 +242,16 @@ public class UserController {
 		
 		
 		//TODO
+//		User user = userRepository.getUser(username, password);
+		
 		if (!isUsernameFree) {
 			//Update DB
+//			userRepository.updateActiveStatus(username);
+//			HttpSession session = request.getSession();
+//			session.setAttribute(LOGGED_USER, user);
 			returnValue = "play";
 		}else{
+			
 			returnValue = "register";
 		}
 		

@@ -2,6 +2,7 @@ package com.soundbear.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -15,13 +16,14 @@ import com.soundbear.model.app.User;
 
 @Component
 public class UserRepository implements UserDAO {
+	private static final String SET_ACTIVE_STATUS_SQL = "UPDATE users SET is_active = 1 WHERE username=?";
 	private static final String UPDATE_PASSWORD_SQL = "UPDATE users SET password = md5(?) WHERE email = ?";
 	private static final String UPDATE_USER = "UPDATE users SET username = ?, email = ?, password = md5(?) WHERE username = ?";
 	private static final String DELETE_USERS_SQL = "DELETE FROM users";
 	private static final String DELETE_USER_SQL = "DELETE FROM users WHERE username = ?";
 	private static final String LIST_USERS_SQL = "SELECT * FROM users";
 	private static final String GET_USER_SQL = "SELECT * FROM users WHERE username = ? AND password = md5(?)";
-	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?))";
+	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?),?,?)";
 	private static final String VALID_USERNAME_SQL = "SELECT * FROM users WHERE username = ?";
 	private static final String VALID_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
 
@@ -32,8 +34,13 @@ public class UserRepository implements UserDAO {
 	}
 
 	public int addUser(User user) {
-		int result = jdbcTemplate.update(ADD_USER_SQL, user.getUsername(), user.getEmail(), user.getPassword());
+		int result = jdbcTemplate.update(ADD_USER_SQL, user.getUsername(), user.getEmail(), user.getPassword(), 0, new Date());
 		return result;
+	}
+	
+	
+	public void updateActiveStatus(String username) {
+		 jdbcTemplate.update(SET_ACTIVE_STATUS_SQL,username);
 	}
 
 	public User getUser(String username, String password) {

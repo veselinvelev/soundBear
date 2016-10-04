@@ -32,6 +32,10 @@ import com.soundbear.repository.UserRepository;
 @ComponentScan("com.soundbear.controller")
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	
+	static {
+		
+	}
+	
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
@@ -83,16 +87,30 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(changeInterceptor);
 	}
 	
+//	@Bean
+//    public DataSource getDataSource() {
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/soundbear?useSSL=false");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//         
+//        return dataSource;
+//    }
+	
+	
 	@Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/soundbear?useSSL=false");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
+        dataSource.setUrl("jdbc:mysql://192.168.8.22:3306/hr?useSSL=false");
+        dataSource.setUsername("ittstudent");
+        dataSource.setPassword("ittstudent-123");
          
         return dataSource;
     }
+	
+	
 	
 	@Bean
 	public UserRepository getUserRepository(){
