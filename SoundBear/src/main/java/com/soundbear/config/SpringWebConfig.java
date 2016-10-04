@@ -26,6 +26,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import com.soundbear.repository.UserRepository;
+import com.soundbear.utils.DBCleaner;
 
 @Configuration
 @EnableWebMvc
@@ -33,6 +34,8 @@ import com.soundbear.repository.UserRepository;
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	
 	static {
+		
+		new DBCleaner().start();
 		
 	}
 	
@@ -87,28 +90,28 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(changeInterceptor);
 	}
 	
-//	@Bean
-//    public DataSource getDataSource() {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-//        dataSource.setUrl("jdbc:mysql://localhost:3306/soundbear?useSSL=false");
-//        dataSource.setUsername("root");
-//        dataSource.setPassword("root");
-//         
-//        return dataSource;
-//    }
-	
-	
 	@Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://192.168.8.22:3306/hr?useSSL=false");
-        dataSource.setUsername("ittstudent");
-        dataSource.setPassword("ittstudent-123");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/soundbear?useSSL=false");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
          
         return dataSource;
     }
+	
+	
+//	@Bean
+//    public DataSource getDataSource() {
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://192.168.8.22:3306/hr?useSSL=false");
+//        dataSource.setUsername("ittstudent");
+//        dataSource.setPassword("ittstudent-123");
+//         
+//        return dataSource;
+//    }
 	
 	
 	
@@ -116,5 +119,7 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	public UserRepository getUserRepository(){
 		return new UserRepository(getDataSource());
 	}
+	
+
 	
 }

@@ -9,10 +9,12 @@ import javax.sql.DataSource;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.soundbear.model.app.User;
+import com.soundbear.model.app.exceptions.UserException;
 
 @Component
 public class UserRepository implements UserDAO {
@@ -23,9 +25,11 @@ public class UserRepository implements UserDAO {
 	private static final String DELETE_USER_SQL = "DELETE FROM users WHERE username = ?";
 	private static final String LIST_USERS_SQL = "SELECT * FROM users";
 	private static final String GET_USER_SQL = "SELECT * FROM users WHERE username = ? AND password = md5(?)";
+	private static final String GET_USER_BY_NAME_SQL = "SELECT * FROM users WHERE username = ?";
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?),?,?)";
 	private static final String VALID_USERNAME_SQL = "SELECT * FROM users WHERE username = ?";
 	private static final String VALID_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
+	private static final PreparedStatementCreator DELETE_INACTIVE_USERS_SQL = null;
 
 	private JdbcTemplate jdbcTemplate;
 
@@ -34,13 +38,13 @@ public class UserRepository implements UserDAO {
 	}
 
 	public int addUser(User user) {
-		int result = jdbcTemplate.update(ADD_USER_SQL, user.getUsername(), user.getEmail(), user.getPassword(), 0, new Date());
+		int result = jdbcTemplate.update(ADD_USER_SQL, user.getUsername(), user.getEmail(), user.getPassword(), user.isActive(),
+				user.getRegistrationDate());
 		return result;
 	}
-	
-	
+
 	public void updateActiveStatus(String username) {
-		 jdbcTemplate.update(SET_ACTIVE_STATUS_SQL,username);
+		jdbcTemplate.update(SET_ACTIVE_STATUS_SQL, username);
 	}
 
 	public User getUser(String username, String password) {
@@ -49,6 +53,25 @@ public class UserRepository implements UserDAO {
 
 		try {
 			user = jdbcTemplate.queryForObject(GET_USER_SQL, new Object[] { username, password }, new UserMapper());
+
+		} catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			return user;
+		}
+
+		System.out.println(user);
+
+		return user;
+	}
+
+	public User getUserByName(String username) {
+
+		User user = null;
+
+		try {
+			user = jdbcTemplate.queryForObject(GET_USER_BY_NAME_SQL, new Object[] { username }, new UserMapper());
+			System.out.println("======================================");
+			System.err.println(user);
 
 		} catch (EmptyResultDataAccessException e) {
 			e.printStackTrace();
@@ -109,11 +132,22 @@ public class UserRepository implements UserDAO {
 	public class UserMapper implements RowMapper<User> {
 
 		public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-			User user = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("email"),
-					rs.getString("password"));
+			User user = null;
+			try {
+				user = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("email"),
+						rs.getString("password"), rs.getInt("is_active"), rs.getDate("registration_date"));
+			} catch (UserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			return user;
 		}
 	}
+
+//	public void clearInactive(Date date) {
+//		jdbcTemplate.update(DELETE_INACTIVE_USERS_SQL, username);
+//		
+//	}
 
 }

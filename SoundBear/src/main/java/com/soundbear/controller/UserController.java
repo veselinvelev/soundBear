@@ -1,23 +1,22 @@
 package com.soundbear.controller;
 
-import static org.mockito.Matchers.booleanThat;
+import java.util.Date;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-import javax.servlet.annotation.ServletSecurity.EmptyRoleSemantic;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.soundbear.model.app.User;
+import com.soundbear.model.app.exceptions.UserException;
 import com.soundbear.model.json.reponse.BaseResponse;
 import com.soundbear.model.json.reponse.BaseResponse.ResponseStatus;
 import com.soundbear.model.json.reponse.RegisterFormResponse;
@@ -26,9 +25,16 @@ import com.soundbear.model.json.request.ResetPasswordRequest;
 import com.soundbear.repository.UserRepository;
 import com.soundbear.utils.EmailUtil;
 import com.soundbear.utils.EncryptionUtil;
+import com.soundbear.utils.ErrorMsgs;
+import com.soundbear.utils.Pages;
 
 @Controller
 public class UserController {
+
+	private static final String USRNAME_TOO_SHORT = "The username is too short";
+
+	private static final String PASSWRDS_DONT_MATCH = "Passwords are different";
+
 	private static final String ACC_ACTIVATION = "SoundBear Activation";
 
 	private static final String ACTIVATION_MSG = "To activate the account: ";
@@ -93,7 +99,7 @@ public class UserController {
 		return response;
 
 	}
-	
+
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody BaseResponse login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 		ResponseStatus status = null;
@@ -154,27 +160,35 @@ public class UserController {
 
 		if (!password1.equals(password2)) {
 			response.setStatus(ResponseStatus.NO);
-			response.setMsg("Passwords are different");
+			response.setMsg(PASSWRDS_DONT_MATCH);
 			return response;
 		}
 
 		if (username.length() < MIN_USERNAME_LENGTH) {
 
 			response.setStatus(ResponseStatus.NO);
-			response.setMsg("The username is too short");
+			response.setMsg(USRNAME_TOO_SHORT);
 			return response;
 		}
 
 		// TODO
 		// VALIDATE PASSWORD FORMAT AND LENGTH
 
-		int success = userRepository.addUser(new User(0, username, email, password1));
+		int success = 0;
+		try {
+			success = userRepository.addUser(new User(0, username, email, password1, 0, new Date()));
+		} catch (UserException e1) {
+			// TODO Auto-generated catch block
+			System.out.println("User can not be created");
+			e1.printStackTrace();
+		}
 
 		if (success != 0) {
 			status = ResponseStatus.OK;
 			msg = REGISTRATION_SUCCESSFUL;
-			String activationURL = generateActivationURL(httpRequest,username);
+			String activationURL = generateActivationURL(httpRequest, username);
 			new Thread() {
+				@Override
 				public void run() {
 					try {
 						EmailUtil.sendEmail(email, ACTIVATION_MSG + activationURL, ACC_ACTIVATION);
@@ -228,37 +242,42 @@ public class UserController {
 
 		return response;
 	}
-	
+
 	@RequestMapping(value = "/activation", method = RequestMethod.GET)
 	public String activateAcc(HttpServletRequest request) {
-		
+
 		String encryptUsername = request.getParameter("data");
 		String username = EncryptionUtil.decrypt(encryptUsername);
-		
-		System.err.println(username);
+
 		String returnValue = null;
-		
-		boolean isUsernameFree = userRepository.isValidUsername(username);
-		
-		
-		//TODO
-//		User user = userRepository.getUser(username, password);
-		
-		if (!isUsernameFree) {
-			//Update DB
-//			userRepository.updateActiveStatus(username);
-//			HttpSession session = request.getSession();
-//			session.setAttribute(LOGGED_USER, user);
-			returnValue = "play";
-		}else{
-			
-			returnValue = "register";
+//		System.out.println("11111111111111111111111111111111111111111111111111111111111111111111");
+//		System.out.println(username);
+		// boolean isUsernameFree = userRepository.isValidUsername(username);
+		User user = userRepository.getUserByName(username);
+
+		if (user != null) {
+			// Update DB
+			if (!user.isActive()) {
+				userRepository.updateActiveStatus(username);
+				HttpSession session = request.getSession();
+				session.setAttribute(LOGGED_USER, user);
+				returnValue = Pages.PLAY;
+
+			} else {
+				returnValue = Pages.LOGIN;
+			}
+
+		} else {
+
+			returnValue = Pages.ERROR;
+			request.setAttribute(ErrorMsgs.ERROR_REDIRECT, Pages.REGISTER);
+			request.setAttribute(ErrorMsgs.ERROR_MSG, ErrorMsgs.ACTIVATION_FAILED);
 		}
-		
-	
+
 		return returnValue;
 	}
-	private boolean isStringValid(String str) {
+
+	public static boolean isStringValid(String str) {
 		boolean isValid;
 		if (str != null && str.length() > 0) {
 			isValid = true;
@@ -275,7 +294,6 @@ public class UserController {
 
 		return RandomStringUtils.random(length, useLetters, useNumbers);
 	}
-
 
 	private String generateActivationURL(HttpServletRequest httpRequest, String username) {
 		String activationURL = httpRequest.getRequestURL().toString();
