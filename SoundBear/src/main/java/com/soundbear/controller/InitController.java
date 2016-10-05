@@ -23,5 +23,10 @@ public class InitController {
 	public String register(Model model) {
 		return "register";
 	}
+	
+	@RequestMapping(value = "/upload", method = RequestMethod.GET)
+	public String upload(Model model) {
+		return "upload";
+	}
 
 }

@@ -1,0 +1,98 @@
+/*
+* Style tweaks
+* --------------------------------------------------
+*/
+html,
+body {
+    //overflow-x: hidden; /* Prevent scroll on narrow devices */
+}
+body {
+    padding-top: 100px;
+    background-color: white;
+}
+
+/*
+ * Custom styles
+ */
+.navbar-brand {
+}
+
+#brand{
+	color: darkorange;
+}
+
+.username, .upload, .playlists, .mysongs, .radio{
+	color: darkorange;
+	font-size: 16px;
+}
+
+.navbar-container {
+    padding: 20px 0 20px 0;
+}
+
+.navbar.navbar-fixed-top.fixed-theme {
+    background-color: #222;
+    border-color: #080808;
+    box-shadow: 0 0 5px rgba(0,0,0,.8);
+}
+
+.navbar-brand.fixed-theme {
+    font-size: 18px;
+}
+
+.navbar-container.fixed-theme {
+    padding: 0;
+}
+
+.navbar-brand.fixed-theme,
+.navbar-container.fixed-theme,
+.navbar.navbar-fixed-top.fixed-theme,
+.navbar-brand,
+.navbar-container{
+    transition: 0.8s;
+    -webkit-transition:  0.8s;
+}
+
+#search {
+    float: right;
+    margin-top: 9px;
+    width: 250px;
+}
+
+.search {
+    padding: 11px 0;
+    width: 230px;
+    height: 30px;
+    position: relative;
+    left: 10px;
+    float: left;
+    line-height: 22px;
+}
+
+    .search input {
+        position: absolute;
+        width: 0px;
+        float: Left;
+        margin-left: 210px;
+        -webkit-transition: all 0.7s ease-in-out;
+        -moz-transition: all 0.7s ease-in-out;
+        -o-transition: all 0.7s ease-in-out;
+        transition: all 0.7s ease-in-out;
+        height: 30px;
+        line-height: 18px;
+        padding: 0 2px 0 2px;
+        border-radius:1px;
+    }
+
+        .search:hover input, .search input:focus {
+            width: 200px;
+            margin-left: 0px;
+        }
+
+.btn {
+    height: 30px;
+    position: absolute;
+    right: 0;
+    top: 11px;
+    border-radius:1px;
+}
