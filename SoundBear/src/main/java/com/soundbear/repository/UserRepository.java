@@ -2,14 +2,13 @@ package com.soundbear.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +17,7 @@ import com.soundbear.model.app.exceptions.UserException;
 
 @Component
 public class UserRepository implements UserDAO {
+	private static final int ACTIVATION_LINK_VALID_PERIOD = 5;
 	private static final String SET_ACTIVE_STATUS_SQL = "UPDATE users SET is_active = 1 WHERE username=?";
 	private static final String UPDATE_PASSWORD_SQL = "UPDATE users SET password = md5(?) WHERE email = ?";
 	private static final String UPDATE_USER = "UPDATE users SET username = ?, email = ?, password = md5(?) WHERE username = ?";
@@ -29,17 +29,22 @@ public class UserRepository implements UserDAO {
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?),?,?)";
 	private static final String VALID_USERNAME_SQL = "SELECT * FROM users WHERE username = ?";
 	private static final String VALID_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
-	private static final PreparedStatementCreator DELETE_INACTIVE_USERS_SQL = null;
+	private static final String DELETE_INACTIVE_USERS_SQL = "DELETE FROM users WHERE is_active = 0 AND DATE_SUB(registration_date, INTERVAL ? MINUTE)";
 
 	private JdbcTemplate jdbcTemplate;
 
+	public UserRepository() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Autowired
 	public UserRepository(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	public int addUser(User user) {
-		int result = jdbcTemplate.update(ADD_USER_SQL, user.getUsername(), user.getEmail(), user.getPassword(), user.isActive(),
-				user.getRegistrationDate());
+		int result = jdbcTemplate.update(ADD_USER_SQL, user.getUsername(), user.getEmail(), user.getPassword(),
+				user.isActive(), user.getRegistrationDate());
 		return result;
 	}
 
@@ -145,9 +150,8 @@ public class UserRepository implements UserDAO {
 		}
 	}
 
-//	public void clearInactive(Date date) {
-//		jdbcTemplate.update(DELETE_INACTIVE_USERS_SQL, username);
-//		
-//	}
+	public void clearInactive() {
+		jdbcTemplate.update(DELETE_INACTIVE_USERS_SQL, ACTIVATION_LINK_VALID_PERIOD);
+	}
 
 }

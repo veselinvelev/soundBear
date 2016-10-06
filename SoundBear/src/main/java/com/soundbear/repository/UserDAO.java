@@ -3,8 +3,11 @@ package com.soundbear.repository;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.soundbear.model.app.User;
 
+@Component
 public interface UserDAO {
 	
 	 public int addUser(User user);
@@ -22,4 +25,6 @@ public interface UserDAO {
 	 public boolean isValidEmail(String email);
 	 
 	 public boolean isValidUsername(String username);
+
+	public void clearInactive();
 }
