@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,7 @@ import com.soundbear.model.json.reponse.RegisterFormResponse;
 import com.soundbear.model.json.request.LoginRequest;
 import com.soundbear.model.json.request.ResetPasswordRequest;
 import com.soundbear.repository.UserRepository;
+import com.soundbear.utils.DBCleaner;
 import com.soundbear.utils.EmailUtil;
 import com.soundbear.utils.EncryptionUtil;
 import com.soundbear.utils.ErrorMsgs;
@@ -47,16 +49,21 @@ public class UserController {
 
 	private static final String THERE_ARE_EMPTY_FIELDS = "Please fill out all fields";
 
-	private static final String LOGGED_USER = "loggedUser";
+	public static final String LOGGED_USER = "loggedUser";
 
 	private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final String RESET_MSG = "Your password has been reset to : ";
 	private static final String PASSWORD_RESET = "Password Reset";
 	private static final int VALID_STRING_LENGTH = 45;
+	private static final int INTERVAL_OF_DB_CLEAN = 10800000;
 
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
+	@Autowired
+	private DBCleaner dbCleaner;
+	@Autowired
+	private HttpSession session;
 
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
 	public @ResponseBody BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
@@ -101,7 +108,12 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+	public @ResponseBody BaseResponse login(@RequestBody LoginRequest request, Model model) {
+
+		if (!dbCleaner.isAlive()) {
+			dbCleaner.start();
+		}
+
 		ResponseStatus status = null;
 		String username = null;
 		String password = null;
@@ -120,7 +132,7 @@ public class UserController {
 
 			user = userRepository.getUser(username, password);
 			if (user != null) {
-				HttpSession session = httpRequest.getSession();
+
 				session.setAttribute(LOGGED_USER, user);
 				status = ResponseStatus.OK;
 			} else {
@@ -246,13 +258,11 @@ public class UserController {
 	@RequestMapping(value = "/activation", method = RequestMethod.GET)
 	public String activateAcc(HttpServletRequest request) {
 
-		String encryptUsername = request.getParameter("data");
+		String encryptUsername = request.getParameter("data").replace(' ', '+');
 		String username = EncryptionUtil.decrypt(encryptUsername);
 
 		String returnValue = null;
-//		System.out.println("11111111111111111111111111111111111111111111111111111111111111111111");
-//		System.out.println(username);
-		// boolean isUsernameFree = userRepository.isValidUsername(username);
+
 		User user = userRepository.getUserByName(username);
 
 		if (user != null) {

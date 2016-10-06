@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,38 +26,35 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import com.soundbear.repository.SongRepository;
 import com.soundbear.repository.UserRepository;
 import com.soundbear.utils.DBCleaner;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.soundbear.controller")
+//@ComponentScan("com.soundbear.controller")
+@ComponentScan(basePackages={"com.soundbear.controller","com.soundbear.repository","com.soundbear.utils"})
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	
-	static {
-		
-		new DBCleaner().start();
-		
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
+		registry.addResourceHandler("/pdfs/**").addResourceLocations("/static/pdf/");
+		registry.addResourceHandler("/script/**").addResourceLocations("/static/js/");
+		registry.addResourceHandler("/img/**").addResourceLocations("/static/img/");
 	}
-	
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
-        registry.addResourceHandler("/pdfs/**").addResourceLocations("/static/pdf/");
-        registry.addResourceHandler("/script/**").addResourceLocations("/static/js/");
-        registry.addResourceHandler("/img/**").addResourceLocations("/static/img/");
-    }
-	
+
 	@Bean
 	public InternalResourceViewResolver getInternalResourceViewResolver() {
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setViewClass(JstlView.class);
 		resolver.setPrefix("/WEB-INF/views/jsp/");
 		resolver.setSuffix(".jsp");
-		
+
 		return resolver;
 	}
-	
+
 	// localization configuration
 	@Bean
 	public MessageSource messageSource() {
@@ -64,62 +62,62 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 		messageSource.setBasename("messages");
 		return messageSource;
 	}
-	
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new GsonHttpMessageConverter());
-    }
 
-    @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.defaultContentType(MediaType.APPLICATION_JSON_UTF8);
-        super.configureContentNegotiation(configurer);
-    }
-	
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		converters.add(new GsonHttpMessageConverter());
+	}
+
+	@Override
+	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+		configurer.defaultContentType(MediaType.APPLICATION_JSON_UTF8);
+		super.configureContentNegotiation(configurer);
+	}
+
 	@Bean
 	public LocaleResolver localeResolver() {
 		SessionLocaleResolver resolver = new SessionLocaleResolver();
 		resolver.setDefaultLocale(Locale.ENGLISH);
 		return resolver;
 	}
-	
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		LocaleChangeInterceptor changeInterceptor = new LocaleChangeInterceptor();
 		changeInterceptor.setParamName("language");
 		registry.addInterceptor(changeInterceptor);
 	}
-	
+
 	@Bean
-    public DataSource getDataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/soundbear?useSSL=false");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-         
-        return dataSource;
-    }
-	
-	
-//	@Bean
-//    public DataSource getDataSource() {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-//        dataSource.setUrl("jdbc:mysql://192.168.8.22:3306/hr?useSSL=false");
-//        dataSource.setUsername("ittstudent");
-//        dataSource.setPassword("ittstudent-123");
-//         
-//        return dataSource;
-//    }
-	
-	
-	
+	public DataSource getDataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/soundbear?useSSL=false");
+		dataSource.setUsername("root");
+		dataSource.setPassword("root");
+
+		return dataSource;
+	}
+
+	// @Bean
+	// public DataSource getDataSource() {
+	// DriverManagerDataSource dataSource = new DriverManagerDataSource();
+	// dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+	// dataSource.setUrl("jdbc:mysql://192.168.8.22:3306/hr?useSSL=false");
+	// dataSource.setUsername("ittstudent");
+	// dataSource.setPassword("ittstudent-123");
+	//
+	// return dataSource;
+	// }
+
 	@Bean
-	public UserRepository getUserRepository(){
+	public UserRepository getUserRepository() {
 		return new UserRepository(getDataSource());
 	}
-	
 
-	
+	@Bean
+	public SongRepository getSongRepository() {
+		return new SongRepository(getDataSource());
+	}
+
 }
