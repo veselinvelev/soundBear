@@ -29,11 +29,16 @@ import com.soundbear.utils.EmailUtil;
 import com.soundbear.utils.EncryptionUtil;
 import com.soundbear.utils.ErrorMsgs;
 import com.soundbear.utils.Pages;
+import com.soundbear.utils.ValidatorUtil;
 
 @Controller
 public class UserController {
 
 	private static final String USRNAME_TOO_SHORT = "The username is too short";
+
+	private static final String INVALID_USERNAME = "Username must contain only latin letters and digits, must not start with a digit.";
+
+	private static final String INVALID_EMAIL = "Email is not in a valid format.";
 
 	private static final String PASSWRDS_DONT_MATCH = "Passwords are different";
 
@@ -41,7 +46,7 @@ public class UserController {
 
 	private static final String ACTIVATION_MSG = "To activate the account: ";
 
-	private static final String REGISTRATION_FAILED = "We can not register you right now. Please tyr again later";
+	private static final String REGISTRATION_FAILED = "We can not register you right now. Please try again later";
 
 	private static final String REGISTRATION_SUCCESSFUL = "Registration successful. Please check your email for account activation.";
 
@@ -57,6 +62,7 @@ public class UserController {
 	private static final String PASSWORD_RESET = "Password Reset";
 	private static final int VALID_STRING_LENGTH = 45;
 	private static final int INTERVAL_OF_DB_CLEAN = 10800000;
+	private static final String USERNAME_REGEX = "^[a-zA-Z]+[a-zA-Z0-9_]*$";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -82,7 +88,8 @@ public class UserController {
 
 		if (isEmpty || !isValid || isFree) {
 			status = ResponseStatus.NO;
-		} else {
+		}
+		else {
 			status = ResponseStatus.OK;
 			final String newPassword = genPassword();
 			userRepository.updatePassword(email, newPassword);
@@ -91,9 +98,11 @@ public class UserController {
 				public void run() {
 					try {
 						EmailUtil.sendEmail(email, RESET_MSG + newPassword, PASSWORD_RESET);
-					} catch (AddressException e) {
+					}
+					catch (AddressException e) {
 						e.printStackTrace();
-					} catch (MessagingException e) {
+					}
+					catch (MessagingException e) {
 						e.printStackTrace();
 					}
 				};
@@ -126,19 +135,21 @@ public class UserController {
 
 		User user = null;
 
-		boolean isUsernameValid = isStringValid(username);
-		boolean isPasswordVAlid = isStringValid(password);
-		if (isUsernameValid && isPasswordVAlid) {
+		boolean isUsernameValid = ValidatorUtil.isStringValid(username);
+		boolean isPasswordValid = ValidatorUtil.isStringValid(password);
+		if (isUsernameValid && isPasswordValid) {
 
 			user = userRepository.getUser(username, password);
 			if (user != null) {
 
 				session.setAttribute(LOGGED_USER, user);
 				status = ResponseStatus.OK;
-			} else {
+			}
+			else {
 				status = ResponseStatus.NO;
 			}
-		} else {
+		}
+		else {
 			status = ResponseStatus.NO;
 		}
 		BaseResponse response = new BaseResponse();
@@ -156,15 +167,12 @@ public class UserController {
 		String email = request.getEmail();
 		// }
 
-		// TODO
-		// Check if all chars are latin or digits
-
 		BaseResponse response = new BaseResponse();
 		ResponseStatus status;
 		String msg = null;
 
-		if (!isStringValid(username) || !isStringValid(password1) || !isStringValid(password2)
-				|| !isStringValid(email)) {
+		if (!ValidatorUtil.isStringValid(username) || !ValidatorUtil.isStringValid(password1)
+				|| !ValidatorUtil.isStringValid(password2) || !ValidatorUtil.isStringValid(email)) {
 			response.setStatus(ResponseStatus.NO);
 			response.setMsg(THERE_ARE_EMPTY_FIELDS);
 			return response;
@@ -177,9 +185,20 @@ public class UserController {
 		}
 
 		if (username.length() < MIN_USERNAME_LENGTH) {
-
 			response.setStatus(ResponseStatus.NO);
 			response.setMsg(USRNAME_TOO_SHORT);
+			return response;
+		}
+
+		if (!username.matches(USERNAME_REGEX)) {
+			response.setStatus(ResponseStatus.NO);
+			response.setMsg(INVALID_USERNAME);
+			return response;
+		}
+
+		if (!email.matches(EMAIL_REGEX)) {
+			response.setStatus(ResponseStatus.NO);
+			response.setMsg(INVALID_EMAIL);
 			return response;
 		}
 
@@ -189,7 +208,8 @@ public class UserController {
 		int success = 0;
 		try {
 			success = userRepository.addUser(new User(0, username, email, password1, 0, new Date()));
-		} catch (UserException e1) {
+		}
+		catch (UserException e1) {
 			// TODO Auto-generated catch block
 			System.out.println("User can not be created");
 			e1.printStackTrace();
@@ -204,15 +224,18 @@ public class UserController {
 				public void run() {
 					try {
 						EmailUtil.sendEmail(email, ACTIVATION_MSG + activationURL, ACC_ACTIVATION);
-					} catch (AddressException e) {
+					}
+					catch (AddressException e) {
 						e.printStackTrace();
-					} catch (MessagingException e) {
+					}
+					catch (MessagingException e) {
 						e.printStackTrace();
 					}
 				};
 			}.start();
 
-		} else {
+		}
+		else {
 			status = ResponseStatus.NO;
 			msg = REGISTRATION_FAILED;
 		}
@@ -234,8 +257,8 @@ public class UserController {
 			email = request.getEmail();
 		}
 
-		boolean isEmailValid = isStringValid(email);
-		boolean isUsernameValid = isStringValid(username);
+		boolean isEmailValid = ValidatorUtil.isStringValid(email);
+		boolean isUsernameValid = ValidatorUtil.isStringValid(username);
 
 		boolean isUsernameFree = false;
 		boolean isEmailFree = false;
@@ -273,11 +296,13 @@ public class UserController {
 				session.setAttribute(LOGGED_USER, user);
 				returnValue = Pages.PLAY;
 
-			} else {
+			}
+			else {
 				returnValue = Pages.LOGIN;
 			}
 
-		} else {
+		}
+		else {
 
 			returnValue = Pages.ERROR;
 			request.setAttribute(ErrorMsgs.ERROR_REDIRECT, Pages.REGISTER);
@@ -285,16 +310,6 @@ public class UserController {
 		}
 
 		return returnValue;
-	}
-
-	public static boolean isStringValid(String str) {
-		boolean isValid;
-		if (str != null && str.length() > 0) {
-			isValid = true;
-		} else {
-			isValid = false;
-		}
-		return isValid;
 	}
 
 	private String genPassword() {

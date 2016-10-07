@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.soundbear.controller.UserController;
 import com.soundbear.model.app.exceptions.UserException;
+import com.soundbear.utils.ValidatorUtil;
 
 public class User {
 	private int userId;
@@ -59,7 +60,7 @@ public class User {
 
 	public void setUsername(String username) throws UserException {
 		
-		if (!UserController.isStringValid(username)) {
+		if (!ValidatorUtil.isStringValid(username)) {
 			throw new UserException("Invalid username");
 		}
 		this.username = username;
@@ -70,7 +71,7 @@ public class User {
 	}
 
 	public void setEmail(String email) throws UserException {
-		if (!UserController.isStringValid(email)) {
+		if (!ValidatorUtil.isStringValid(email)) {
 			throw new UserException("Invalid email");
 		}
 		this.email = email;
@@ -81,7 +82,7 @@ public class User {
 	}
 
 	public void setPassword(String password) throws UserException {
-		if (!UserController.isStringValid(password)) {
+		if (!ValidatorUtil.isStringValid(password)) {
 			throw new UserException("Invalid password");
 		}
 		

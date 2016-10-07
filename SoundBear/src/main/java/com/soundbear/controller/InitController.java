@@ -13,15 +13,11 @@ import com.soundbear.utils.Pages;
 
 @Controller
 public class InitController {
-//	 @Autowired
-//	 SongDAO songRepository;
 	@Autowired
 	private HttpSession session;
 
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String login(Model model) {
-//		 songRepository.addArtist("Gosho Ot shumen ");
-
 		return getPage(Pages.PLAY);
 	}
 
@@ -32,7 +28,8 @@ public class InitController {
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String register(Model model) {
-		return getPage(Pages.PLAY);
+		//return getPage(Pages.PLAY);
+		return "register";
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.GET)

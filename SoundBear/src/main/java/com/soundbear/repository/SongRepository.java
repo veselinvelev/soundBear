@@ -3,14 +3,14 @@ package com.soundbear.repository;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
-
+import com.soundbear.model.app.Song;
 
 @Component
 public class SongRepository implements SongDAO {
@@ -19,33 +19,46 @@ public class SongRepository implements SongDAO {
 	private static final String ADD_ARTIST_SQL = "INSERT INTO artists values (null, ?)";
 	private static final String ADD_SONG_SQL = "INSERT INTO songs VALUES (null, ?, ?, ?, ?, ?)";
 
-	
 	private JdbcTemplate jdbcTemplate;
+	private TransactionTemplate transactionTemplate;
 	
 	public SongRepository() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Autowired
-	public SongRepository(DataSource dataSource) {
+	public SongRepository(DataSource dataSource, TransactionTemplate template) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
+		transactionTemplate = template;
 	}
 
-//	@Transactional(readOnly = true)
-//	public void addSong(Song song) {
-//		int artistId = getArtistId(song.getArtist());
-//
-//		if (artistId == 0) {
-//			addArtist(song.getArtist());
-//			artistId = getArtistId(song.getArtist());
-//		}
-//
-//		int genreId = getGenreId(song.getGenre());
-//
-//		jdbcTemplate.update(ADD_SONG_SQL, song.getSongName(), song.getPath(), song.getUserId(), genreId, artistId);
-//
-//	}
+	public void addSong(final Song song) {
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				try {
+					int artistId = getArtistId(song.getArtist());
+
+					if (artistId == 0) {
+						addArtist(song.getArtist());
+						artistId = getArtistId(song.getArtist());
+					}
+
+					int genreId = getGenreId(song.getGenre());
+
+					jdbcTemplate.update(ADD_SONG_SQL, song.getSongName(), song.getPath(), song.getUserId(), genreId,
+							artistId);
+				}
+				catch (Exception e) {
+					transactionStatus.setRollbackOnly();
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+	}
 	public int getGenreId(String genreName) {
 		return jdbcTemplate.queryForObject(GET_GENRE_SQL, new Object[] { genreName }, Integer.class);
 	}

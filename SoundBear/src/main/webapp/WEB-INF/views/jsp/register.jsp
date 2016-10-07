@@ -24,6 +24,9 @@
 	src="<c:url value="/script/jquery-3.1.1.min.js"/>"></script>
 <script>
 	function validate() {
+		var usernameRegex = new RegExp("^[a-zA-Z]+[a-zA-Z0-9_]*$");
+		var emailRegex = new RegExp("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		
 		var username = $("#username").val();
 		var email = $("#email").val();
 		var password1 = $("#password1").val();
@@ -46,7 +49,7 @@
 			success : function(data) {
 
 				if (username) {
-					if (data.isValidUsername) {
+					if (data.isValidUsername && usernameRegex.test(username)) {
 						isValidUsername = true;
 
 						$(".username-success").show();
@@ -65,7 +68,7 @@
 				}
 
 				if (email) {
-					if (data.isValidEmail) {
+					if (data.isValidEmail && emailRegex.test(email)) {
 						isValidEmail = true
 
 						$(".email-success").show();
@@ -168,7 +171,7 @@
 
 						<input type="text" id="username" placeholder="Username"
 							required="required" maxlength="45" onblur="validate()" /> <span
-							class="username-error">Username taken. </span> <span
+							class="username-error">Username taken or invalid. </span> <span
 							class="username-success">Username available. </span> <input
 							type="text" id="email" placeholder="Email" required="required"
 							maxlength="45" onblur="validate()" /> <span class="email-error">Email
