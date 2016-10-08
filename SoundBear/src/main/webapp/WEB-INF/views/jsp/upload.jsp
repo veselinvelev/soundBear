@@ -127,7 +127,7 @@
                 <br />
             </div>
 
-            <br /> <br /> <span class="fields-required col-md-3 col-md-push-4" style="display: none; color: red;">Please fill out all
+            <br /> <span class="fields-required col-md-3 col-md-push-4" style="display: none; color: red;">Please fill out all
 				fields.</span>
 
             <span class="choose-file col-md-3 col-md-push-4" style="display: none; color: red;">Please choose a file.</span>
