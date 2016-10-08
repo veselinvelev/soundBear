@@ -24,20 +24,32 @@
 
 		$('#upload-file-info').html($("#my-file-selector").val());
 	}
-
-	function uploadSong() {
-		var artist = $("#artist").val();
-		var name = $("#name").val();
-		var genre = $("#genre").val();
-		var songName = $('#my-file-selector').val();
-
-		if (artist && name && genre != "empty") {
-
-		} else {
-			$(".fields-required").show();
-		}
-
-	}
+	
+	
+	$(document).ready(function() {
+        $("form").submit(function(e){
+        	var artist = $("#artist").val();
+    		var songName = $("#name").val();
+    		var genre = $("#genre").val();	
+    		var fileName = $('#my-file-selector').val();
+    		
+    		if(artist && songName && genre!="empty" && fileName.length){
+    			return true;
+    		}
+    		else if (!fileName.length){
+    			$(".choose-file").show();
+    			$(".fields-required").hide();
+    			return false;
+    		}
+    		else{
+    			$(".choose-file").hide();
+    			$(".fields-required").show();
+    			return false;
+    		}
+        });
+    });
+	
+	
 </script>
 
 
@@ -50,80 +62,86 @@
 	<div class="container">
 
 		<br />
-
-		<div class="row">
-			<h2 class="text-primary col-md-4 col-md-push-4">Upload a song</h2>
-		</div>
-
-		<br />
-
-		<div class="row">
-			<div class="form-group col-xs-3 col-md-push-4">
-
-				<label class="text-primary"> Artist: </label> <input type="text"
-					class="form-control" id="artist" maxlength="45">
-
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="form-group col-xs-3 col-md-push-4">
-
-				<label class="text-primary"> Song name: </label> <input type="text"
-					class="form-control" id="name" maxlength="45">
-
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="form-group col-xs-3 col-md-push-4">
-				<label class="text-primary"> Genre: </label> <select
-					class="form-control" id="genre">
-
-					<option value="empty"></option>
-					<option value="pop">Pop</option>
-					<option value="rock">Rock</option>
-					<option value="rap">Rap</option>
-					<option value="jazz">Jazz</option>
-					<option value="house">House</option>
-					<option value="classical">Classical</option>
-					<option value="karaoke">Karaoke</option>
-
-				</select>
-
-			</div>
-		</div>
-
-		<div class="row">
-
-			<div class="form-group col-md-6">
-				<label class="btn btn-primary" for="my-file-selector"> <input
-					id="my-file-selector" type="file" accept="audio/*"
-					style="display: none;" onchange="validate(this.value)">
-					Choose file
-				</label>
+		<form name="form" enctype="multipart/form-data" method="post" action="upload">
+			<div class="row">
+				<h2 class="text-primary col-md-4 col-md-push-4">Upload a song</h2>
 			</div>
 
-		</div>
+			<br />
 
-		<br /> <br />
-		<div class="col-md-9 col-md-push-4">
-			<span class='label label-primary' id="upload-file-info"></span>
-		</div>
+			<div class="row">
+				<div class="form-group col-xs-3 col-md-push-4">
 
-		<br />
+					<label class="text-primary"> Artist: </label> <input type="text"
+						class="form-control" id="artist" name="artist" maxlength="45">
 
-		<div class="row">
-
-			<div class="form-group col-md-6">
-				<button id="submit" type="submit" class="btn btn-primary"
-					onclick="uploadSong()">Upload</button>
+				</div>
 			</div>
 
-		</div>
+			<div class="row">
+				<div class="form-group col-xs-3 col-md-push-4">
 
-		<br /> <br /> <span class="fields-required col-md-3 col-md-push-4"
-			style="display: none; color: red;">Please fill out all fields.</span>
+					<label class="text-primary"> Song name: </label> <input type="text"
+						class="form-control" id="name" name="name" maxlength="45">
+
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group col-xs-3 col-md-push-4">
+					<label class="text-primary"> Genre: </label> <select
+						class="form-control" id="genre" name="genre">
+
+						<option value="empty"></option>
+						<option value="pop">Pop</option>
+						<option value="rock">Rock</option>
+						<option value="rap">Rap</option>
+						<option value="jazz">Jazz</option>
+						<option value="house">House</option>
+						<option value="classical">Classical</option>
+						<option value="karaoke">Karaoke</option>
+
+					</select>
+
+				</div>
+			</div>
+
+			<div class="row">
+
+				<div class="form-group col-md-6">
+					<label class="btn btn-primary" for="my-file-selector"> <input
+						id="my-file-selector" type="file" name ="file" accept="audio/*"
+						style="display: none;" onchange="validate(this.value)">
+						Choose file
+					</label>
+				</div>
+
+			</div>
+
+			<br /> <br />
+			<div class="col-md-9 col-md-push-4">
+				<span class='label label-primary' id="upload-file-info"></span>
+			</div>
+
+			<br />
+
+			<div class="row">
+
+				<div class="form-group col-md-6">
+					<button id="submit" type="submit" class="btn btn-primary"
+						onclick="uploadSong()">Upload</button>
+				</div>
+
+			</div>
+
+			<br /> <br /> <span class="fields-required col-md-3 col-md-push-4"
+				style="display: none; color: red;">Please fill out all
+				fields.</span>
+				
+				<span class="choose-file col-md-3 col-md-push-4"
+				style="display: none; color: red;">Please choose a file.</span>
+
+		</form>
 
 	</div>
 </body>

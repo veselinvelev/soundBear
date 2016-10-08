@@ -25,6 +25,8 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -43,8 +45,8 @@ import com.soundbear.utils.DBCleaner;
 @Configuration
 @EnableWebMvc
 // @ComponentScan("com.soundbear.controller")
+// @EnableTransactionManagement // Transactions
 @ComponentScan(basePackages = { "com.soundbear.controller", "com.soundbear.repository", "com.soundbear.utils" })
-@EnableTransactionManagement // Transactions
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 
 	@Override
@@ -82,6 +84,12 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
 		configurer.defaultContentType(MediaType.APPLICATION_JSON_UTF8);
 		super.configureContentNegotiation(configurer);
+	}
+
+	// upload
+	@Bean(name = "multipartResolver")
+	public StandardServletMultipartResolver resolver() {
+		return new StandardServletMultipartResolver();
 	}
 
 	@Bean
@@ -130,18 +138,18 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 		return new SongRepository(getDataSource(), transactionTemplate());
 	}
 
-    // transaction
+	// transaction
 	@Bean
 	public PlatformTransactionManager transactionManager() {
 		return new DataSourceTransactionManager(getDataSource());
 	}
-	
+
 	@Bean
-    public TransactionTemplate transactionTemplate() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(transactionManager());
-        return transactionTemplate;
-}
+	public TransactionTemplate transactionTemplate() {
+		TransactionTemplate transactionTemplate = new TransactionTemplate();
+		transactionTemplate.setTransactionManager(transactionManager());
+		return transactionTemplate;
+	}
 
 	// Transactions
 
