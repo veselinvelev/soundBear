@@ -33,7 +33,7 @@
 						<div class="search">
 							<input type="text" class="form-control input-sm " maxlength="64"
 								placeholder="Search" />
-							<button type="submit" class="btn btn-primary btn-sm glyphicon glyphicon-search"></button>
+							<button type="submit" class="btn btn-warning btn-sm glyphicon glyphicon-search"></button>
 						</div>
 					</li>
 
@@ -49,8 +49,8 @@
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- 	Include all compiled plugins (below), or include individual files as needed -->
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/navbar.js"></script>
-
-</body>
-</html>
+<script src="<c:url value = "/script/bootstrap.min.js"/>"></script>
+	
+	<script src="<c:url value = "/script/navbar.js"/>"></script>
+	
+	<script type="text/javascript" src="<c:url value="/script/jquery-3.1.1.min.js"/>"></script>
