@@ -45,7 +45,7 @@ import com.soundbear.utils.DBCleaner;
 @Configuration
 @EnableWebMvc
 // @ComponentScan("com.soundbear.controller")
-// @EnableTransactionManagement // Transactions
+@EnableTransactionManagement // Transactions
 @ComponentScan(basePackages = { "com.soundbear.controller", "com.soundbear.repository", "com.soundbear.utils" })
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 
