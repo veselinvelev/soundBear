@@ -152,5 +152,29 @@ public class UserRepository implements UserDAO {
 		jdbcTemplate.update(DELETE_INACTIVE_USERS_SQL, ACTIVATION_LINK_VALID_PERIOD);
 	}
 
+	@Override
+	public void addPhoto(String photoURL) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addPhoto(User user) {
+		jdbcTemplate.update("UPDATE users SET path_photo = ? WHERE username = ?", user.getPhoto(), user.getUsername() );
+		
+	}
+	
+	@Override
+	public int getfollowing(User user) {
+		return jdbcTemplate.queryForObject("SELECT COUNT('following') FROM follows where user_id  = ?;", new Object[] { user.getUserId() }, Integer.class);
+	}
+	
+	@Override
+	public int getfollowers(User user) {
+		return jdbcTemplate.queryForObject("SELECT COUNT('user_id') FROM follows  where following  = ?;", new Object[] { user.getUserId() }, Integer.class);
+	}
+
+
+
 	
 }

@@ -25,21 +25,21 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.soundbear.model.app.Song;
 import com.soundbear.model.app.User;
 import com.soundbear.repository.SongDAO;
+import com.soundbear.utils.AWSConstants;
 import com.soundbear.utils.Pages;
 import com.soundbear.utils.ValidatorUtil;
 
 @Controller
 public class SongController {
-	public static final String BUCKET_NAME = "soundbear";
 
 	@Autowired
 	private HttpSession session;
 
 	@Autowired
-	SongDAO songRepository;
+	private SongDAO songRepository;
 
-	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String upload(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request) {
+	@RequestMapping(value = "/songUpload", method = RequestMethod.POST)
+	public String songUpload(@RequestParam("song") MultipartFile multipartFile, HttpServletRequest request) {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
@@ -50,9 +50,10 @@ public class SongController {
 		if (ValidatorUtil.isStringValid(artist) && ValidatorUtil.isStringValid(songName)
 				&& ValidatorUtil.isStringValid(genre)) {
 
-			AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+		
 
 			new Thread() {
+				AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
 
 				@Override
 				public void run() {
@@ -60,20 +61,21 @@ public class SongController {
 
 					try {
 						is = multipartFile.getInputStream();
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
 
-					String songCloudName = (songName.replaceAll("[^a-zA-Z0-9]", "") + user.getUserId()
+					String songCloudName = (songName.replaceAll(AWSConstants.AWS_FILE_NAME_REGEX, "") + user.getUserId()
 							+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
 
 					// save song on s3 with public read access
-					s3client.putObject(new PutObjectRequest(BUCKET_NAME, songCloudName, is, new ObjectMetadata())
-							.withCannedAcl(CannedAccessControlList.PublicRead));
+					s3client.putObject(
+							new PutObjectRequest(AWSConstants.BUCKET_NAME, songCloudName, is, new ObjectMetadata())
+									.withCannedAcl(CannedAccessControlList.PublicRead));
 
 					// get referance to the song object
-					S3Object s3Object = s3client.getObject(new GetObjectRequest(BUCKET_NAME, songCloudName));
+					S3Object s3Object = s3client
+							.getObject(new GetObjectRequest(AWSConstants.BUCKET_NAME, songCloudName));
 
 					// get song url
 					String songURL = s3Object.getObjectContent().getHttpRequest().getURI().toString();
@@ -82,15 +84,13 @@ public class SongController {
 
 					try {
 						is.close();
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 			}.start();
 
-		}
-		else {
+		} else {
 
 		}
 

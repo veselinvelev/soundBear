@@ -40,7 +40,7 @@ img {
 
 <script type="text/javascript">
 	function showUpload() {
-		$("#file").val("");
+		$("#photo").val("");
 		$("#upload-file-info").html("");
 		if ($('.profile-pic').css('display') == 'none') {
 			$(".profile-pic").show();
@@ -50,22 +50,22 @@ img {
 
 	}
 
-	function validate(file) {
-		var ext = file.split(".");
+	function validate(photo) {
+		var ext = photo.split(".");
 		ext = ext[ext.length - 1].toLowerCase();
 		var arrayExtensions = [ "jpeg", "png", "jpg" ];
 
 		if (arrayExtensions.lastIndexOf(ext) == -1) {
 			alert("Only jpg, jpeg and png files are allowed.");
-			$("#file").val("");
+			$("#photo").val("");
 		}
 
-		$('#upload-file-info').html($("#file").val());
+		$('#upload-file-info').html($("#photo").val());
 	}
 
 	$(document).ready(function() {
 		$("form").submit(function(e) {
-			var fileName = $('#file').val();
+			var fileName = $('#photo').val();
 
 			if (fileName.length) {
 				return true;
@@ -90,34 +90,42 @@ img {
 		<div class="container-fluid well span6">
 			<div class="row">
 				<div class="item span2 col-sm-2 col-md-2">
-					<img
-						src="https://pbs.twimg.com/profile_images/2573540313/image.jpg"
-						alt="" class="img-rounded img-responsive" />
+					<img src="${loggedUser.photo}" alt=""
+						class="img-rounded img-responsive" />
 				</div>
-
-
-
 				<div class="span2 col-md-4 col-sm-4">
-
-
-
 					<h3>
 						<c:out value="${loggedUser.username}" />
 					</h3>
-
-
-
 					<h6>
 						Email:
 						<c:out value="${loggedUser.email}" />
 					</h6>
-					<h6>Ubication: Colombia</h6>
-					<h6>Old: 1 Year</h6>
-
-
 					<h6>
-						<a href="#">More... </a>
+						Registration Date:
+						<c:out value="${loggedUser.registrationDate}" />
 					</h6>
+
+				</div>
+
+				<div class="col-xs-8 divider row  ">
+					<div class="col-xs-12 col-sm-2 emphasis">
+					
+						<h2>
+							<strong> <c:out value="${loggedUser.followers}" /></strong>
+						</h2>
+						<p>
+							<small>Followers</small>
+						</p>
+					</div>
+					<div class=" col-sm-4 col-sm-pull-0">
+						<h2>
+							<strong><c:out value="${loggedUser.following}" /></strong>
+						</h2>
+						<p>
+							<small>Following</small>
+						</p>
+					</div>
 				</div>
 
 				<div class="span2 col-sm-6 col-md-6">
@@ -133,10 +141,10 @@ img {
 
 			<div class="span2 col-md-4 profile-pic" style="display: none">
 				<form name="form" method="POST" enctype="multipart/form-data"
-					onsubmit="Validatebodypanelbumper()">
+					onsubmit="Validatebodypanelbumper()" action="photoUpload">
 					<div class="btn-group">
 						<span class="btn btn-sm btn-info btn-file col-md-pull-2">Browse
-							<input type="file" id="file" name="file" accept="image/*"
+							<input type="file" id="photo" name="photo" accept="image/*"
 							onchange="validate(this.value)" />
 						</span> <input class="btn  btn-sm btn-info " type="submit" value="Upload" />
 					</div>
@@ -144,22 +152,15 @@ img {
 
 				<div class="row">
 					<div class="col-md-9 ">
-					<br>
-						<span class='label label-info' id="upload-file-info"></span>
+						<br> <span class='label label-info' id="upload-file-info"></span>
 					</div>
 				</div>
-				 <span class="choose-file" style="display: none; color: red;">Please choose a file.</span>
+				<span class="choose-file" style="display: none; color: red;">Please
+					choose a file.</span>
 			</div>
 
-			<!--  	<div class="col-xs-8 divider text-center">
-			<div class="col-xs-12 col-sm-4 emphasis">
-			<br>
-				<h2>
-					<strong> 20,7K </strong>
-				</h2>
-				<p>
-					<small>Followers</small>
-				</p>
+
+			<!--
 				<button class="btn btn-success btn-block">
 					<span class="fa fa-plus-circle"></span> Follow
 				</button>
@@ -180,5 +181,7 @@ img {
 		</div>
 		-->
 		</div>
+	</div>
+
 </body>
 <%@ include file="footer.jsp"%>

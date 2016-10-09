@@ -32,6 +32,12 @@ public interface UserDAO {
 	public User getUserByName(String username);
 
 	public void updatePassword(String email, String password);
+
+	public void addPhoto(String photoURL);
+
+	public void addPhoto(User user);
+	public int getfollowers(User user);
+	public int getfollowing(User user);
 	
 	
 }

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`artists` (
   UNIQUE INDEX `artist_UNIQUE` (`artist_name` ASC),
   INDEX `artist` (`artist_name` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
+AUTO_INCREMENT = 12
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`users` (
   UNIQUE INDEX `email_UNIQUE` (`email` ASC),
   UNIQUE INDEX `usename_UNIQUE` (`username` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -54,13 +54,13 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `soundbear`.`follows`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soundbear`.`follows` (
-  `follower` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL,
   `following` INT(11) NOT NULL,
-  PRIMARY KEY (`follower`, `following`),
+  PRIMARY KEY (`user_id`, `following`),
   INDEX `fk_users_has_users_users1_idx` (`following` ASC),
-  INDEX `fk_users_has_users_users_idx` (`follower` ASC),
+  INDEX `fk_users_has_users_users_idx` (`user_id` ASC),
   CONSTRAINT `fk_users_has_users_users`
-    FOREIGN KEY (`follower`)
+    FOREIGN KEY (`user_id`)
     REFERENCES `soundbear`.`users` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`genres` (
   UNIQUE INDEX `genre_UNIQUE` (`genre_name` ASC),
   INDEX `genre_index` (`genre_name` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
+AUTO_INCREMENT = 9
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -137,6 +137,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`songs` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 

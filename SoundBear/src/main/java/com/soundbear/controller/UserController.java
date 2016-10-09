@@ -1,5 +1,8 @@
 package com.soundbear.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.mail.MessagingException;
@@ -14,8 +17,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.soundbear.model.app.User;
 import com.soundbear.model.app.exceptions.UserException;
 import com.soundbear.model.json.reponse.BaseResponse;
@@ -24,6 +37,7 @@ import com.soundbear.model.json.reponse.RegisterFormResponse;
 import com.soundbear.model.json.request.LoginRequest;
 import com.soundbear.model.json.request.ResetPasswordRequest;
 import com.soundbear.repository.UserDAO;
+import com.soundbear.utils.AWSConstants;
 import com.soundbear.utils.DBCleaner;
 import com.soundbear.utils.EmailUtil;
 import com.soundbear.utils.EncryptionUtil;
@@ -60,8 +74,8 @@ public class UserController {
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final String RESET_MSG = "Your password has been reset to : ";
 	private static final String PASSWORD_RESET = "Password Reset";
-//	private static final int VALID_STRING_LENGTH = 45;
-//	private static final int INTERVAL_OF_DB_CLEAN = 10800000;
+	// private static final int VALID_STRING_LENGTH = 45;
+	// private static final int INTERVAL_OF_DB_CLEAN = 10800000;
 	private static final String USERNAME_REGEX = "^[a-zA-Z]+[a-zA-Z0-9_.]*$";
 
 	@Autowired
@@ -75,10 +89,10 @@ public class UserController {
 	public @ResponseBody BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
 		String email = request.getEmail();
 
-//		System.out.println(email);
-//		System.out.println(email.isEmpty());
-//		System.out.println(email.matches(EMAIL_REGEX));
-//		System.out.println(userRepository.isValidEmail(email));
+		// System.out.println(email);
+		// System.out.println(email.isEmpty());
+		// System.out.println(email.matches(EMAIL_REGEX));
+		// System.out.println(userRepository.isValidEmail(email));
 
 		boolean isEmpty = email.isEmpty();
 		boolean isValid = email.matches(EMAIL_REGEX);
@@ -88,8 +102,7 @@ public class UserController {
 
 		if (isEmpty || !isValid || isFree) {
 			status = ResponseStatus.NO;
-		}
-		else {
+		} else {
 			status = ResponseStatus.OK;
 			final String newPassword = genPassword();
 			userRepository.updatePassword(email, newPassword);
@@ -98,11 +111,9 @@ public class UserController {
 				public void run() {
 					try {
 						EmailUtil.sendEmail(email, RESET_MSG + newPassword, PASSWORD_RESET);
-					}
-					catch (AddressException e) {
+					} catch (AddressException e) {
 						e.printStackTrace();
-					}
-					catch (MessagingException e) {
+					} catch (MessagingException e) {
 						e.printStackTrace();
 					}
 				};
@@ -140,16 +151,18 @@ public class UserController {
 		if (isUsernameValid && isPasswordValid) {
 
 			user = userRepository.getUser(username, password);
+			
+			
 			if (user != null) {
-
+				user.setFollowers(userRepository.getfollowers(user)); ;
+				user.setFollowing(userRepository.getfollowing(user));
 				session.setAttribute(LOGGED_USER, user);
+
 				status = ResponseStatus.OK;
-			}
-			else {
+			} else {
 				status = ResponseStatus.NO;
 			}
-		}
-		else {
+		} else {
 			status = ResponseStatus.NO;
 		}
 		BaseResponse response = new BaseResponse();
@@ -207,9 +220,8 @@ public class UserController {
 
 		int success = 0;
 		try {
-			success = userRepository.addUser(new User(0, username, email, password1, 0, new Date(),null));
-		}
-		catch (UserException e1) {
+			success = userRepository.addUser(new User(0, username, email, password1, 0, new Date(), null));
+		} catch (UserException e1) {
 			// TODO Auto-generated catch block
 			System.out.println("User can not be created");
 			e1.printStackTrace();
@@ -224,18 +236,15 @@ public class UserController {
 				public void run() {
 					try {
 						EmailUtil.sendEmail(email, ACTIVATION_MSG + activationURL, ACC_ACTIVATION);
-					}
-					catch (AddressException e) {
+					} catch (AddressException e) {
 						e.printStackTrace();
-					}
-					catch (MessagingException e) {
+					} catch (MessagingException e) {
 						e.printStackTrace();
 					}
 				};
 			}.start();
 
-		}
-		else {
+		} else {
 			status = ResponseStatus.NO;
 			msg = REGISTRATION_FAILED;
 		}
@@ -296,13 +305,11 @@ public class UserController {
 				session.setAttribute(LOGGED_USER, user);
 				returnValue = Pages.PLAY;
 
-			}
-			else {
+			} else {
 				returnValue = Pages.LOGIN;
 			}
 
-		}
-		else {
+		} else {
 
 			returnValue = Pages.ERROR;
 			request.setAttribute(ErrorMsgs.ERROR_REDIRECT, Pages.REGISTER);
@@ -328,4 +335,49 @@ public class UserController {
 
 		return activationURL;
 	}
+
+	@RequestMapping(value = "/photoUpload", method = RequestMethod.POST)
+	public String upload(@RequestParam("photo") MultipartFile multipartFile, HttpServletRequest request) {
+
+		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		new Thread() {
+			AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+			@Override
+			public void run() {
+				InputStream is = null;
+
+				try {
+					is = multipartFile.getInputStream();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				String photoCloudName = ("profilepicture" + user.getUserId()
+						+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
+
+				// save song on s3 with public read access
+				s3client.putObject(
+						new PutObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName, is, new ObjectMetadata())
+								.withCannedAcl(CannedAccessControlList.PublicRead));
+
+				// get referance to the song object
+				S3Object s3Object = s3client.getObject(new GetObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName));
+
+				// get song url
+				String photoURL = s3Object.getObjectContent().getHttpRequest().getURI().toString();
+
+				user.setPhoto(photoURL);
+				userRepository.addPhoto(user);
+
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
+		return Pages.PROFILE;
+	}
+
 }

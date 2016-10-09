@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.soundbear.model.app.User;
+import com.soundbear.repository.UserDAO;
 import com.soundbear.utils.Pages;
 
 @Controller
 public class InitController {
 	@Autowired
 	private HttpSession session;
+	@Autowired
+	private UserDAO userRepository;
 
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String login(Model model) {
@@ -40,6 +43,11 @@ public class InitController {
 
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
 	public String profile(Model model) {
+		
+		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		user.setFollowers(userRepository.getfollowers(user)); ;
+		user.setFollowing(userRepository.getfollowing(user));
+		
 		return getPage(Pages.PROFILE);
 	}
 

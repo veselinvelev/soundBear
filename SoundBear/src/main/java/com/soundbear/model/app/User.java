@@ -14,6 +14,8 @@ public class User {
 	private boolean isActive;
 	private Date registrationDate;
 	private String photo;
+	private int following;
+	private int followers;
 	
 	
 	public User(int userId, String username, String email, String password, int isActive, Date registrationDate, String photo) throws UserException {
@@ -108,6 +110,22 @@ public class User {
 
 	public void setPhoto(String photo) {
 		this.photo = photo;
+	}
+
+	public int getFollowing() {
+		return following;
+	}
+
+	public void setFollowing(int following) {
+		this.following = following;
+	}
+
+	public int getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(int followers) {
+		this.followers = followers;
 	}
 
 }
