@@ -60,8 +60,8 @@ public class UserController {
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final String RESET_MSG = "Your password has been reset to : ";
 	private static final String PASSWORD_RESET = "Password Reset";
-	private static final int VALID_STRING_LENGTH = 45;
-	private static final int INTERVAL_OF_DB_CLEAN = 10800000;
+//	private static final int VALID_STRING_LENGTH = 45;
+//	private static final int INTERVAL_OF_DB_CLEAN = 10800000;
 	private static final String USERNAME_REGEX = "^[a-zA-Z]+[a-zA-Z0-9_]*$";
 
 	@Autowired

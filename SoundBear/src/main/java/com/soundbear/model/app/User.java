@@ -13,6 +13,20 @@ public class User {
 	private String password;
 	private boolean isActive;
 	private Date registrationDate;
+	
+	
+	public User(int userId, String username, String email, String password, int isActive, Date registrationDate) throws UserException {
+		//TODO VALIDATION!
+		setUserId(userId);
+		setUsername(username);
+		setEmail(email);
+		setPassword(password);
+		this.isActive = isActive != 0;
+		if (registrationDate == null) {
+			throw new UserException("Invalid Registration Data ");
+		}
+		this.registrationDate = registrationDate;
+	}
 
 	public boolean isActive() {
 		return isActive;
@@ -30,18 +44,7 @@ public class User {
 		this.registrationDate = registrationDate;
 	}
 
-	public User(int userId, String username, String email, String password, int isActive, Date registrationDate) throws UserException {
-		//TODO VALIDATION!
-		setUserId(userId);
-		setUsername(username);
-		setEmail(email);
-		setPassword(password);
-		this.isActive = isActive != 0;
-		if (registrationDate == null) {
-			throw new UserException("Invalid Registration Data ");
-		}
-		this.registrationDate = registrationDate;
-	}
+
 
 	public int getUserId() {
 		return userId;

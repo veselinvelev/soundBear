@@ -36,6 +36,12 @@ public class InitController {
 	public String upload(Model model) {
 		return getPage(Pages.UPLOAD);
 	}
+	
+
+	@RequestMapping(value = "/profile", method = RequestMethod.GET)
+	public String profile(Model model) {
+		return getPage(Pages.PROFILE);
+	}
 
 	private String getPage(String page) {
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);

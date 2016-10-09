@@ -1,4 +1,4 @@
-<jsp:include page="header.jsp" />
+<%@ include file="header.jsp" %>
 <title>SoundBear Upload</title>
 <script>
     function validate(file) {
@@ -44,7 +44,6 @@
 
 
 <body>
-    <jsp:include page="navbar.jsp" />
     <div class="container">
 
         <br />
@@ -137,4 +136,4 @@
     </div>
 </body>
 
-<jsp:include page="footer.jsp" />
+<%@ include file="footer.jsp" %>

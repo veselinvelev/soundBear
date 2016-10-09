@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 
 <link href="css/navbar.css" rel="stylesheet">
 <script type="text/javascript"
@@ -21,7 +21,7 @@
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 
-					<li class="active"> <a class="username glyphicon glyphicon-user" href="#"> Profile </a> </li>
+					<li class="active"> <a class="username glyphicon glyphicon-user" href="profile"> Profile </a> </li>
 
 					<li> <a class = "upload glyphicon glyphicon-upload" href="upload"> Upload</a> </li>
 

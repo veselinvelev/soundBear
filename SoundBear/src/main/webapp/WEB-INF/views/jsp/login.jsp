@@ -1,4 +1,4 @@
-<jsp:include page="login_header.jsp" />
+<%@ include file="login_header.jsp" %>
 
 <title>SoundBear Login</title>
 </head>
@@ -73,4 +73,4 @@
 -->
 </body>
 
-<jsp:include page="footer.jsp" />
+<%@ include file="footer.jsp" %>

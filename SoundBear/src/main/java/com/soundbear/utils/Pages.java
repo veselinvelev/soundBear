@@ -7,5 +7,6 @@ public interface Pages{
 	String ERROR = "error";
 	String PLAY = "play";
 	String UPLOAD = "upload";
+	String PROFILE = "profile";
 	
 }
