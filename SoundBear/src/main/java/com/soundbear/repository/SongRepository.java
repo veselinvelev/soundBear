@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.soundbear.model.app.Song;
 
-@Component
+@Repository
 public class SongRepository implements SongDAO {
 	private static final String GET_GENRE_SQL = "SELECT genre_id FROM genres WHERE genre_name = ?";
 	private static final String GET_ARTIST_SQL = "SELECT artist_id FROM artists WHERE artist_name = ?";

@@ -23,7 +23,7 @@ import com.soundbear.model.json.reponse.BaseResponse.ResponseStatus;
 import com.soundbear.model.json.reponse.RegisterFormResponse;
 import com.soundbear.model.json.request.LoginRequest;
 import com.soundbear.model.json.request.ResetPasswordRequest;
-import com.soundbear.repository.UserRepository;
+import com.soundbear.repository.UserDAO;
 import com.soundbear.utils.DBCleaner;
 import com.soundbear.utils.EmailUtil;
 import com.soundbear.utils.EncryptionUtil;
@@ -62,10 +62,10 @@ public class UserController {
 	private static final String PASSWORD_RESET = "Password Reset";
 //	private static final int VALID_STRING_LENGTH = 45;
 //	private static final int INTERVAL_OF_DB_CLEAN = 10800000;
-	private static final String USERNAME_REGEX = "^[a-zA-Z]+[a-zA-Z0-9_]*$";
+	private static final String USERNAME_REGEX = "^[a-zA-Z]+[a-zA-Z0-9_.]*$";
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserDAO userRepository;
 	@Autowired
 	private DBCleaner dbCleaner;
 	@Autowired
@@ -75,10 +75,10 @@ public class UserController {
 	public @ResponseBody BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
 		String email = request.getEmail();
 
-		System.out.println(email);
-		System.out.println(email.isEmpty());
-		System.out.println(email.matches(EMAIL_REGEX));
-		System.out.println(userRepository.isValidEmail(email));
+//		System.out.println(email);
+//		System.out.println(email.isEmpty());
+//		System.out.println(email.matches(EMAIL_REGEX));
+//		System.out.println(userRepository.isValidEmail(email));
 
 		boolean isEmpty = email.isEmpty();
 		boolean isValid = email.matches(EMAIL_REGEX);
@@ -207,7 +207,7 @@ public class UserController {
 
 		int success = 0;
 		try {
-			success = userRepository.addUser(new User(0, username, email, password1, 0, new Date()));
+			success = userRepository.addUser(new User(0, username, email, password1, 0, new Date(),null));
 		}
 		catch (UserException e1) {
 			// TODO Auto-generated catch block

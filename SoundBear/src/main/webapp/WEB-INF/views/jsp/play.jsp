@@ -1,4 +1,4 @@
-<jsp:include page="header.jsp" />
+<%@ include file="header.jsp" %>
 <title>SoundBear Player</title>
 
 <script>
@@ -62,4 +62,4 @@
 
 </body>
 
-<jsp:include page="footer.jsp" />
+<%@ include file="footer.jsp" %>

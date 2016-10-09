@@ -91,7 +91,7 @@
 <!-- START REGISTER JS FUNCTIONS -->
 <script>
     function validate() {
-        var usernameRegex = new RegExp("^[a-zA-Z]+[a-zA-Z0-9_]*$");
+        var usernameRegex = new RegExp("^[a-zA-Z]+[a-zA-Z0-9_.]*$");
         var emailRegex = new RegExp("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
         var username = $("#username").val();

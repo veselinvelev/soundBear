@@ -13,9 +13,10 @@ public class User {
 	private String password;
 	private boolean isActive;
 	private Date registrationDate;
+	private String photo;
 	
 	
-	public User(int userId, String username, String email, String password, int isActive, Date registrationDate) throws UserException {
+	public User(int userId, String username, String email, String password, int isActive, Date registrationDate, String photo) throws UserException {
 		//TODO VALIDATION!
 		setUserId(userId);
 		setUsername(username);
@@ -26,6 +27,9 @@ public class User {
 			throw new UserException("Invalid Registration Data ");
 		}
 		this.registrationDate = registrationDate;
+		
+		setPhoto(photo);
+		
 	}
 
 	public boolean isActive() {
@@ -96,6 +100,14 @@ public class User {
 	public String toString() {
 		return "User [userId=" + userId + ", username=" + username + ", email=" + email + ", password=" + password
 				+ "]";
+	}
+
+	public String getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
 	}
 
 }
