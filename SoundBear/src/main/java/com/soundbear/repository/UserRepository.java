@@ -100,10 +100,13 @@ public class UserRepository implements UserDAO {
 		jdbcTemplate.update(UPDATE_USER, user.getUsername(), user.getEmail(), user.getPassword(), user.getUsername());
 	}
 
-	public void updatePassword(String email, String password) {
+	public void updatePassword(User user) {
 
-		if (email != null && !email.equals("") && password != null && !password.equals("")) {
-			jdbcTemplate.update(UPDATE_PASSWORD_SQL, password, email);
+
+		if (user.getEmail() != null && !user.getEmail().equals("") && user.getPassword() != null
+				&& !user.getPassword().equals("")) {
+			
+			jdbcTemplate.update(UPDATE_PASSWORD_SQL, user.getPassword(), user.getEmail());
 		}
 
 	}
@@ -155,26 +158,25 @@ public class UserRepository implements UserDAO {
 	@Override
 	public void addPhoto(String photoURL) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addPhoto(User user) {
-		jdbcTemplate.update("UPDATE users SET path_photo = ? WHERE username = ?", user.getPhoto(), user.getUsername() );
-		
+		jdbcTemplate.update("UPDATE users SET path_photo = ? WHERE username = ?", user.getPhoto(), user.getUsername());
+
 	}
-	
+
 	@Override
 	public int getfollowing(User user) {
-		return jdbcTemplate.queryForObject("SELECT COUNT('following') FROM follows where user_id  = ?;", new Object[] { user.getUserId() }, Integer.class);
+		return jdbcTemplate.queryForObject("SELECT COUNT('following') FROM follows where user_id  = ?;",
+				new Object[] { user.getUserId() }, Integer.class);
 	}
-	
+
 	@Override
 	public int getfollowers(User user) {
-		return jdbcTemplate.queryForObject("SELECT COUNT('user_id') FROM follows  where following  = ?;", new Object[] { user.getUserId() }, Integer.class);
+		return jdbcTemplate.queryForObject("SELECT COUNT('user_id') FROM follows  where following  = ?;",
+				new Object[] { user.getUserId() }, Integer.class);
 	}
 
-
-
-	
 }

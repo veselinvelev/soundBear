@@ -31,7 +31,7 @@ public interface UserDAO {
 
 	public User getUserByName(String username);
 
-	public void updatePassword(String email, String password);
+	public void updatePassword(User user);
 
 	public void addPhoto(String photoURL);
 

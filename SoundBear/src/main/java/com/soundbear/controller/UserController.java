@@ -48,6 +48,10 @@ import com.soundbear.utils.ValidatorUtil;
 @Controller
 public class UserController {
 
+	private static final String DEFAULT_STRING = "Default";
+
+	private static final String PASSWORD_UPDATED = "Password Updated!";
+
 	private static final String USRNAME_TOO_SHORT = "The username is too short";
 
 	private static final String INVALID_USERNAME = "Username must contain only latin letters and digits, must not start with a digit.";
@@ -89,10 +93,8 @@ public class UserController {
 	public @ResponseBody BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
 		String email = request.getEmail();
 
-		// System.out.println(email);
-		// System.out.println(email.isEmpty());
-		// System.out.println(email.matches(EMAIL_REGEX));
-		// System.out.println(userRepository.isValidEmail(email));
+
+		User user = null;
 
 		boolean isEmpty = email.isEmpty();
 		boolean isValid = email.matches(EMAIL_REGEX);
@@ -103,9 +105,15 @@ public class UserController {
 		if (isEmpty || !isValid || isFree) {
 			status = ResponseStatus.NO;
 		} else {
+
 			status = ResponseStatus.OK;
 			final String newPassword = genPassword();
-			userRepository.updatePassword(email, newPassword);
+			try {
+				user = new User(0, DEFAULT_STRING, email, newPassword, 0, new Date(), DEFAULT_STRING);
+			} catch (UserException e1) {
+				e1.printStackTrace();
+			}
+			userRepository.updatePassword(user);
 
 			new Thread() {
 				public void run() {
@@ -151,10 +159,9 @@ public class UserController {
 		if (isUsernameValid && isPasswordValid) {
 
 			user = userRepository.getUser(username, password);
-			
-			
+
 			if (user != null) {
-				user.setFollowers(userRepository.getfollowers(user)); ;
+				user.setFollowers(userRepository.getfollowers(user));
 				user.setFollowing(userRepository.getfollowing(user));
 				session.setAttribute(LOGGED_USER, user);
 
@@ -342,6 +349,7 @@ public class UserController {
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 		new Thread() {
 			AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+
 			@Override
 			public void run() {
 				InputStream is = null;
@@ -378,6 +386,41 @@ public class UserController {
 		}.start();
 
 		return Pages.PROFILE;
+	}
+
+	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	public @ResponseBody BaseResponse changePassword(@RequestBody LoginRequest request) {
+
+		// if (request != null) {
+		String password1 = request.getPassword1();
+		String password2 = request.getPassword2();
+		// }
+
+		BaseResponse response = new BaseResponse();
+
+		if (!password1.equals(password2)) {
+			response.setStatus(ResponseStatus.NO);
+			response.setMsg(PASSWRDS_DONT_MATCH);
+			return response;
+		}
+
+		// TODO
+		// VALIDATE PASSWORD FORMAT AND LENGTH
+
+		User user = (User) session.getAttribute(LOGGED_USER);
+		try {
+			user.setPassword(password1);
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		userRepository.updatePassword(user);
+		response.setStatus(ResponseStatus.OK);
+		response.setMsg(PASSWORD_UPDATED);
+
+		return response;
+
 	}
 
 }

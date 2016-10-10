@@ -204,9 +204,9 @@ img {
 
 
 
-				<div class="span2 col-sm-6 col-md-6">
+				<div class="span2 col-md-6">
 					<div class="btn-group">
-						<button class="btn btn-primary btn-info btn-sm"
+						<button class="btn span2 btn-primary btn-info btn-sm col-md-12"
 							onclick="showUpload()">Update Photo</button>
 					</div>
 				</div>
@@ -244,7 +244,7 @@ img {
 					onclick="showPasswdUpdate()">Update Password</button>
 			</div>
 			  -->
-			<div class="col-md-6">
+			<div class="col-md-6 form-inline">
 			
 				<input class="change-password" type="password" id="password1"
 					placeholder="Password" style="display: none;" required
@@ -254,7 +254,7 @@ img {
 					onkeydown="if (event.keyCode == 13)
 	                        document.getElementById('change-password').click()" />
 
-				<div class = "emphasis">
+				<div class = "btn-group emphasis">
 					<button class="change-password btn btn-primary btn-info btn-xs"
 						id="change-password" style="display: none;"
 						onclick="changePassword() ">Save Changes</button>

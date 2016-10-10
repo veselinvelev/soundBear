@@ -69,7 +69,6 @@
 				contentType : "application/json; charset=utf-8",
 				dataType : 'json',
 				success : function(data) {
-					alert(data.status);
 
 					if (data.status == 'OK') {
 						alert("A new password has been sent to your email")
