@@ -34,8 +34,10 @@
 			});
 	
 	
-/* 	function sortSongs(){
+ 	function sortSongs(){
 		var criteria = $("#sortBy").val();
+		
+		$("#tbody").html("");
 		
 		$.ajax({
 			type : 'GET',
@@ -66,7 +68,7 @@
 		});
 		
 		
-	} */
+	} 
 	
 	
 </script>
@@ -76,14 +78,16 @@
 
 <body>
 	<div class="col-md-9 col-md-push-1" id="mySongs">
-
-		<select class="form-control" id="sortBy" name="sortBy" >
+		<div class="form-inline">
+		<label>Sort by:</label> <select class="form-control" id="sortBy" name="sortBy" onchange="sortSongs()">
 
 						<option value="artist">Artist</option>
 						<option value="song">Song</option>
 						<option value="genre">Genre</option>
 
 					</select>
+					
+		</div>
 		
 		<table class="table table-hover" id="table">
 			<thead>

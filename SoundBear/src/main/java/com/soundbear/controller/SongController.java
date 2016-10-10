@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,12 +30,15 @@ import com.soundbear.model.app.Song;
 import com.soundbear.model.app.User;
 import com.soundbear.model.json.reponse.MySongsResponse;
 import com.soundbear.repository.SongDAO;
+import com.soundbear.utils.AWSConstants;
 import com.soundbear.utils.Pages;
+import com.soundbear.utils.SongUtil;
 import com.soundbear.utils.ValidatorUtil;
 
 @Controller
 public class SongController {
-	public static final String BUCKET_NAME = "soundbear";
+
+	private static final String ARTIST = "artist";
 
 	@Autowired
 	private HttpSession session;
@@ -49,7 +51,7 @@ public class SongController {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
-		String artist = request.getParameter("artist").trim();
+		String artist = request.getParameter(ARTIST).trim();
 		String songName = request.getParameter("name").trim();
 		String genre = request.getParameter("genre").trim();
 
@@ -72,15 +74,15 @@ public class SongController {
 						e.printStackTrace();
 					}
 
-					String songCloudName = (songName.replaceAll("[^a-zA-Z0-9]", "") + user.getUserId()
+					String songCloudName = (songName.replaceAll(AWSConstants.AWS_FILE_NAME_REGEX, "") + user.getUserId()
 							+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
 
 					// save song on s3 with public read access
-					s3client.putObject(new PutObjectRequest(BUCKET_NAME, songCloudName, is, new ObjectMetadata())
+					s3client.putObject(new PutObjectRequest(AWSConstants.BUCKET_NAME, songCloudName, is, new ObjectMetadata())
 							.withCannedAcl(CannedAccessControlList.PublicRead));
 
 					// get referance to the song object
-					S3Object s3Object = s3client.getObject(new GetObjectRequest(BUCKET_NAME, songCloudName));
+					S3Object s3Object = s3client.getObject(new GetObjectRequest(AWSConstants.BUCKET_NAME, songCloudName));
 
 					// get song url
 					String songURL = s3Object.getObjectContent().getHttpRequest().getURI().toString();
@@ -110,6 +112,8 @@ public class SongController {
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
 		ArrayList<Song> userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
+		
+		userSongs.sort(SongUtil.getComaparator(ARTIST));
 
 		MySongsResponse response = new MySongsResponse();
 
@@ -125,7 +129,7 @@ public class SongController {
 
 		ArrayList<Song> userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
 		
-		userSongs.sort((s1,s2)->s1.getArtist().compareTo(s2.getArtist()));
+		userSongs.sort(SongUtil.getComaparator(criteria));
 
 		MySongsResponse response = new MySongsResponse();
 
@@ -134,29 +138,6 @@ public class SongController {
 		return response;
 	}
 	
-	private Comparator<Song> getComaparator(String criteria) {
-		switch (criteria) {
-		case "song":
-			return (s1,s2)->s1.getArtist().compareTo(s2.getArtist());
 
-		case "genre":
-			return new Comparator<Song>() {
-
-				@Override
-				public int compare(Song s1, Song s2) {
-					return s1.getGenre().compareTo(s2.getGenre());
-				}
-			};
-
-		default:
-			return new Comparator<Song>() {
-
-				@Override
-				public int compare(Song s1, Song s2) {
-					return s1.getArtist().compareTo(s2.getArtist());
-				}
-			};
-		}
-	}
 
 }
