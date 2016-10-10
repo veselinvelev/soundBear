@@ -45,7 +45,7 @@ public class SongController {
 	SongDAO songRepository;
 
 	@RequestMapping(value = "/songUpload", method = RequestMethod.POST)
-	public String songUplaod(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request) {
+	public String songUplaod(@RequestParam("song") MultipartFile multipartFile, HttpServletRequest request) {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
@@ -118,7 +118,7 @@ public class SongController {
 		return response;
 	}
 
-	/*@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
+	@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
 	public @ResponseBody MySongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria) {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
@@ -132,10 +132,6 @@ public class SongController {
 		response.setMySongs(userSongs);
 
 		return response;
-	}
-
-	private Comparator<Song> f (){
-		return (s1,s2)->s1.getArtist().compareTo(s2.getArtist());
 	}
 	
 	private Comparator<Song> getComaparator(String criteria) {
@@ -161,6 +157,6 @@ public class SongController {
 				}
 			};
 		}
-	}*/
+	}
 
 }

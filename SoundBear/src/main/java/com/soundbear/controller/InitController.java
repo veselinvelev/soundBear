@@ -50,6 +50,11 @@ public class InitController {
 		
 		return getPage(Pages.PROFILE);
 	}
+	
+	@RequestMapping(value = "/mySongs", method = RequestMethod.GET)
+	public String mySongs(Model model) {
+		return getPage(Pages.MYSONGS);
+	}
 
 	private String getPage(String page) {
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
