@@ -88,7 +88,7 @@
 
                     </div>
                 </div>
-                'https://soundbear.s3-us-west-2.amazonaws.com/profilepicture120161009225558'
+                
 
                 <div class="row">
                     <div class="btn-group col-xs-3 col-xs-push-4">

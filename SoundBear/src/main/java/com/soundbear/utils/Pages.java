@@ -8,5 +8,6 @@ public interface Pages{
 	String PLAY = "play";
 	String UPLOAD = "upload";
 	String PROFILE = "profile";
+	String MYSONGS = "mySongs";
 	
 }

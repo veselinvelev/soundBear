@@ -1,12 +1,16 @@
 package com.soundbear.repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -19,12 +23,20 @@ public class SongRepository implements SongDAO {
 	private static final String GET_ARTIST_SQL = "SELECT artist_id FROM artists WHERE artist_name = ?";
 	private static final String ADD_ARTIST_SQL = "INSERT INTO artists values (null, ?)";
 	private static final String ADD_SONG_SQL = "INSERT INTO songs VALUES (null, ?, ?, ?, ?, ?)";
+	private static final String LIST_SONGS_SQL = "SELECT * FROM songs s \r\n"
+			+ "JOIN artists a ON s.artist_id = a.artist_id\r\n" + "JOIN genres g ON s.genre_id = g.genre_id;";
+	private static final String LIST_SONGS_BY_KEY_SQL = "SELECT * FROM songs s JOIN artists a ON s.artist_id = a.artist_id\r\n"
+			+ "JOIN genres g ON s.genre_id = g.genre_id\r\n" + "WHERE s.song_name LIKE ? OR a.artist_name LIKE ?";
+	private static final String LIST_USER_SONGS_SQL = "SELECT * FROM songs s JOIN artists a ON s.artist_id = a.artist_id\r\n"
+			+ "JOIN genres g ON s.genre_id = g.genre_id\r\n" + "WHERE s.user_id = ?";
+	private static final String LIST_SONGS_BY_GENRE_SQL = "SELECT * FROM songs s JOIN artists a ON s.artist_id = a.artist_id\r\n"
+			+ "JOIN genres g ON s.genre_id = g.genre_id\r\n" + "WHERE g.genre_name = ?";
 
 	private JdbcTemplate jdbcTemplate;
 	private TransactionTemplate transactionTemplate;
 	
 	public SongRepository() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Autowired
@@ -80,5 +92,41 @@ public class SongRepository implements SongDAO {
 	@Override
 	public void addArtist(String artistName) {
 		jdbcTemplate.update(ADD_ARTIST_SQL, artistName);
+	}
+	
+	public List<Song> listSongs() {
+		List<Song> songs = jdbcTemplate.query(LIST_SONGS_SQL, new SongMapper());
+
+		return songs;
+	}
+
+	public List<Song> listSongs(String key) {
+		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_KEY_SQL,
+				new Object[] { "%" + key.trim() + "%", "%" + key.trim() + "%" }, new SongMapper());
+
+		return songs;
+	}
+
+	public List<Song> listSongs(int userId) {
+		List<Song> songs = jdbcTemplate.query(LIST_USER_SONGS_SQL, new Object[] { userId }, new SongMapper());
+
+		return songs;
+	}
+
+	public List<Song> listSongsByGenre(String genreName) {
+		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_GENRE_SQL, new Object[] { genreName }, new SongMapper());
+
+		return songs;
+	}
+	
+	public class SongMapper implements RowMapper<Song> {
+
+		public Song mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+			Song song = new Song(rs.getInt("song_id"), rs.getString("song_name"), rs.getString("path"),
+					rs.getInt("user_id"), rs.getString("genre_name"), rs.getString("artist_name"));
+
+			return song;
+		}
 	}
 }

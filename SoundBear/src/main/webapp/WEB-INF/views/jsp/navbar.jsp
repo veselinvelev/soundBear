@@ -16,7 +16,7 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a id="brand" class="navbar-brand  	glyphicon glyphicon-play-circle" href="play"> SoundBear</a>
+				<a id="brand" class="navbar-brand  	glyphicon glyphicon-music" href="play"> SoundBear</a>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
@@ -27,7 +27,7 @@
 
 					<li> <a  class = "playlists glyphicon glyphicon-play" href="#"> Playlists </a> </li>
 					
-					<li> <a  class = "mysongs glyphicon glyphicon-cd" href="#"> MySongs </a> </li>
+					<li> <a  class = "mysongs glyphicon glyphicon-cd" href="mySongs"> MySongs </a> </li>
 
 					<li>
 						<div class="search">

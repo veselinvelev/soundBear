@@ -39,7 +39,6 @@
 
 <body>
 
-
 	<div class="container">
 
 		Artist: <input type="text" id="artist"  onkeydown = "if (event.keyCode == 13)
