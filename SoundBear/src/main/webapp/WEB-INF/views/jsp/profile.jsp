@@ -42,6 +42,7 @@ img {
 	function showUpload() {
 		$("#photo").val("");
 		$("#upload-file-info").html("");
+		$(".choose-file").hide();
 		if ($('.profile-pic').css('display') == 'none') {
 			$(".profile-pic").show();
 		} else {
@@ -50,7 +51,20 @@ img {
 
 	}
 
+	function showPasswdUpdate() {
+		$(".choose-file").hide();
+		$("#photo").val("");
+		$("#upload-file-info").html("");
+		if ($('.change-password').css('display') == 'none') {
+			$(".change-password").show();
+		} else {
+			$(".change-password").hide();
+		}
+
+	}
+
 	function validate(photo) {
+		$(".choose-file").hide();
 		var ext = photo.split(".");
 		ext = ext[ext.length - 1].toLowerCase();
 		var arrayExtensions = [ "jpeg", "png", "jpg" ];
@@ -75,6 +89,68 @@ img {
 			}
 		});
 	});
+
+	function validate() {
+
+		var password1 = $("#password1").val();
+		var password2 = $("#password2").val();
+
+		var validatePassword;
+
+		if (password1 == password2) {
+			isValidPassword = true;
+
+		} else {
+			isValidPassword = false;
+
+			$(".password-error").show();
+			$(".password-success").hide();
+		}
+
+		//check if the fields are empty
+		if (!password1 && !password2) {
+			isValidPassword = true;
+
+			$(".password-success").hide();
+			$(".password-error").hide();
+		}
+
+		if (isValidPassword) {
+			$("#change-password").attr("disabled", false);
+		} else {
+			$("#change-password").attr("disabled", true);
+		}
+	}
+
+	function changePassword() {
+		var password1 = $("#password1").val();
+		var password2 = $("#password2").val();
+
+		if (password1 && password2) {
+			$.ajax({
+				url : 'changePassword',
+				type : 'POST',
+				data : JSON.stringify({
+					"password1" : password1,
+					"password2" : password2
+				}),
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				success : function(data) {
+
+					if (data.status === 'OK') {
+						window.location = 'profile';
+					} else {
+						$(".login-error").show();
+					}
+				},
+				error : function(data) {
+					alert(data);
+				}
+
+			});
+		}
+	}
 </script>
 
 <link
@@ -82,8 +158,6 @@ img {
 	rel="stylesheet">
 </head>
 <body>
-
-
 	<div class="container">
 
 		<br> <br>
@@ -108,9 +182,9 @@ img {
 
 				</div>
 
-				<div class="col-xs-8 divider row  ">
+				<div class="col-md-2 divider row  ">
 					<div class="col-xs-12 col-sm-2 emphasis">
-					
+
 						<h2>
 							<strong> <c:out value="${loggedUser.followers}" /></strong>
 						</h2>
@@ -118,7 +192,7 @@ img {
 							<small>Followers</small>
 						</p>
 					</div>
-					<div class=" col-sm-4 col-sm-pull-0">
+					<div class=" col-sm-4 col-sm-push-4">
 						<h2>
 							<strong><c:out value="${loggedUser.following}" /></strong>
 						</h2>
@@ -128,18 +202,23 @@ img {
 					</div>
 				</div>
 
+
+
 				<div class="span2 col-sm-6 col-md-6">
 					<div class="btn-group">
 						<button class="btn btn-primary btn-info btn-sm"
 							onclick="showUpload()">Update Photo</button>
-
-
 					</div>
+				</div>
+
+				<div class="btn-group span2  col-md-4">
+					<button class="btn btn-primary btn-info btn-sm"
+						onclick="showPasswdUpdate()">Update Password</button>
 				</div>
 
 			</div>
 
-			<div class="span2 col-md-4 profile-pic" style="display: none">
+			<div class="span2 col-md-2 profile-pic" style="display: none">
 				<form name="form" method="POST" enctype="multipart/form-data"
 					onsubmit="Validatebodypanelbumper()" action="photoUpload">
 					<div class="btn-group">
@@ -150,13 +229,44 @@ img {
 					</div>
 				</form>
 
-				<div class="row">
+				<div>
 					<div class="col-md-9 ">
 						<br> <span class='label label-info' id="upload-file-info"></span>
 					</div>
 				</div>
 				<span class="choose-file" style="display: none; color: red;">Please
 					choose a file.</span>
+			</div>
+
+
+			<!--		<div class="btn-group span2  col-md-4">
+				<button class="btn btn-primary btn-info btn-sm"
+					onclick="showPasswdUpdate()">Update Password</button>
+			</div>
+			  -->
+			<div class="col-md-6">
+			
+				<input class="change-password" type="password" id="password1"
+					placeholder="Password" style="display: none;" required
+					maxlength="45" /> <input class="change-password" type="password"
+					id="password2" placeholder="Confirm Password"
+					style="display: none;" required maxlength="45" onblur="validate()"
+					onkeydown="if (event.keyCode == 13)
+	                        document.getElementById('change-password').click()" />
+
+				<div class = "emphasis">
+					<button class="change-password btn btn-primary btn-info btn-xs"
+						id="change-password" style="display: none;"
+						onclick="changePassword() ">Save Changes</button>
+				</div>
+
+				<div class="col-md-6 row">
+					<br /> <span class="password-error col-md-10 row"
+						style="display: none; color: red;" id="password-error">Passwords
+						don't match. </span>
+				</div>
+
+
 			</div>
 
 
@@ -182,6 +292,5 @@ img {
 		-->
 		</div>
 	</div>
-
 </body>
 <%@ include file="footer.jsp"%>

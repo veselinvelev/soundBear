@@ -36,8 +36,9 @@ public interface UserDAO {
 	public void addPhoto(String photoURL);
 
 	public void addPhoto(User user);
+
 	public int getfollowers(User user);
+
 	public int getfollowing(User user);
-	
-	
+
 }
