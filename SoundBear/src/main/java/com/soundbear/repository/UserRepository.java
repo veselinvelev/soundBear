@@ -2,6 +2,8 @@ package com.soundbear.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -17,6 +19,7 @@ import com.soundbear.model.app.exceptions.UserException;
 
 @Repository
 public class UserRepository implements UserDAO {
+	private static final String LIST_FOLLOWERS_SQL = "SELECT * FROM users WHERE user_id IN (SELECT user_id FROM follows where following = ?);";
 	private static final int ACTIVATION_LINK_VALID_PERIOD = 5;
 	private static final String SET_ACTIVE_STATUS_SQL = "UPDATE users SET is_active = 1 WHERE username=?";
 	private static final String UPDATE_PASSWORD_SQL = "UPDATE users SET password = md5(?) WHERE email = ?";
@@ -102,10 +105,9 @@ public class UserRepository implements UserDAO {
 
 	public void updatePassword(User user) {
 
-
 		if (user.getEmail() != null && !user.getEmail().equals("") && user.getPassword() != null
 				&& !user.getPassword().equals("")) {
-			
+
 			jdbcTemplate.update(UPDATE_PASSWORD_SQL, user.getPassword(), user.getEmail());
 		}
 
@@ -168,15 +170,25 @@ public class UserRepository implements UserDAO {
 	}
 
 	@Override
-	public int getfollowing(User user) {
+	public int getNumFollowing(User user) {
 		return jdbcTemplate.queryForObject("SELECT COUNT('following') FROM follows where user_id  = ?;",
 				new Object[] { user.getUserId() }, Integer.class);
 	}
 
 	@Override
-	public int getfollowers(User user) {
+	public int getNumFollowers(User user) {
 		return jdbcTemplate.queryForObject("SELECT COUNT('user_id') FROM follows  where following  = ?;",
 				new Object[] { user.getUserId() }, Integer.class);
+	}
+
+	@Override
+	public ArrayList<User> listFollowers(User user) {
+		
+		
+		Collection<User> followers = jdbcTemplate.query(LIST_FOLLOWERS_SQL, new Object[] { user.getUserId() }, new UserMapper());
+
+		return new ArrayList<>( Collections.unmodifiableCollection(followers));
+	
 	}
 
 }

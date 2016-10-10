@@ -3,6 +3,7 @@ package com.soundbear.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.mail.MessagingException;
@@ -33,6 +34,7 @@ import com.soundbear.model.app.User;
 import com.soundbear.model.app.exceptions.UserException;
 import com.soundbear.model.json.reponse.BaseResponse;
 import com.soundbear.model.json.reponse.BaseResponse.ResponseStatus;
+import com.soundbear.model.json.reponse.FollowersResponse;
 import com.soundbear.model.json.reponse.RegisterFormResponse;
 import com.soundbear.model.json.request.LoginRequest;
 import com.soundbear.model.json.request.ResetPasswordRequest;
@@ -161,8 +163,8 @@ public class UserController {
 			user = userRepository.getUser(username, password);
 
 			if (user != null) {
-				user.setFollowers(userRepository.getfollowers(user));
-				user.setFollowing(userRepository.getfollowing(user));
+				user.setFollowers(userRepository.getNumFollowers(user));
+				user.setFollowing(userRepository.getNumFollowing(user));
 				session.setAttribute(LOGGED_USER, user);
 
 				status = ResponseStatus.OK;
@@ -421,6 +423,24 @@ public class UserController {
 
 		return response;
 
+	}
+	
+	@RequestMapping(value = "/listFollowers", method = RequestMethod.GET)
+	public @ResponseBody FollowersResponse listMySongs() {
+
+		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+
+		ArrayList<User> followers = userRepository.listFollowers(user);
+
+		FollowersResponse response = new FollowersResponse();
+		
+		for (User user2 : followers) {
+			System.err.println(user);
+		}
+
+		response.setFollowers(followers);
+
+		return response;
 	}
 
 }

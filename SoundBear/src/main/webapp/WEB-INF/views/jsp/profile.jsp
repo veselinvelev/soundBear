@@ -151,6 +151,28 @@ img {
 			});
 		}
 	}
+	
+	
+	
+	
+	
+//	$(document).ready(
+			function showFollowers() {
+				$.ajax({
+					type : 'GET',
+					url : 'listFollowers',
+					dataType : 'json',
+					success : function(data) {
+
+
+					},
+					error : function(code, message) {
+
+					}
+				});
+
+			}
+			//);
 </script>
 
 <link
@@ -183,22 +205,26 @@ img {
 				</div>
 
 				<div class="col-md-2 divider row  ">
-					<div class="col-xs-12 col-sm-2 emphasis">
+					<div class=" col-sm-2 inline">
 
 						<h2>
 							<strong> <c:out value="${loggedUser.followers}" /></strong>
 						</h2>
-						<p>
-							<small>Followers</small>
-						</p>
+						<div class="btn-group">
+							<button class="btn span2 btn-primary btn-info btn-sm"
+								onclick="showFollowers()">Followers</button>
+						</div>
 					</div>
-					<div class=" col-sm-4 col-sm-push-4">
+					<div class=" col-sm-4 col-sm-push-8">
+
 						<h2>
 							<strong><c:out value="${loggedUser.following}" /></strong>
 						</h2>
-						<p>
-							<small>Following</small>
-						</p>
+						<div class="btn-group">
+							<button class="btn span2 btn-primary btn-info btn-sm"
+								onclick="showUpload()">Following</button>
+						</div>
+
 					</div>
 				</div>
 
@@ -206,7 +232,7 @@ img {
 
 				<div class="span2 col-md-6">
 					<div class="btn-group">
-						<button class="btn span2 btn-primary btn-info btn-sm col-md-12"
+						<button class="btn  btn-primary btn-info btn-sm "
 							onclick="showUpload()">Update Photo</button>
 					</div>
 				</div>
@@ -245,7 +271,7 @@ img {
 			</div>
 			  -->
 			<div class="col-md-6 form-inline">
-			
+
 				<input class="change-password" type="password" id="password1"
 					placeholder="Password" style="display: none;" required
 					maxlength="45" /> <input class="change-password" type="password"
@@ -254,7 +280,7 @@ img {
 					onkeydown="if (event.keyCode == 13)
 	                        document.getElementById('change-password').click()" />
 
-				<div class = "btn-group emphasis">
+				<div class="btn-group emphasis">
 					<button class="change-password btn btn-primary btn-info btn-xs"
 						id="change-password" style="display: none;"
 						onclick="changePassword() ">Save Changes</button>

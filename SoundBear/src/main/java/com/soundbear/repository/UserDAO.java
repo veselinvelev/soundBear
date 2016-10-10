@@ -1,5 +1,6 @@
 package com.soundbear.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -37,8 +38,10 @@ public interface UserDAO {
 
 	public void addPhoto(User user);
 
-	public int getfollowers(User user);
+	public int getNumFollowers(User user);
 
-	public int getfollowing(User user);
+	public int getNumFollowing(User user);
+
+	public ArrayList<User> listFollowers(User user);
 
 }

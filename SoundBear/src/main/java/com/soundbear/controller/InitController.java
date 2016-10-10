@@ -45,8 +45,8 @@ public class InitController {
 	public String profile(Model model) {
 		
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
-		user.setFollowers(userRepository.getfollowers(user)); ;
-		user.setFollowing(userRepository.getfollowing(user));
+		user.setFollowers(userRepository.getNumFollowers(user)); ;
+		user.setFollowing(userRepository.getNumFollowing(user));
 		
 		return getPage(Pages.PROFILE);
 	}
