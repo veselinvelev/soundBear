@@ -63,11 +63,20 @@ img {
 
 	}
 
-	function validate(photo) {
+	function validatePhoto(photo) {
 		$(".choose-file").hide();
 		var ext = photo.split(".");
 		ext = ext[ext.length - 1].toLowerCase();
 		var arrayExtensions = [ "jpeg", "png", "jpg" ];
+
+		if (typeof FileReader !== "undefined") {
+			var size = document.getElementById('photo').files[0].size;
+			if (size > 5242880) { //5MB
+				alert("The file is too big. Max 20MB allowed");
+				$("#photo").val("");
+				return;
+			}
+		}
 
 		if (arrayExtensions.lastIndexOf(ext) == -1) {
 			alert("Only jpg, jpeg and png files are allowed.");
@@ -164,15 +173,22 @@ img {
 					dataType : 'json',
 					success : function(data) {
 
+	//	$(document).ready(
+	function showFollowers() {
+		$.ajax({
+			type : 'GET',
+			url : 'listFollowers',
+			dataType : 'json',
+			success : function(data) {
 
-					},
-					error : function(code, message) {
-
-					}
-				});
+			},
+			error : function(code, message) {
 
 			}
-			//);
+		});
+
+	}
+	//);
 </script>
 
 <link
@@ -250,13 +266,13 @@ img {
 					<div class="btn-group">
 						<span class="btn btn-sm btn-info btn-file col-md-pull-2">Browse
 							<input type="file" id="photo" name="photo" accept="image/*"
-							onchange="validate(this.value)" />
+							onchange="validatePhoto(this.value)" />
 						</span> <input class="btn  btn-sm btn-info " type="submit" value="Upload" />
 					</div>
 				</form>
 
 				<div>
-					<div class="col-md-9 ">
+					<div class="col-md-9 row">
 						<br> <span class='label label-info' id="upload-file-info"></span>
 					</div>
 				</div>

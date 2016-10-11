@@ -346,7 +346,11 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/photoUpload", method = RequestMethod.POST)
-	public String upload(@RequestParam("photo") MultipartFile multipartFile, HttpServletRequest request) {
+	public String photoUpload(@RequestParam("photo") MultipartFile multipartFile, HttpServletRequest request) {
+		
+		
+	//	System.err.println("======"+multipartFile.getSize()+"=====");
+		
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 		new Thread() {
@@ -355,13 +359,15 @@ public class UserController {
 			@Override
 			public void run() {
 				InputStream is = null;
+				
 
 				try {
 					is = multipartFile.getInputStream();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
+				
+				
 				String photoCloudName = ("profilepicture" + user.getUserId()
 						+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
 
@@ -433,10 +439,7 @@ public class UserController {
 		ArrayList<User> followers = userRepository.listFollowers(user);
 
 		FollowersResponse response = new FollowersResponse();
-		
-		for (User user2 : followers) {
-			System.err.println(user);
-		}
+
 
 		response.setFollowers(followers);
 

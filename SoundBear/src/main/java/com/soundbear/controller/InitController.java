@@ -3,6 +3,7 @@ package com.soundbear.controller;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +56,18 @@ public class InitController {
 	public String mySongs(Model model) {
 		return getPage(Pages.MYSONGS);
 	}
-
+	
+	@RequestMapping(value = "/error", method = RequestMethod.POST)
+	public String errorPost(Model model) {
+		return Pages.ERROR;
+	}
+	@RequestMapping(value = "/error", method = RequestMethod.GET)
+	public String errorGetS(Model model) {
+		return Pages.ERROR;
+	}
+	
+	
+	
 	private String getPage(String page) {
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 		return (user != null) ? page : Pages.LOGIN;
