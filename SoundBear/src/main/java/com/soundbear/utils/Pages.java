@@ -9,5 +9,6 @@ public interface Pages{
 	String UPLOAD = "upload";
 	String PROFILE = "profile";
 	String MYSONGS = "mySongs";
+	String FOLLOWERS = "followers";
 	
 }

@@ -20,9 +20,7 @@ import com.soundbear.model.app.exceptions.UserException;
 
 @Repository
 public class UserRepository implements UserDAO {
-	private static final String NUMBER_OF_FOLLOWERS_SQL = "SELECT COUNT('user_id') FROM follows  where following  = ?;";
-	private static final String NUMBER_OF_FOLLOWING_SQL = "SELECT COUNT('following') FROM follows where user_id  = ?;";
-	private static final String ADD_PROFILE_PICTURE_SQL = "UPDATE users SET path_photo = ? WHERE username = ?";
+	private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
 	private static final String LIST_FOLLOWERS_SQL = "SELECT * FROM users WHERE user_id IN (SELECT user_id FROM follows where following = ?);";
 	private static final int ACTIVATION_LINK_VALID_PERIOD = 5;
 	private static final String SET_ACTIVE_STATUS_SQL = "UPDATE users SET is_active = 1 WHERE username=?";
@@ -32,16 +30,16 @@ public class UserRepository implements UserDAO {
 	private static final String DELETE_USER_SQL = "DELETE FROM users WHERE username = ?";
 	private static final String LIST_USERS_SQL = "SELECT * FROM users";
 	private static final String GET_USER_SQL = "SELECT * FROM users WHERE username = ? AND password = md5(?)";
-	private static final String GET_USER_BY_NAME_SQL = "SELECT * FROM users WHERE username = ?";
+	private static final String GET_USER_BY_NAME_SQL = GET_USER_BY_ID;
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?),?,?,?)";
-	private static final String VALID_USERNAME_SQL = "SELECT * FROM users WHERE username = ?";
+	private static final String VALID_USERNAME_SQL = GET_USER_BY_ID;
 	private static final String VALID_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
 	private static final String DELETE_INACTIVE_USERS_SQL = "DELETE FROM users WHERE is_active = 0 AND DATE_SUB(registration_date, INTERVAL ? MINUTE)";
 
 	private JdbcTemplate jdbcTemplate;
 
 	public UserRepository() {
-
+		// TODO Auto-generated constructor stub
 	}
 
 	@Autowired
@@ -161,27 +159,23 @@ public class UserRepository implements UserDAO {
 		jdbcTemplate.update(DELETE_INACTIVE_USERS_SQL, ACTIVATION_LINK_VALID_PERIOD);
 	}
 
-	@Override
-	public void addPhoto(String photoURL) {
-		// TODO Auto-generated method stub
 
-	}
 
 	@Override
 	public void addPhoto(User user) {
-		jdbcTemplate.update(ADD_PROFILE_PICTURE_SQL, user.getPhoto(), user.getUsername());
+		jdbcTemplate.update("UPDATE users SET path_photo = ? WHERE username = ?", user.getPhoto(), user.getUsername());
 
 	}
 
 	@Override
 	public int getNumFollowing(User user) {
-		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWING_SQL,
+		return jdbcTemplate.queryForObject("SELECT COUNT('following') FROM follows where user_id  = ?;",
 				new Object[] { user.getUserId() }, Integer.class);
 	}
 
 	@Override
 	public int getNumFollowers(User user) {
-		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWERS_SQL,
+		return jdbcTemplate.queryForObject("SELECT COUNT('user_id') FROM follows  where following  = ?;",
 				new Object[] { user.getUserId() }, Integer.class);
 	}
 
@@ -193,6 +187,23 @@ public class UserRepository implements UserDAO {
 
 		return new ArrayList<>( Collections.unmodifiableCollection(followers));
 	
+	}
+
+	@Override
+	public User getUserById(int userId) {
+		User user = null;
+
+		try {
+			user = jdbcTemplate.queryForObject(GET_USER_BY_ID, new Object[] { userId }, new UserMapper());
+
+		} catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			return user;
+		}
+
+		System.out.println(user);
+
+		return user;
 	}
 
 }

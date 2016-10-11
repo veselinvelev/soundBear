@@ -176,21 +176,18 @@ img {
 		<div class="container-fluid well span6">
 			<div class="row">
 				<div class="item span2 col-sm-2 col-md-2">
-					<img src="${loggedUser.photo}" alt=""
+					<img src="${anotherUser.photo}" alt=""
 						class="img-rounded img-responsive" />
 				</div>
 				<div class="span2 col-md-4 col-sm-4">
 					<h3>
-						<c:out value="${loggedUser.username}" />
+						<c:out value="${anotherUser.username}" />
 					</h3>
 					<h6>
 						Email:
-						<c:out value="${loggedUser.email}" />
+						<c:out value="${anotherUser.email}" />
 					</h6>
-					<h6>
-						Registration Date:
-						<c:out value="${loggedUser.registrationDate}" />
-					</h6>
+
 
 				</div>
 
@@ -217,70 +214,15 @@ img {
 
 
 
-				<div class="span2 col-md-6">
-					<div class="btn-group">
-						<button class="btn  btn-primary btn-info btn-sm "
-							onclick="showUpload()">Update Photo</button>
-					</div>
-				</div>
 
-				<div class="btn-group span2  col-md-4">
-					<button class="btn btn-primary btn-info btn-sm"
-						onclick="showPasswdUpdate()">Update Password</button>
-				</div>
+
+		
 
 			</div>
 
-			<div class="span2 col-md-2 profile-pic" style="display: none">
-				<form name="form" method="POST" enctype="multipart/form-data"
-					onsubmit="Validatebodypanelbumper()" action="photoUpload">
-					<div class="btn-group">
-						<span class="btn btn-sm btn-info btn-file col-md-pull-2">Browse
-							<input type="file" id="photo" name="photo" accept="image/*"
-							onchange="validatePhoto(this.value)" />
-						</span> <input class="btn  btn-sm btn-info " type="submit" value="Upload" />
-					</div>
-				</form>
-
-				<div>
-					<div class="col-md-9 row">
-						<br> <span class='label label-info' id="upload-file-info"></span>
-					</div>
-				</div>
-				<span class="choose-file" style="display: none; color: red;">Please
-					choose a file.</span>
-			</div>
 
 
-			<!--		<div class="btn-group span2  col-md-4">
-				<button class="btn btn-primary btn-info btn-sm"
-					onclick="showPasswdUpdate()">Update Password</button>
-			</div>
-			  -->
-			<div class="col-md-6 form-inline">
 
-				<input class="change-password" type="password" id="password1"
-					placeholder="Password" style="display: none;" required
-					maxlength="45" /> <input class="change-password" type="password"
-					id="password2" placeholder="Confirm Password"
-					style="display: none;" required maxlength="45" onblur="validate()"
-					onkeydown="if (event.keyCode == 13)
-	                        document.getElementById('change-password').click()" />
-
-				<div class="btn-group ">
-					<button class="change-password btn btn-primary btn-info btn-sm"
-						id="change-password" style="display: none;"
-						onclick="changePassword() ">Save Changes</button>
-				</div>
-
-				<div class="col-md-6 row">
-					<br /> <span class="password-error col-md-10 row"
-						style="display: none; color: red;" id="password-error">Passwords
-						don't match. </span>
-				</div>
-
-
-			</div>
 
 
 			<!--

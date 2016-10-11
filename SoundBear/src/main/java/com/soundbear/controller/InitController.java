@@ -65,9 +65,26 @@ public class InitController {
 	public String errorGetS(Model model) {
 		return Pages.ERROR;
 	}
-	
-	
-	
+
+	@RequestMapping(value = "/followers", method = RequestMethod.GET)
+	public String followers(Model model) {
+		return Pages.FOLLOWERS;
+	}
+
+	@RequestMapping(value = "/viewProfile", method = RequestMethod.GET)
+	public String viewProfile(Model model, HttpServletRequest req) {
+
+		int id = Integer.parseInt(req.getParameter("id"));
+
+		System.err.println("PROFILEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + "           " + id);
+
+		User user = userRepository.getUserById(id);
+		
+		req.setAttribute("anotherUser", user);
+
+		return "another_user";
+	}
+
 	private String getPage(String page) {
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 		return (user != null) ? page : Pages.LOGIN;
