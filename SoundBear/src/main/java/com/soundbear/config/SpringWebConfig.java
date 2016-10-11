@@ -32,6 +32,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import com.soundbear.repository.PlaylistRepository;
 import com.soundbear.repository.SongRepository;
 import com.soundbear.repository.UserRepository;
 
@@ -131,6 +132,11 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 		return new SongRepository(getDataSource(), transactionTemplate());
 	}
 
+	@Bean
+	public PlaylistRepository getPlaylistRepository() {
+		return new PlaylistRepository(getDataSource());
+	}
+
 	// transaction
 	@Bean
 	public PlatformTransactionManager transactionManager() {
@@ -145,7 +151,5 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	// Transactions
-	
-
 
 }

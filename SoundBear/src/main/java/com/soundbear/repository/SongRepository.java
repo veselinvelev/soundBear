@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -32,10 +31,12 @@ public class SongRepository implements SongDAO {
 			+ "JOIN genres g ON s.genre_id = g.genre_id\r\n" + "WHERE s.user_id = ?";
 	private static final String LIST_SONGS_BY_GENRE_SQL = "SELECT * FROM songs s JOIN artists a ON s.artist_id = a.artist_id\r\n"
 			+ "JOIN genres g ON s.genre_id = g.genre_id\r\n" + "WHERE g.genre_name = ?";
+	private static final String LIST_SONGS_BY_PLAYLIST_SQL = "SELECT * FROM songs s JOIN playlists_has_songs p ON s.song_id = p.song_id "
+			+ "JOIN genres g ON s.genre_id = g.genre_id JOIN artists a ON s.artist_id = a.artist_id where p.playlist_id = ?";
 
 	private JdbcTemplate jdbcTemplate;
 	private TransactionTemplate transactionTemplate;
-	
+
 	public SongRepository() {
 
 	}
@@ -73,6 +74,7 @@ public class SongRepository implements SongDAO {
 		});
 
 	}
+
 	public int getGenreId(String genreName) {
 		return jdbcTemplate.queryForObject(GET_GENRE_SQL, new Object[] { genreName }, Integer.class);
 	}
@@ -94,7 +96,7 @@ public class SongRepository implements SongDAO {
 	public void addArtist(String artistName) {
 		jdbcTemplate.update(ADD_ARTIST_SQL, artistName);
 	}
-	
+
 	public List<Song> listSongs() {
 		List<Song> songs = jdbcTemplate.query(LIST_SONGS_SQL, new SongMapper());
 
@@ -119,7 +121,13 @@ public class SongRepository implements SongDAO {
 
 		return songs;
 	}
-	
+
+	public List<Song> listSongsByPlaylist(int playlistId) {
+		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_PLAYLIST_SQL, new Object[] { playlistId }, new SongMapper());
+
+		return songs;
+	}
+
 	public class SongMapper implements RowMapper<Song> {
 
 		public Song mapRow(ResultSet rs, int rowNum) throws SQLException {

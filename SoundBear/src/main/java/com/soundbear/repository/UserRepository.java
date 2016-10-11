@@ -20,6 +20,9 @@ import com.soundbear.model.app.exceptions.UserException;
 
 @Repository
 public class UserRepository implements UserDAO {
+	private static final String NUMBER_OF_FOLLOWERS_SQL = "SELECT COUNT('user_id') FROM follows  where following  = ?;";
+	private static final String NUMBER_OF_FOLLOWING_SQL = "SELECT COUNT('following') FROM follows where user_id  = ?;";
+	private static final String ADD_PROFILE_PICTURE_SQL = "UPDATE users SET path_photo = ? WHERE username = ?";
 	private static final String LIST_FOLLOWERS_SQL = "SELECT * FROM users WHERE user_id IN (SELECT user_id FROM follows where following = ?);";
 	private static final int ACTIVATION_LINK_VALID_PERIOD = 5;
 	private static final String SET_ACTIVE_STATUS_SQL = "UPDATE users SET is_active = 1 WHERE username=?";
@@ -38,7 +41,7 @@ public class UserRepository implements UserDAO {
 	private JdbcTemplate jdbcTemplate;
 
 	public UserRepository() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Autowired
@@ -166,19 +169,19 @@ public class UserRepository implements UserDAO {
 
 	@Override
 	public void addPhoto(User user) {
-		jdbcTemplate.update("UPDATE users SET path_photo = ? WHERE username = ?", user.getPhoto(), user.getUsername());
+		jdbcTemplate.update(ADD_PROFILE_PICTURE_SQL, user.getPhoto(), user.getUsername());
 
 	}
 
 	@Override
 	public int getNumFollowing(User user) {
-		return jdbcTemplate.queryForObject("SELECT COUNT('following') FROM follows where user_id  = ?;",
+		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWING_SQL,
 				new Object[] { user.getUserId() }, Integer.class);
 	}
 
 	@Override
 	public int getNumFollowers(User user) {
-		return jdbcTemplate.queryForObject("SELECT COUNT('user_id') FROM follows  where following  = ?;",
+		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWERS_SQL,
 				new Object[] { user.getUserId() }, Integer.class);
 	}
 
