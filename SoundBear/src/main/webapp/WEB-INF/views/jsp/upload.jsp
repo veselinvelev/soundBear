@@ -21,8 +21,26 @@
                 var songName = $("#name").val();
                 var genre = $("#genre").val();
                 var fileName = $('#my-file-selector').val();
-
+                
+                var validationRegex = new RegExp("^[a-zA-Z0-9 ]+[a-zA-Z ]+[a-zA-z0-9 ]$");
+                
+                $(".invalid-artist").hide();
+                $(".invalid-song").hide();
+                
                 if (artist && songName && genre != "empty" && fileName.length) {
+                	$(".choose-file").hide();
+                    $(".fields-required").hide();
+                	
+                	if(!validationRegex.test(artist)){
+                		$(".invalid-artist").show();
+                		return false;
+                	}
+                	
+                	if(!validationRegex.test(songName)){
+                		$(".invalid-song").show();
+                		return false;
+                	}
+                	
                     return true;
                 } else if (!fileName.length) {
                     $(".choose-file").show();
@@ -35,7 +53,7 @@
                 }
             });
         });
-
+        
     </script>
 
 
@@ -57,7 +75,7 @@
                 <div class="row">
                     <div class="form-group col-xs-3 col-md-push-4">
 
-                        <label class="text-warning"> Artist: </label> <input type="text" class="form-control" id="artist" name="artist" maxlength="45">
+                        <label class="text-warning"> Artist: </label> <input type="text" class="form-control" id="artist" name="artist" maxlength="45" />
 
                     </div>
                 </div>
@@ -65,7 +83,7 @@
                 <div class="row">
                     <div class="form-group col-xs-3 col-md-push-4">
 
-                        <label class="text-warning"> Song name: </label> <input type="text" class="form-control" id="name" name="name" maxlength="45">
+                        <label class="text-warning"> Song name: </label> <input type="text" class="form-control" id="name" name="name" maxlength="45"/>
 
                     </div>
                 </div>
@@ -127,10 +145,16 @@
                     <br />
                 </div>
 
-                <br /> <span class="fields-required col-md-3 col-md-push-4" style="display: none; color: red;">Please fill out all
+                <br /> <span class="fields-required col-md-2 col-md-push-4" style="display: none; color: red;">Please fill out all
 				fields.</span>
 
-                <span class="choose-file col-md-3 col-md-push-4" style="display: none; color: red;">Please choose a file.</span>
+                <span class="choose-file col-md-2 col-md-push-4" style="display: none; color: red;">Please choose a file.</span>
+                
+                <span class="invalid-song col-md-2 col-md-push-4" style="display: none; color: red;">Invalid song name.</span>
+                
+                <span class="invalid-artist col-md-2 col-md-push-4" style="display: none; color: red;">Invalid artist.</span>
+                
+                
 
             </form>
 
