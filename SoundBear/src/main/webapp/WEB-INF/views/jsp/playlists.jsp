@@ -15,7 +15,7 @@
 							$("#tbody").append("<tr>" +
 								     " <th scope=\"row\">"+(index+1)+"</th>"+
 								      "<td>"+playlist.playlistName+"</td>"+
-								      "<td><a href=\"#\">View Playlist</a></td>"+
+								      "<td><button class=\"btn-info\" id="+playlist.playlistId+">Open</button></td>"+
 								      "<td> <input type=\"button\" id="+playlist.playlistId+" class=\"btn-danger\" value=\"Delete\"/>"+
 								    "</tr>");
 
@@ -53,10 +53,10 @@
 					$("#tbody").append("<tr>" +
 						     " <th scope=\"row\">"+(index+1)+"</th>"+
 						      "<td>"+playlist.playlistName+"</td>"+
-						      "<td><a href=\"#\">View Playlist</a></td>"+
-						      "<td> <input type=\"button\" id="+playlist.playlistId+" class=\"btn-danger\" value=\"Delete\" />"+
+						      "<td><button class=\"btn-info\" id="+playlist.playlistId+">Open</button></td>"+
+						      "<td> <input type=\"button\" id="+playlist.playlistId+" class=\"btn-danger\" value=\"Delete\"/>"+
 						    "</tr>");
-					
+
 				});
 
 			},
@@ -85,13 +85,13 @@
  					$.each(data.playlists, function(index, playlist) {
 
  						$("#tbody").append("<tr>" +
- 							     " <th scope=\"row\">"+(index+1)+"</th>"+
- 							      "<td>"+playlist.playlistName+"</td>"+
- 							      "<td><a href=\"#\">View Playlist</a></td>"+
- 							      "<td> <input type=\"button\" id="+playlist.playlistId+" class=\"btn-danger\" value=\"Delete\"/>"+
- 							    "</tr>");
+							     " <th scope=\"row\">"+(index+1)+"</th>"+
+							      "<td>"+playlist.playlistName+"</td>"+
+							      "<td><button class=\"btn-info\" id="+playlist.playlistId+">Open</button></td>"+
+							      "<td> <input type=\"button\" id="+playlist.playlistId+" class=\"btn-danger\" value=\"Delete\"/>"+
+							    "</tr>");
 
- 					});
+					});
 
  				},
  				error : function(code, message) {
@@ -121,7 +121,6 @@
 				<tr>
 				 	<th>#</th>
 					<th>Playlist</th>
-					<th>View</th>
 				</tr>
 			</thead>
 			

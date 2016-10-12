@@ -43,6 +43,7 @@ img {
 		$("#photo").val("");
 		$("#upload-file-info").html("");
 		$(".choose-file").hide();
+		$(".change-password").hide();
 		if ($('.profile-pic').css('display') == 'none') {
 			$(".profile-pic").show();
 		} else {
@@ -55,6 +56,7 @@ img {
 		$(".choose-file").hide();
 		$("#photo").val("");
 		$("#upload-file-info").html("");
+		$(".profile-pic").hide();
 		if ($('.change-password').css('display') == 'none') {
 			$(".change-password").show();
 		} else {
@@ -231,7 +233,7 @@ img {
 
 			</div>
 
-			<div class="span2 col-md-2 profile-pic" style="display: none">
+			<div class="span2 col-md-3 profile-pic" style="display: none">
 				<form name="form" method="POST" enctype="multipart/form-data"
 					onsubmit="Validatebodypanelbumper()" action="photoUpload">
 					<div class="btn-group">
@@ -247,7 +249,7 @@ img {
 						<br> <span class='label label-info' id="upload-file-info"></span>
 					</div>
 				</div>
-				<span class="choose-file" style="display: none; color: red;">Please
+				<span class="choose-file col-md-8" style="display: none; color: red;">Please
 					choose a file.</span>
 			</div>
 
