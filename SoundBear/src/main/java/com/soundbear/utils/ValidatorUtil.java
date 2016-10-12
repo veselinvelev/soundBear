@@ -1,5 +1,10 @@
 package com.soundbear.utils;
 
+import javax.servlet.http.HttpSession;
+
+import com.soundbear.controller.UserController;
+import com.soundbear.model.app.User;
+
 public class ValidatorUtil {
 
 	public static boolean isStringValid(String str) {

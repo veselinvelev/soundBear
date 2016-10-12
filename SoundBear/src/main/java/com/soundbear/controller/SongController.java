@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +108,7 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/listMySongs", method = RequestMethod.GET)
-	public @ResponseBody MySongsResponse listMySongs(HttpServletResponse resp) {
+	public @ResponseBody SongsResponse listMySongs(HttpServletResponse resp) {
 
 		
 
@@ -134,7 +136,7 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
-	public @ResponseBody MySongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria, HttpServletResponse resp, HttpServletRequest req ) {
+	public @ResponseBody SongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria, HttpServletResponse resp, HttpServletRequest req ) {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 		if (user == null) {

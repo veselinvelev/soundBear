@@ -31,10 +31,10 @@ public interface UserDAO {
 	public void updateActiveStatus(String username);
 
 	public User getUserByName(String username);
+
 	public User getUserById(int userId);
 
 	public void updatePassword(User user);
-
 
 	public void addPhoto(User user);
 
@@ -43,5 +43,7 @@ public interface UserDAO {
 	public int getNumFollowing(User user);
 
 	public ArrayList<User> listFollowers(User user);
+
+	public ArrayList<User> listFollowing(User user);
 
 }
