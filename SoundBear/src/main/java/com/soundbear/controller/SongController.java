@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,7 +27,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.soundbear.model.app.Song;
 import com.soundbear.model.app.User;
-import com.soundbear.model.json.reponse.MySongsResponse;
+import com.soundbear.model.json.reponse.SongsResponse;
 import com.soundbear.repository.SongDAO;
 import com.soundbear.utils.AWSConstants;
 import com.soundbear.utils.Pages;
@@ -51,7 +50,7 @@ public class SongController {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
-		String artist = request.getParameter(ARTIST).trim();
+		String artist = request.getParameter("artist").trim();
 		String songName = request.getParameter("name").trim();
 		String genre = request.getParameter("genre").trim();
 
@@ -107,7 +106,7 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/listMySongs", method = RequestMethod.GET)
-	public @ResponseBody MySongsResponse listMySongs() {
+	public @ResponseBody SongsResponse listMySongs() {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
@@ -115,15 +114,15 @@ public class SongController {
 		
 		userSongs.sort(SongUtil.getComaparator(ARTIST));
 
-		MySongsResponse response = new MySongsResponse();
+		SongsResponse response = new SongsResponse();
 
-		response.setMySongs(userSongs);
+		response.setSongs(userSongs);
 
 		return response;
 	}
 
 	@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
-	public @ResponseBody MySongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria) {
+	public @ResponseBody SongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria) {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
@@ -131,9 +130,9 @@ public class SongController {
 		
 		userSongs.sort(SongUtil.getComaparator(criteria));
 
-		MySongsResponse response = new MySongsResponse();
+		SongsResponse response = new SongsResponse();
 
-		response.setMySongs(userSongs);
+		response.setSongs(userSongs);
 
 		return response;
 	}

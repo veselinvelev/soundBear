@@ -10,5 +10,5 @@ public interface Pages{
 	String PROFILE = "profile";
 	String MYSONGS = "mySongs";
 	String FOLLOWERS = "followers";
-	
+	String PLAYLISTS = "playlists";
 }

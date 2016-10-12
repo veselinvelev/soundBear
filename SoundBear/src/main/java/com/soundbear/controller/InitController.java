@@ -58,12 +58,17 @@ public class InitController {
 		return getPage(Pages.MYSONGS);
 	}
 	
+	@RequestMapping(value = "/playlists", method = RequestMethod.GET)
+	public String playlists(Model model) {
+		return getPage(Pages.PLAYLISTS);
+	}
+	
 	@RequestMapping(value = "/error", method = RequestMethod.POST)
 	public String errorPost(Model model) {
 		return Pages.ERROR;
 	}
 	@RequestMapping(value = "/error", method = RequestMethod.GET)
-	public String errorGetS(Model model) {
+	public String errorGets(Model model) {
 		return Pages.ERROR;
 	}
 

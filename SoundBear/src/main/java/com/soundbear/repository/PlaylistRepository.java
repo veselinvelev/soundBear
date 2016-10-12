@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.soundbear.model.app.Playlist;
 
 @Repository
-public class PlaylistRepository {
+public class PlaylistRepository implements PlaylistDAO {
 	private static final String IS_SONG_IN_PLAYLIST_SQL = "SELECT count(*) FROM playlists_has_songs WHERE playlist_id = ? AND song_id = ?";
 	private static final String DELETE_SONG_FROM_PLAYLIST_SQL = "DELETE FROM playlists_has_songs WHERE playlist_id = ? AND song_id = ?";
 	private static final String DELETE_PLAYLIST_SQL = "DELETE FROM playlists WHERE playlist_id = ?";
@@ -33,14 +33,17 @@ public class PlaylistRepository {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
+	@Override
 	public void addPlaylist(Playlist playlist) {
 		jdbcTemplate.update(ADD_PLAYLIST_SQL, playlist.getPlaylistName(), playlist.getUserId());
 	}
 
+	@Override
 	public void addSong(int playlistId, int songId) {
 		jdbcTemplate.update(ADD_SONG_INTO_PLAYLIST_SQL, playlistId, songId);
 	}
 
+	@Override
 	public List<Playlist> listPlaylists(int userId) {
 		List<Playlist> playlists = jdbcTemplate.query(LIST_PLAYLISTS_SQL, new Object[] { userId },
 				new PlaylistMapper());
@@ -48,14 +51,17 @@ public class PlaylistRepository {
 		return playlists;
 	}
 
+	@Override
 	public void deletePlaylist(int playlistId) {
 		jdbcTemplate.update(DELETE_PLAYLIST_SQL, playlistId);
 	}
 
+	@Override
 	public void deleteSong(int playlistId, int songId) {
 		jdbcTemplate.update(DELETE_SONG_FROM_PLAYLIST_SQL, playlistId, songId);
 	}
 
+	@Override
 	public boolean isSongInPlaylist(int playlistId, int songId) {
 		Integer result = jdbcTemplate.queryForObject(IS_SONG_IN_PLAYLIST_SQL, new Object[] { playlistId, songId },
 				Integer.class);

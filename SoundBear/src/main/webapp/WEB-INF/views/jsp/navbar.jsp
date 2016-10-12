@@ -25,7 +25,7 @@
 
 					<li> <a class = "upload glyphicon glyphicon-upload" href="upload"> Upload</a> </li>
 
-					<li> <a  class = "playlists glyphicon glyphicon-play" href="#"> Playlists </a> </li>
+					<li> <a  class = "playlists glyphicon glyphicon-play" href="playlists"> Playlists </a> </li>
 					
 					<li> <a  class = "mysongs glyphicon glyphicon-cd" href="mySongs"> MySongs </a> </li>
 

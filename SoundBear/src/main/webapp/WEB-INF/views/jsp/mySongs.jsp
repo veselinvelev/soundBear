@@ -9,7 +9,7 @@
 					dataType : 'json',
 					success : function(data) {
 
-						$.each(data.mySongs, function(index, song) {
+						$.each(data.songs, function(index, song) {
 
 							$("#tbody").append("<tr>" +
 								     " <th scope=\"row\">"+(index+1)+"</th>"+
@@ -45,7 +45,7 @@
 			dataType : 'json',
 			success : function(data) {
 
-				$.each(data.mySongs, function(index, song) {
+				$.each(data.songs, function(index, song) {
 
 					$("#tbody").append("<tr>" +
 						     " <th scope=\"row\">"+(index+1)+"</th>"+

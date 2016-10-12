@@ -47,6 +47,7 @@ public class SongRepository implements SongDAO {
 		transactionTemplate = template;
 	}
 
+	@Override
 	public void addSong(final Song song) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -75,10 +76,12 @@ public class SongRepository implements SongDAO {
 
 	}
 
+	@Override
 	public int getGenreId(String genreName) {
 		return jdbcTemplate.queryForObject(GET_GENRE_SQL, new Object[] { genreName }, Integer.class);
 	}
 
+	@Override
 	public int getArtistId(String artistName) {
 		Integer result = 0;
 
@@ -97,12 +100,14 @@ public class SongRepository implements SongDAO {
 		jdbcTemplate.update(ADD_ARTIST_SQL, artistName);
 	}
 
+	@Override
 	public List<Song> listSongs() {
 		List<Song> songs = jdbcTemplate.query(LIST_SONGS_SQL, new SongMapper());
 
 		return songs;
 	}
 
+	@Override
 	public List<Song> listSongs(String key) {
 		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_KEY_SQL,
 				new Object[] { "%" + key.trim() + "%", "%" + key.trim() + "%" }, new SongMapper());
@@ -110,18 +115,21 @@ public class SongRepository implements SongDAO {
 		return songs;
 	}
 
+	@Override
 	public List<Song> listSongs(int userId) {
 		List<Song> songs = jdbcTemplate.query(LIST_USER_SONGS_SQL, new Object[] { userId }, new SongMapper());
 
 		return songs;
 	}
 
+	@Override
 	public List<Song> listSongsByGenre(String genreName) {
 		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_GENRE_SQL, new Object[] { genreName }, new SongMapper());
 
 		return songs;
 	}
 
+	@Override
 	public List<Song> listSongsByPlaylist(int playlistId) {
 		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_PLAYLIST_SQL, new Object[] { playlistId }, new SongMapper());
 
