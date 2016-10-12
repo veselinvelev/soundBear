@@ -162,7 +162,7 @@ img {
 	}
 
 
-	//);
+
 </script>
 
 <link

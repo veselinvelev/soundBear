@@ -5,9 +5,6 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
 -- Schema soundbear
 -- -----------------------------------------------------
 
@@ -27,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`artists` (
   UNIQUE INDEX `artist_UNIQUE` (`artist_name` ASC),
   INDEX `artist` (`artist_name` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 12
+AUTO_INCREMENT = 0
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -46,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`users` (
   UNIQUE INDEX `email_UNIQUE` (`email` ASC),
   UNIQUE INDEX `usename_UNIQUE` (`username` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
+AUTO_INCREMENT = 0
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -83,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`genres` (
   UNIQUE INDEX `genre_UNIQUE` (`genre_name` ASC),
   INDEX `genre_index` (`genre_name` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 9
+AUTO_INCREMENT = 0
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -91,7 +88,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `soundbear`.`playlists`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soundbear`.`playlists` (
-  `playlist_id` INT(11) NOT NULL,
+  `playlist_id` INT(11) NOT NULL AUTO_INCREMENT,
   `playlist_name` VARCHAR(45) NOT NULL,
   `user_id` INT(11) NOT NULL,
   PRIMARY KEY (`playlist_id`),
@@ -99,9 +96,10 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`playlists` (
   CONSTRAINT `fk_playlists_users1`
     FOREIGN KEY (`user_id`)
     REFERENCES `soundbear`.`users` (`user_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
+AUTO_INCREMENT = 0
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -137,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`songs` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
+AUTO_INCREMENT = 0
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -150,15 +148,15 @@ CREATE TABLE IF NOT EXISTS `soundbear`.`playlists_has_songs` (
   PRIMARY KEY (`playlist_id`, `song_id`),
   INDEX `fk_playlists_has_songs_songs1_idx` (`song_id` ASC),
   INDEX `fk_playlists_has_songs_playlists1_idx` (`playlist_id` ASC),
-  CONSTRAINT `fk_playlists_has_songs_playlists1`
+  CONSTRAINT `playlist_id`
     FOREIGN KEY (`playlist_id`)
     REFERENCES `soundbear`.`playlists` (`playlist_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_playlists_has_songs_songs1`
+  CONSTRAINT `song_id`
     FOREIGN KEY (`song_id`)
     REFERENCES `soundbear`.`songs` (`song_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
