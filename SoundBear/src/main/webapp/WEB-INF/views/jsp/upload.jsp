@@ -6,11 +6,23 @@
             ext = ext[ext.length - 1].toLowerCase();
             var arrayExtensions = ["mp3"];
 
+            if (typeof FileReader !== "undefined") {
+    			var size = document.getElementById('my-file-selector').files[0].size;
+    			if (size > 20971520) { //20MB
+    				alert("The file size exceeds the 20MB limit.");
+    				$("#my-file-selector").val("");
+    				return;
+    			}
+    		}
+            
             if (arrayExtensions.lastIndexOf(ext) == -1) {
                 alert("Only mp3 files are allowed.");
                 $("#my-file-selector").val("");
+                return;
             }
 
+           
+            
             $('#upload-file-info').html($("#my-file-selector").val());
         }
 
