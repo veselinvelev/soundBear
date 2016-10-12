@@ -1,5 +1,6 @@
 package com.soundbear.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +76,6 @@ public class InitController {
 	public String viewProfile(Model model, HttpServletRequest req) {
 
 		int id = Integer.parseInt(req.getParameter("id"));
-
-		System.err.println("PROFILEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + "           " + id);
 
 		User user = userRepository.getUserById(id);
 		

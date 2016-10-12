@@ -68,23 +68,21 @@
 	
 	 } */
 
-	$(document)
-			.ready(
-					function() {
-						$
-								.ajax({
-									type : 'GET',
-									url : 'listFollowers',
-									dataType : 'json',
-									success : function(data) {
+	$(document).ready(function() {
+		$.ajax({
+			type : 'GET',
+			url : 'listFollowers',
+			dataType : 'json',
+			success : function(data) {
 
-										$
-												.each(
-														data.followers,
-														function(index,
-																follower) {
+				$.each(data.followers, function(index, follower) {
 
-															$("#tbody")
+					//	alert(follower.userId);
+					var a = document.createElement('a');
+					$("#tbody").append(+ "<td>");
+					a.href = 'viewProfile?id=' + follower.userId;
+					
+					$("#tbody")
 																	.append(
 																			"<tr>"
 																					+ " <th scope=\"row\">"
@@ -95,21 +93,18 @@
 																					+ "</td>"
 																					+ "<td>"
 																					+ follower.email
-																					+ "</td>"
-																					+ "<td>"
-																					+ "<a href=\"viewProfile?id=3\">View Profile</a>"
-																					+ "</td>"
-																		+ "</tr>");
+																					+ "</td> <td><a href=\""+a+"\">View Profile</a></td>"
+																		);
 
-														});
+				});
 
-									},
-									error : function(code, message) {
-//
-									}
-								});
+			},
+			error : function(code, message) {
+				//
+			}
+		});
 
-					});
+	});
 </script>
 
 </head>
@@ -118,7 +113,7 @@
 <body>
 	<div class="col-md-6 col-md-push-1" id="mySongs">
 
-		
+
 		<h2>Following Me</h2>
 		<table class="table table-hover" id="table">
 			<thead>
