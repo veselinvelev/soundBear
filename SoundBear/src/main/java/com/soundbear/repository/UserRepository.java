@@ -20,6 +20,7 @@ import com.soundbear.model.app.exceptions.UserException;
 
 @Repository
 public class UserRepository implements UserDAO {
+	private static final String LIST_FOLLOWING_SQL = "SELECT * FROM users WHERE user_id IN (SELECT following FROM follows where user_id = ?);";
 	private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
 	private static final String NUMBER_OF_FOLLOWERS_SQL = "SELECT COUNT('user_id') FROM follows  where following  = ?;";
 	private static final String NUMBER_OF_FOLLOWING_SQL = "SELECT COUNT('following') FROM follows where user_id  = ?;";
@@ -50,6 +51,7 @@ public class UserRepository implements UserDAO {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
+	@Override
 	public int addUser(User user) {
 		int result = jdbcTemplate.update(ADD_USER_SQL, user.getUsername(), user.getEmail(), user.getPassword(),
 				user.isActive(), user.getRegistrationDate(), user.getPhoto());
@@ -60,6 +62,7 @@ public class UserRepository implements UserDAO {
 		jdbcTemplate.update(SET_ACTIVE_STATUS_SQL, username);
 	}
 
+	@Override
 	public User getUser(String username, String password) {
 
 		User user = null;
@@ -72,11 +75,10 @@ public class UserRepository implements UserDAO {
 			return user;
 		}
 
-		System.out.println(user);
-
 		return user;
 	}
 
+	@Override
 	public User getUserByName(String username) {
 
 		User user = null;
@@ -89,25 +91,27 @@ public class UserRepository implements UserDAO {
 			return user;
 		}
 
-		System.out.println(user);
-
 		return user;
 	}
 
+	@Override
 	public List<User> listUsers() {
 		List<User> users = jdbcTemplate.query(LIST_USERS_SQL, new UserMapper());
 
 		return users;
 	}
 
+	@Override
 	public void deleteUser(String username) {
 		jdbcTemplate.update(DELETE_USER_SQL, username);
 	}
 
+	@Override
 	public void updateUser(User user) {
 		jdbcTemplate.update(UPDATE_USER, user.getUsername(), user.getEmail(), user.getPassword(), user.getUsername());
 	}
 
+	@Override
 	public void updatePassword(User user) {
 
 		if (user.getEmail() != null && !user.getEmail().equals("") && user.getPassword() != null
@@ -118,10 +122,12 @@ public class UserRepository implements UserDAO {
 
 	}
 
+	@Override
 	public void deleteUsers() {
 		jdbcTemplate.update(DELETE_USERS_SQL);
 	}
 
+	@Override
 	public boolean isValidUsername(String username) {
 		try {
 			jdbcTemplate.queryForObject(VALID_USERNAME_SQL, new Object[] { username }, new UserMapper());
@@ -132,6 +138,7 @@ public class UserRepository implements UserDAO {
 		return false;
 	}
 
+	@Override
 	public boolean isValidEmail(String email) {
 		try {
 			jdbcTemplate.queryForObject(VALID_EMAIL_SQL, new Object[] { email }, new UserMapper());
@@ -158,11 +165,10 @@ public class UserRepository implements UserDAO {
 		}
 	}
 
+	@Override
 	public void clearInactive() {
 		jdbcTemplate.update(DELETE_INACTIVE_USERS_SQL, ACTIVATION_LINK_VALID_PERIOD);
 	}
-
-
 
 	@Override
 	public void addPhoto(User user) {
@@ -184,12 +190,22 @@ public class UserRepository implements UserDAO {
 
 	@Override
 	public ArrayList<User> listFollowers(User user) {
-		
-		
-		Collection<User> followers = jdbcTemplate.query(LIST_FOLLOWERS_SQL, new Object[] { user.getUserId() }, new UserMapper());
 
-		return new ArrayList<>( Collections.unmodifiableCollection(followers));
-	
+		Collection<User> followers = jdbcTemplate.query(LIST_FOLLOWERS_SQL, new Object[] { user.getUserId() },
+				new UserMapper());
+
+		return new ArrayList<>(Collections.unmodifiableCollection(followers));
+
+	}
+
+	@Override
+	public ArrayList<User> listFollowing(User user) {
+
+		Collection<User> followers = jdbcTemplate.query(LIST_FOLLOWING_SQL, new Object[] { user.getUserId() },
+				new UserMapper());
+
+		return new ArrayList<>(Collections.unmodifiableCollection(followers));
+
 	}
 
 	@Override
@@ -203,8 +219,6 @@ public class UserRepository implements UserDAO {
 			e.printStackTrace();
 			return user;
 		}
-
-		System.out.println(user);
 
 		return user;
 	}

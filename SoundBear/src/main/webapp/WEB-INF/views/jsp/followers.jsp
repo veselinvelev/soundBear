@@ -1,99 +1,32 @@
 <%@ include file="header.jsp"%>
 <title>SoundBear My Followers</title>
 <script>
-	/*	$(document).ready(
-	 function() {
-	 $.ajax({
-	 type : 'GET',
-	 url : 'listMySongs',
-	 dataType : 'json',
-	 success : function(data) {
-
-	 $.each(data.mySongs, function(index, song) {
-
-	 $("#tbody").append("<tr>" +
-	 " <th scope=\"row\">"+(index+1)+"</th>"+
-	 "<td>"+song.artist+"</td>"+
-	 "<td>"+song.songName+"</td>"+
-	 "<td>"+song.genre+"</td>"+
-	 "<td><audio controls>"+
-	 "<source src="+song.path+" type=\"audio/mpeg\">"+
-	 "</audio></td>"+
-	 "</tr>");
-
-	 });
-
-	 },
-	 error : function(code, message) {
-	 $('#error').html(
-	 'Error Code: ' + code + ', Error Message: '
-	 + message);
-	 }
-	 });
-
-	 });
-	 */
-
-	/* 	function sortSongs(){
-	 var criteria = $("#sortBy").val();
 	
-	 $.ajax({
-	 type : 'GET',
-	 url : 'sortMySongs/'+criteria,
-	 dataType : 'json',
-	 success : function(data) {
-
-	 $.each(data.mySongs, function(index, song) {
-
-	 $("#tbody").append("<tr>" +
-	 " <th scope=\"row\">"+(index+1)+"</th>"+
-	 "<td>"+song.artist+"</td>"+
-	 "<td>"+song.songName+"</td>"+
-	 "<td>"+song.genre+"</td>"+
-	 "<td><audio controls>"+
-	 "<source src="+song.path+" type=\"audio/mpeg\">"+
-	 "</audio></td>"+
-	 "</tr>");
-
-	 });
-
-	 },
-	 error : function(code, message) {
-	 $('#error').html(
-	 'Error Code: ' + code + ', Error Message: '
-	 + message);
-	 }
-	 });
-	
-	
-	 } */
-
 	$(document).ready(function() {
+		
+		var parameter = window.location.search.replace( "?", "" ); // will return the GET parameter 
+
+		var values = parameter.split("=");
+
+		
 		$.ajax({
 			type : 'GET',
-			url : 'listFollowers',
+			url : 'listFollowers?item=' + values[1],
 			dataType : 'json',
 			success : function(data) {
 
 				$.each(data.followers, function(index, follower) {
-
-					//	alert(follower.userId);
 					var a = document.createElement('a');
 					$("#tbody").append(+ "<td>");
 					a.href = 'viewProfile?id=' + follower.userId;
-					
-					$("#tbody")
-																	.append(
-																			"<tr>"
-																					+ " <th scope=\"row\">"
-																					+ (index + 1)
-																					+ "</th>"
-																					+ "<td>"
-																					+ follower.username
-																					+ "</td>"
-																					+ "<td>"
-																					+ follower.email
-																					+ "</td> <td><a href=\""+a+"\">View Profile</a></td>"
+					$("#tbody").append("<tr>"+ 
+							" <th scope=\"row\">"+
+							(index + 1)+
+							"</th>"+ "<td>"+
+							follower.username+
+							"</td>"+ "<td>"
+							+ follower.email
+							+ "</td> <td><a href=\""+a+"\">View Profile</a></td>"
 																		);
 
 				});
@@ -114,7 +47,7 @@
 	<div class="col-md-6 col-md-push-1" id="mySongs">
 
 
-		<h2>Following Me</h2>
+		<h2><c:out value="${loggedUser.username}" /> <c:out value="${item}" /></h2>
 		<table class="table table-hover" id="table">
 			<thead>
 				<tr>

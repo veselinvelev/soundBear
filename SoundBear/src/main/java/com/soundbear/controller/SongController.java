@@ -106,7 +106,19 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/listMySongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse listMySongs() {
+	public @ResponseBody MySongsResponse listMySongs(HttpServletResponse resp) {
+
+		
+
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				resp.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 
@@ -122,9 +134,19 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria) {
+	public @ResponseBody MySongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria, HttpServletResponse resp, HttpServletRequest req ) {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		if (user == null) {
+			
+				try {
+					req.getRequestDispatcher(Pages.LOGIN).forward(req, resp);
+				} catch (ServletException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				};
+		
+		}
 
 		ArrayList<Song> userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
 		

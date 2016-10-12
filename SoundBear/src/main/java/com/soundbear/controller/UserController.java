@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -97,6 +98,8 @@ public class UserController {
 
 
 		User user = null;
+		
+		
 
 		boolean isEmpty = email.isEmpty();
 		boolean isValid = email.matches(EMAIL_REGEX);
@@ -432,11 +435,27 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/listFollowers", method = RequestMethod.GET)
-	public @ResponseBody FollowersResponse listMySongs() {
+	public @ResponseBody FollowersResponse listFollowers(HttpServletRequest req, HttpServletResponse resp) {
+		
+		
+		User user = (User) session.getAttribute(LOGGED_USER);
+		
+		if (user == null) {
+			try {
+				resp.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
-
-		ArrayList<User> followers = userRepository.listFollowers(user);
+		ArrayList<User> followers =null;
+		if (req.getParameter("item").equals("Followers")) {
+			followers = userRepository.listFollowers(user);
+		}else{
+			followers = userRepository.listFollowing(user);
+		}
 
 		FollowersResponse response = new FollowersResponse();
 

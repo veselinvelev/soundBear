@@ -10,5 +10,8 @@ public interface Pages{
 	String PROFILE = "profile";
 	String MYSONGS = "mySongs";
 	String FOLLOWERS = "followers";
-	String PLAYLISTS = "playlists";
+	String FOLLOWING = "following";
+	String ANOTHEUSER = "another_user";
+	String INDEX = "/";
+	
 }

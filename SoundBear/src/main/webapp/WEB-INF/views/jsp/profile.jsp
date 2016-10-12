@@ -72,7 +72,7 @@ img {
 		if (typeof FileReader !== "undefined") {
 			var size = document.getElementById('photo').files[0].size;
 			if (size > 5242880) { //5MB
-				alert("The file is too big. Max 20MB allowed");
+				alert("The file is too big. Max 5MB allowed");
 				$("#photo").val("");
 				return;
 			}
@@ -201,7 +201,7 @@ img {
 							<strong> <c:out value="${loggedUser.followers}" /></strong>
 						</h2>
 
-						<strong><a href="followers">Followers</a></strong>
+						<strong><a href="follow?item=Followers">Followers</a></strong>
 						</p>
 
 					</div>
@@ -210,7 +210,7 @@ img {
 						<h2>
 							<strong><c:out value="${loggedUser.following}" /></strong>
 						</h2>
-						<strong><a href="followers">Following</a></strong>
+						<strong><a href="follow?item=Following">Following</a></strong>
 
 					</div>
 				</div>
