@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class BaseResponse implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3376773176167375964L;
 	private ResponseStatus status;
 	private String msg;
 	private String field;

@@ -39,130 +39,86 @@ img {
 </style>
 
 <script type="text/javascript">
-	function showUpload() {
-		$("#photo").val("");
-		$("#upload-file-info").html("");
-		$(".choose-file").hide();
-		if ($('.profile-pic').css('display') == 'none') {
-			$(".profile-pic").show();
-		} else {
-			$(".profile-pic").hide();
-		}
-
-	}
-
-	function showPasswdUpdate() {
-		$(".choose-file").hide();
-		$("#photo").val("");
-		$("#upload-file-info").html("");
-		if ($('.change-password').css('display') == 'none') {
-			$(".change-password").show();
-		} else {
-			$(".change-password").hide();
-		}
-
-	}
-
-	function validatePhoto(photo) {
-		$(".choose-file").hide();
-		var ext = photo.split(".");
-		ext = ext[ext.length - 1].toLowerCase();
-		var arrayExtensions = [ "jpeg", "png", "jpg" ];
-
-		if (typeof FileReader !== "undefined") {
-			var size = document.getElementById('photo').files[0].size;
-			if (size > 5242880) { //5MB
-				alert("The file is too big. Max 20MB allowed");
-				$("#photo").val("");
-				return;
-			}
-		}
-
-		if (arrayExtensions.lastIndexOf(ext) == -1) {
-			alert("Only jpg, jpeg and png files are allowed.");
-			$("#photo").val("");
-		}
-
-		$('#upload-file-info').html($("#photo").val());
-	}
-
 	$(document).ready(function() {
-		$("form").submit(function(e) {
-			var fileName = $('#photo').val();
 
-			if (fileName.length) {
-				return true;
-			} else {
-				$(".choose-file").show();
-				return false;
+		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
+
+		var values = parameter.split("=");
+
+	//	alert(values[1]);
+
+		$.ajax({
+			type : 'GET',
+			url : 'checkFollowStatus?id=' + values[1],
+			dataType : 'json',
+			success : function(data) {
+
+				if (data.status == 'OK') {
+					$("#follow").hide();
+					$("#unfollow").show();
+
+				} else {
+
+					$("#follow").show();
+					$("#unfollow").hide();
+
+				}
+
+			},
+			error : function(code, message) {
 			}
 		});
+
 	});
+	
+	
+	function follow() {
+		
+		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
 
-	function validate() {
-
-		var password1 = $("#password1").val();
-		var password2 = $("#password2").val();
-
-		var validatePassword;
-
-		if (password1 == password2) {
-			isValidPassword = true;
-
-		} else {
-			isValidPassword = false;
-
-			$(".password-error").show();
-			$(".password-success").hide();
-		}
-
-		//check if the fields are empty
-		if (!password1 && !password2) {
-			isValidPassword = true;
-
-			$(".password-success").hide();
-			$(".password-error").hide();
-		}
-
-		if (isValidPassword) {
-			$("#change-password").attr("disabled", false);
-		} else {
-			$("#change-password").attr("disabled", true);
-		}
-	}
-
-	function changePassword() {
-		var password1 = $("#password1").val();
-		var password2 = $("#password2").val();
-
-		if (password1 && password2) {
+		var values = parameter.split("=");
+		
 			$.ajax({
-				url : 'changePassword',
-				type : 'POST',
-				data : JSON.stringify({
-					"password1" : password1,
-					"password2" : password2
-				}),
+				url : 'updateFollow?id=' + values[1] + '&action=follow',
+				type : 'GET',
 				contentType : "application/json; charset=utf-8",
 				dataType : "json",
 				success : function(data) {
-
-					if (data.status === 'OK') {
-						window.location = 'profile';
-					} else {
-						$(".login-error").show();
-					}
+					
+					window.location = 'viewProfile?id=' + values[1];
+			
 				},
 				error : function(data) {
-					alert(data);
+					window.location = 'error';
 				}
 
 			});
-		}
 	}
+	
+function unfollow() {
+		
+		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
 
+		var values = parameter.split("=");
+		
+			$.ajax({
+				url : 'updateFollow?id=' + values[1] + '&action=unfollow',
+				type : 'GET',
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				success : function(data) {
+					window.location = 'viewProfile?id=' + values[1];
+			
+				},
+				error : function(data) {
+				
+					window.location = 'error';
+				}
 
-	//);
+			});
+	}
+	
+	
 </script>
 
 <link
@@ -188,27 +144,11 @@ img {
 						<c:out value="${anotherUser.email}" />
 					</h6>
 
-
-				</div>
-
-				<div class="col-md-2  row  ">
-					<div class=" col-sm-2 inline">
-						<p>
-						<h2>
-							<strong> <c:out value="${loggedUser.followers}" /></strong>
-						</h2>
-
-						<strong><a href="followers">Followers</a></strong>
-						</p>
-
-					</div>
-					<div class=" col-sm-4 col-sm-push-8">
-
-						<h2>
-							<strong><c:out value="${loggedUser.following}" /></strong>
-						</h2>
-						<strong><a href="followers">Following</a></strong>
-
+					<div class="col-md-4  row btn-group ">
+						<button class="btn btn-primary btn-info btn-md" id="follow"
+							style="display: none" onclick="follow()">Follow</button>
+						<button class="btn btn-primary btn-info btn-md" id="unfollow"
+							style="display: none" onclick="unfollow()">Unfollow</button>
 					</div>
 				</div>
 
@@ -216,7 +156,10 @@ img {
 
 
 
-		
+
+
+
+
 
 			</div>
 

@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class LoginRequest implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7473540823380480262L;
 	private String username;
 	private String password1;
 	private String password2;

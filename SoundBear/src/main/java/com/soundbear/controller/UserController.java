@@ -96,10 +96,7 @@ public class UserController {
 	public @ResponseBody BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
 		String email = request.getEmail();
 
-
 		User user = null;
-		
-		
 
 		boolean isEmpty = email.isEmpty();
 		boolean isValid = email.matches(EMAIL_REGEX);
@@ -350,10 +347,8 @@ public class UserController {
 
 	@RequestMapping(value = "/photoUpload", method = RequestMethod.POST)
 	public String photoUpload(@RequestParam("photo") MultipartFile multipartFile, HttpServletRequest request) {
-		
-		
-	//	System.err.println("======"+multipartFile.getSize()+"=====");
-		
+
+		// System.err.println("======"+multipartFile.getSize()+"=====");
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
 		new Thread() {
@@ -362,15 +357,13 @@ public class UserController {
 			@Override
 			public void run() {
 				InputStream is = null;
-				
 
 				try {
 					is = multipartFile.getInputStream();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
-				
+
 				String photoCloudName = ("profilepicture" + user.getUserId()
 						+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
 
@@ -433,13 +426,12 @@ public class UserController {
 		return response;
 
 	}
-	
+
 	@RequestMapping(value = "/listFollowers", method = RequestMethod.GET)
 	public @ResponseBody FollowersResponse listFollowers(HttpServletRequest req, HttpServletResponse resp) {
-		
-		
+
 		User user = (User) session.getAttribute(LOGGED_USER);
-		
+
 		if (user == null) {
 			try {
 				resp.sendRedirect(Pages.LOGIN);
@@ -450,18 +442,76 @@ public class UserController {
 			}
 		}
 
-		ArrayList<User> followers =null;
+		ArrayList<User> followers = null;
 		if (req.getParameter("item").equals("Followers")) {
 			followers = userRepository.listFollowers(user);
-		}else{
+		} else {
 			followers = userRepository.listFollowing(user);
 		}
 
 		FollowersResponse response = new FollowersResponse();
 
-
 		response.setFollowers(followers);
 
+		return response;
+	}
+
+	@RequestMapping(value = "/checkFollowStatus", method = RequestMethod.GET)
+	public @ResponseBody BaseResponse checkFollowStatus(HttpServletRequest req, HttpServletResponse resp) {
+
+		User user = (User) session.getAttribute(LOGGED_USER);
+
+		if (user == null) {
+			try {
+				resp.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		int id = Integer.parseInt(req.getParameter("id"));
+
+		int followStatus = 0;
+		ResponseStatus status = ResponseStatus.NO;
+
+		followStatus = userRepository.getFollowStatus(user, id);
+
+		if (followStatus != 0) {
+			status = ResponseStatus.OK;
+		}
+
+		BaseResponse response = new BaseResponse();
+		response.setStatus(status);
+		return response;
+	}
+
+	@RequestMapping(value = "/updateFollow", method = RequestMethod.GET)
+	public @ResponseBody BaseResponse updateFollow(HttpServletRequest req, HttpServletResponse resp) {
+
+		User user = (User) session.getAttribute(LOGGED_USER);
+
+		if (user == null) {
+			try {
+				resp.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		int id = Integer.parseInt(req.getParameter("id"));
+		String action = req.getParameter("action");
+
+		if (action.equals("follow")) {
+			userRepository.follow(user, id);
+		} else {
+			userRepository.unfollow(user, id);
+		}
+		BaseResponse response = new BaseResponse();
+		response.setStatus(ResponseStatus.OK);
 		return response;
 	}
 

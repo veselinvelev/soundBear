@@ -20,6 +20,8 @@ import com.soundbear.model.app.exceptions.UserException;
 
 @Repository
 public class UserRepository implements UserDAO {
+	private static final String FOLLOW_SQL = "INSERT INTO follows VALUES (? , ?);";
+	private static final String GET_FOLLOW_STATUS_SQL = "SELECT following from follows where user_id = ? and following = ?";
 	private static final String LIST_FOLLOWING_SQL = "SELECT * FROM users WHERE user_id IN (SELECT following FROM follows where user_id = ?);";
 	private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
 	private static final String NUMBER_OF_FOLLOWERS_SQL = "SELECT COUNT('user_id') FROM follows  where following  = ?;";
@@ -178,14 +180,12 @@ public class UserRepository implements UserDAO {
 
 	@Override
 	public int getNumFollowing(User user) {
-		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWING_SQL,
-				new Object[] { user.getUserId() }, Integer.class);
+		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWING_SQL, new Object[] { user.getUserId() }, Integer.class);
 	}
 
 	@Override
 	public int getNumFollowers(User user) {
-		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWERS_SQL,
-				new Object[] { user.getUserId() }, Integer.class);
+		return jdbcTemplate.queryForObject(NUMBER_OF_FOLLOWERS_SQL, new Object[] { user.getUserId() }, Integer.class);
 	}
 
 	@Override
@@ -221,6 +221,34 @@ public class UserRepository implements UserDAO {
 		}
 
 		return user;
+	}
+
+	@Override
+	public int getFollowStatus(User user, int id) {
+
+		int value = 0;
+
+		try {
+			value = jdbcTemplate.queryForObject(GET_FOLLOW_STATUS_SQL,
+					new Object[] { user.getUserId(), id }, Integer.class);
+
+		} catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			return value;
+		}
+
+		return value;
+	}
+
+	@Override
+	public void follow(User user, int id) {
+		jdbcTemplate.update(FOLLOW_SQL, user.getUserId(), id);
+	}
+
+	@Override
+	public void unfollow(User user, int id) {
+		jdbcTemplate.update("DELETE FROM follows where user_id = ? and following = ?;", user.getUserId(), id);
+		
 	}
 
 }

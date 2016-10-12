@@ -46,4 +46,10 @@ public interface UserDAO {
 
 	public ArrayList<User> listFollowing(User user);
 
+	public int getFollowStatus(User user, int id);
+
+	public void follow(User user, int id);
+
+	public void unfollow(User user, int id);
+
 }
