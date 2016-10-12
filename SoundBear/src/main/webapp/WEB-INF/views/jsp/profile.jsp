@@ -268,7 +268,7 @@ img {
 	                        document.getElementById('change-password').click()" />
 
 				<div class="btn-group ">
-					<button class="change-password btn btn-primary btn-info btn-sm"
+					<button class="change-password btn-primary btn-info btn-xs"
 						id="change-password" style="display: none;"
 						onclick="changePassword() ">Save Changes</button>
 				</div>
