@@ -11,6 +11,7 @@
     			if (size > 20971520) { //20MB
     				alert("The file size exceeds the 20MB limit.");
     				$("#my-file-selector").val("");
+    				$('#upload-file-info').html("");
     				return;
     			}
     		}
@@ -18,6 +19,7 @@
             if (arrayExtensions.lastIndexOf(ext) == -1) {
                 alert("Only mp3 files are allowed.");
                 $("#my-file-selector").val("");
+                $('#upload-file-info').html("");
                 return;
             }
 
@@ -131,19 +133,6 @@
                         <button id="submit" type="submit" class="btn btn-warning btn-sm col-xs-push-5" onclick="uploadSong()">Upload</button>
 
                     </div>
-
-                    <!--           </div>-->
-
-
-                    <!--     <div class="row">
-                <!-- 
-                <div class="btn-group col-md-6">
-                    <button id="submit" type="submit" class="btn btn-warning btn-warning btn-sm" onclick="uploadSong()">Upload</button>
-                </div>
--->
-
-                    <!--   <button id="submit" type="submit" class="btn btn-warning btn-warning btn-sm" onclick="uploadSong()">Upload</button>
--->
 
                 </div>
 
