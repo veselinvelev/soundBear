@@ -44,7 +44,6 @@ img {
 		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
 		$(".followed-user-songs").hide();
 		var values = parameter.split("=");
-		var showSongs = false;
 
 		//	alert(values[1]);
 
@@ -52,7 +51,6 @@ img {
 			type : 'GET',
 			url : 'checkFollowStatus?id=' + values[1],
 			dataType : 'json',
-			async : false,
 			success : function(data) {
 
 				if (data.status == 'OK') {
@@ -66,13 +64,6 @@ img {
 
 				}
 
-				if ($('#follow').css('display') == 'none') {
-					$(".followed-user-songs").show();
-					showSongs = true;
-				} else {
-					showSongs = false;
-				}
-
 			},
 			error : function(code, message) {
 			}
@@ -84,6 +75,10 @@ img {
 			url : 'listMySongs?id=' + values[1],
 			dataType : 'json',
 			success : function(data) {
+				
+				if(Object.keys(data.songs).length > 0){
+					$(".followed-user-songs").show();
+				}
 
 				$.each(data.songs, function(index, song) {
 

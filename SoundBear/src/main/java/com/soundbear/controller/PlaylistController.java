@@ -167,5 +167,25 @@ public class PlaylistController {
 
 		return response;
 	}
+	
+	@RequestMapping(value = "/deleteSongFromPlaylist", method = RequestMethod.GET)
+	public @ResponseBody SongsResponse deleteSongFromPlaylist (HttpServletRequest request) {
+		
+		int playlistId = Integer.parseInt(request.getParameter("pid"));
+		
+		int songId = Integer.parseInt(request.getParameter("sid"));
+		
+		playlistRepository.deleteSong(playlistId, songId);
+
+		ArrayList<Song> playlistSongs = (ArrayList<Song>) songRepository.listSongsByPlaylist(playlistId);
+		
+		playlistSongs.sort(SongUtil.getComaparator(SongController.ARTIST));
+
+		SongsResponse response = new SongsResponse();
+
+		response.setSongs(playlistSongs);
+
+		return response;
+	}
 
 }

@@ -32,6 +32,7 @@ $(document).ready(
 							      "<td><audio controls>"+
 							      "<source src="+song.path+" type=\"audio/mpeg\">"+
 							    "</audio></td>"+
+							    "<td> <input type=\"button\" id="+song.songId+" class=\"btn-danger\" value=\"Delete\"/>"+
 							    "</tr>");
 
 					});
@@ -68,6 +69,7 @@ function sortSongs(){
 					      "<td><audio controls>"+
 					      "<source src="+song.path+" type=\"audio/mpeg\">"+
 					    "</audio></td>"+
+					    "<td> <input type=\"button\" id="+song.songId+" class=\"btn-danger\" value=\"Delete\"/>"+
 					    "</tr>");
 
 			});
@@ -79,9 +81,48 @@ function sortSongs(){
 							+ message);
 		}
 	});
+}
 	
+	$(document).ready(function(){
+ 	    $("table").delegate("input", "click", function(){
+ 	        
+ 	    	var playlistId = "${playlistId}";
+ 	    	var songId = this.id;
+ 	    	
+ 	    	$("#tbody").html("");
+ 			
+ 			$.ajax({
+ 				type : 'GET',
+ 				url : 'deleteSongFromPlaylist?pid='+playlistId+"&sid="+songId,
+ 				dataType : 'json',
+ 				success : function(data) {
+
+ 					$.each(data.songs, function(index, song) {
+
+						$("#tbody").append("<tr>" +
+							     " <th scope=\"row\">"+(index+1)+"</th>"+
+							      "<td>"+song.artist+"</td>"+
+							      "<td>"+song.songName+"</td>"+
+							      "<td>"+song.genre+"</td>"+
+							      "<td><audio controls>"+
+							      "<source src="+song.path+" type=\"audio/mpeg\">"+
+							    "</audio></td>"+
+							    "<td> <input type=\"button\" id="+song.songId+" class=\"btn-danger\" value=\"Delete\"/>"+
+							    "</tr>");
+
+					});
+
+ 				},
+ 				error : function(code, message) {
+ 					$('#error').html(
+ 							'Error Code: ' + code + ', Error Message: '
+ 									+ message);
+ 				}
+ 			});
+ 	    	
+ 	    });
+ 	});
 	
-} 
 
 
 </script>

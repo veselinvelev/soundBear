@@ -5,7 +5,20 @@
 	src="<c:url value="/script/jquery-3.1.1.min.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/script/navbar.js"/>"></script>
 
-	<!-- Fixed navbar -->
+<%
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+
+	if (session.getAttribute("loggedUser") == null)
+		response.sendRedirect("login");
+	
+%>
+
+
+
+<!-- Fixed navbar -->
 	<nav id="header" class="navbar navbar-fixed-top">
 		<div id="header-container" class="container navbar-container">
 			<div class="navbar-header">
@@ -59,3 +72,4 @@
 	<script src="<c:url value = "/script/navbar.js"/>"></script>
 	
 	<script type="text/javascript" src="<c:url value="/script/jquery-3.1.1.min.js"/>"></script>
+

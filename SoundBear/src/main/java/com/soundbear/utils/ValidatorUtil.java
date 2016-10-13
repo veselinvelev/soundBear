@@ -21,11 +21,12 @@ public class ValidatorUtil {
 		}
 		return false;
 	}
-
+	
+	/*Implemented in navbar.jsp via scriplet
 	public static void noBackspaceLogin(HttpServletResponse response) {
 
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setDateHeader("Expires", 0);
-	}
+	}*/
 }
