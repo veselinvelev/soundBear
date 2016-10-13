@@ -21,6 +21,7 @@ public class PlaylistRepository implements PlaylistDAO {
 	private static final String LIST_PLAYLISTS_SQL = "SELECT * FROM playlists WHERE user_id = ?";
 	private static final String ADD_SONG_INTO_PLAYLIST_SQL = "INSERT INTO playlists_has_songs VALUES (?, ?)";
 	private static final String ADD_PLAYLIST_SQL = "INSERT INTO playlists VALUES (null, ?, ?)";
+	private static final String GET_PLAYLIST_SQL = "SELECT * FROM playlists WHERE playlist_id = ?";
 
 	private JdbcTemplate jdbcTemplate;
 
@@ -41,6 +42,11 @@ public class PlaylistRepository implements PlaylistDAO {
 	@Override
 	public void addSong(int playlistId, int songId) {
 		jdbcTemplate.update(ADD_SONG_INTO_PLAYLIST_SQL, playlistId, songId);
+	}
+
+	@Override
+	public Playlist getPlaylist(int playlistId) {
+		return jdbcTemplate.queryForObject(GET_PLAYLIST_SQL, new Object[] { playlistId }, new PlaylistMapper());
 	}
 
 	@Override

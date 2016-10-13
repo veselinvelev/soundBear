@@ -13,6 +13,7 @@ public interface Pages{
 	String FOLLOWING = "following";
 	String ANOTHEUSER = "another_user";
 	String PLAYLISTS = "playlists";
+	String PLAYLIST = "playlist";
 	String INDEX = "/";
 	
 }

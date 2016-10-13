@@ -103,6 +103,27 @@
  	    	
  	    });
  	});
+ 	
+ 	
+	$(document).ready(function(){
+ 	    $("table").delegate("button", "click", function(){
+ 	        
+ 	    	var playlistId = this.id;
+ 	    	
+ 			$.ajax({
+ 				type : 'GET',
+ 				url : 'openPlaylist?pid='+playlistId,
+ 				
+ 				success : function() {
+ 					window.location='openPlaylist?pid='+playlistId;
+ 				},
+ 				error : function() {
+ 					window.location='error';
+ 				}
+ 			});
+ 	    	
+ 	    });
+ 	});
 	
 </script>
 

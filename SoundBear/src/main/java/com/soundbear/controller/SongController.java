@@ -39,7 +39,7 @@ import com.soundbear.utils.ValidatorUtil;
 @Controller
 public class SongController {
 
-	private static final String ARTIST = "artist";
+	public static final String ARTIST = "artist";
 
 	@Autowired
 	private HttpSession session;

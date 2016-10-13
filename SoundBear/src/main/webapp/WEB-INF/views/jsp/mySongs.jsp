@@ -3,11 +3,20 @@
 <script>
 	$(document).ready(
 			function() {
+				
+				$("#table").hide();
+				$("#sort").hide();
+				
 				$.ajax({
 					type : 'GET',
 					url : 'listMySongs',
 					dataType : 'json',
 					success : function(data) {
+						
+						if(Object.keys(data.songs).length > 0){
+							$("#table").show();
+							$("#sort").show();
+						}
 
 						$.each(data.songs, function(index, song) {
 

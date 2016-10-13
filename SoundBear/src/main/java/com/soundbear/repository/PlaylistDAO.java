@@ -9,6 +9,8 @@ public interface PlaylistDAO {
 	void addPlaylist(Playlist playlist);
 
 	void addSong(int playlistId, int songId);
+	
+	Playlist getPlaylist(int playlistId);
 
 	List<Playlist> listPlaylists(int userId);
 

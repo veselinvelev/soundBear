@@ -8,13 +8,13 @@ public class SongUtil {
 	public static Comparator<Song> getComaparator(String criteria) {
 		switch (criteria) {
 		case "song":
-			return (s1, s2) -> s1.getSongName().compareTo(s2.getSongName());
+			return (s1, s2) -> s1.getSongName().toLowerCase().compareTo(s2.getSongName().toLowerCase());
 
 		case "genre":
 			return (s1, s2) -> s1.getGenre().compareTo(s2.getGenre());
 
 		default:
-			return (s1, s2) -> s1.getArtist().compareTo(s2.getArtist());
+			return (s1, s2) -> s1.getArtist().toLowerCase().compareTo(s2.getArtist().toLowerCase());
 		}
 	}
 }
