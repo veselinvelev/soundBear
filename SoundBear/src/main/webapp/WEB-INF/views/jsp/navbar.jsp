@@ -28,14 +28,19 @@
 					<li> <a  class = "playlists glyphicon glyphicon-play" href="playlists"> Playlists </a> </li>
 					
 					<li> <a  class = "mysongs glyphicon glyphicon-cd" href="mySongs"> MySongs </a> </li>
+					<li> <a  class = "mysongs glyphicon glyphicon-cd" href="mySongs"> Logout </a> </li>
+					
 
 					<li>
-						<div class="search">
+						<div class="search col-md-pull-2">
 							<input type="text" class="form-control input-sm " maxlength="64"
 								placeholder="Search" />
 							<button type="submit" class="btn btn-warning btn-sm glyphicon glyphicon-search"></button>
 						</div>
 					</li>
+					
+					<li> <div class = "col-md-2"></div></li>
+					<li> <a  class = "mysongs glyphicon glyphicon-cd" href="logout"> Logout </a> </li>
 
 				</ul>
 			</div>

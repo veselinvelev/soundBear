@@ -1,5 +1,6 @@
 package com.soundbear.utils;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.soundbear.controller.UserController;
@@ -11,6 +12,7 @@ public class ValidatorUtil {
 
 		return ((str != null) && (str.length() > 0));
 	}
+
 	public static boolean isSessionOver(HttpSession session) {
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
@@ -18,5 +20,12 @@ public class ValidatorUtil {
 			return true;
 		}
 		return false;
+	}
+
+	public static void noBackspaceLogin(HttpServletResponse response) {
+
+		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP
+		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+		response.setDateHeader("Expires", 0);
 	}
 }

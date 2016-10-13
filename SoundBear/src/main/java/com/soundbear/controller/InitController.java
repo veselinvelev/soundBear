@@ -1,6 +1,7 @@
 package com.soundbear.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,36 +20,43 @@ public class InitController {
 	@Autowired
 	private HttpSession session;
 	@Autowired
+	private HttpServletResponse response;
+	@Autowired
 	private UserDAO userRepository;
 
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return getPage(Pages.PLAY);
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return getPage(Pages.PLAY);
 	}
 
 	@RequestMapping(value = "/play", method = RequestMethod.GET)
 	public String play(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return getPage(Pages.PLAY);
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String register(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return Pages.REGISTER;
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.GET)
 	public String upload(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return getPage(Pages.UPLOAD);
 	}
 
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
 	public String profile(Model model) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		if (ValidatorUtil.isSessionOver(session)) {
 			return Pages.LOGIN;
 		}
@@ -62,26 +70,28 @@ public class InitController {
 
 	@RequestMapping(value = "/mySongs", method = RequestMethod.GET)
 	public String mySongs(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return getPage(Pages.MYSONGS);
 	}
 
 	@RequestMapping(value = "/playlists", method = RequestMethod.GET)
 	public String playlists(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return getPage(Pages.PLAYLISTS);
 	}
 	
-	@RequestMapping(value = "/error", method = RequestMethod.POST)
-	public String errorPost(Model model) {
-		return getPage(Pages.ERROR);
-	}
+
 
 	@RequestMapping(value = "/error", method = RequestMethod.GET)
 	public String errorGetS(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return getPage(Pages.ERROR);
 	}
 
 	@RequestMapping(value = "/follow", method = RequestMethod.GET)
 	public String followers(Model model, HttpServletRequest req) {
+		ValidatorUtil.noBackspaceLogin(response);
+		
 		if (ValidatorUtil.isSessionOver(session)) {
 			return Pages.LOGIN;
 		}
@@ -93,6 +103,7 @@ public class InitController {
 
 	@RequestMapping(value = "/viewProfile", method = RequestMethod.GET)
 	public String viewProfile(Model model, HttpServletRequest req) {
+		ValidatorUtil.noBackspaceLogin(response);
 		
 		if (ValidatorUtil.isSessionOver(session)) {
 			return Pages.LOGIN;
@@ -110,29 +121,34 @@ public class InitController {
 	
 	@RequestMapping(value = "/changePassword", method = RequestMethod.GET)
 	public String changePassword(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		 return getPage(Pages.PROFILE);
 	}
 	@RequestMapping(value = "/photoUpload", method = RequestMethod.GET)
 	public String photoUpload(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		 return getPage(Pages.PROFILE);
 	}
 	
 	@RequestMapping(value = "/validateRegisterForm", method = RequestMethod.GET)
 	public String validateRegisterForm(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return Pages.LOGIN;
 	}
 
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
 	public String resetPassword(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		return Pages.LOGIN;
 	}
 	@RequestMapping(value = "/songUpload", method = RequestMethod.GET)
 	public String songUpload(Model model) {
+		ValidatorUtil.noBackspaceLogin(response);
 		 return getPage(Pages.UPLOAD);
 	}
 	@RequestMapping(value = "/registerSubmit", method = RequestMethod.GET)
 	public String registerSubmit(Model model) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		return Pages.LOGIN;
 	}
 

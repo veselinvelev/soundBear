@@ -91,9 +91,12 @@ public class UserController {
 	private DBCleaner dbCleaner;
 	@Autowired
 	private HttpSession session;
+	@Autowired
+	private HttpServletResponse response;
 
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
 	public @ResponseBody BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
+		ValidatorUtil.noBackspaceLogin(response);
 		String email = request.getEmail();
 
 		User user = null;
@@ -139,7 +142,7 @@ public class UserController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody BaseResponse login(@RequestBody LoginRequest request, Model model) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		if (!dbCleaner.isAlive()) {
 			dbCleaner.start();
 		}
@@ -181,7 +184,7 @@ public class UserController {
 
 	@RequestMapping(value = "/registerSubmit", method = RequestMethod.POST)
 	public @ResponseBody BaseResponse register(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		// if (request != null) {
 		String username = request.getUsername();
 		String password1 = request.getPassword1();
@@ -266,7 +269,7 @@ public class UserController {
 
 	@RequestMapping(value = "/validateRegisterForm", method = RequestMethod.POST)
 	public @ResponseBody RegisterFormResponse validateRegisterForm(@RequestBody LoginRequest request) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		String email = null;
 		String username = null;
 
@@ -298,7 +301,7 @@ public class UserController {
 
 	@RequestMapping(value = "/activation", method = RequestMethod.GET)
 	public String activateAcc(HttpServletRequest request) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		String encryptUsername = request.getParameter("data").replace(' ', '+');
 		String username = EncryptionUtil.decrypt(encryptUsername);
 
@@ -346,7 +349,7 @@ public class UserController {
 
 	@RequestMapping(value = "/photoUpload", method = RequestMethod.POST)
 	public String photoUpload(@RequestParam("photo") MultipartFile multipartFile, HttpServletRequest request) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		// System.err.println("======"+multipartFile.getSize()+"=====");
 
 		User user = (User) session.getAttribute(UserController.LOGGED_USER);
@@ -393,7 +396,7 @@ public class UserController {
 
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public @ResponseBody BaseResponse changePassword(@RequestBody LoginRequest request) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		// if (request != null) {
 		String password1 = request.getPassword1();
 		String password2 = request.getPassword2();
@@ -428,7 +431,7 @@ public class UserController {
 
 	@RequestMapping(value = "/listFollowers", method = RequestMethod.GET)
 	public @ResponseBody FollowersResponse listFollowers(HttpServletRequest req, HttpServletResponse resp) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		User user = (User) session.getAttribute(LOGGED_USER);
 
 		if (user == null) {
@@ -457,7 +460,7 @@ public class UserController {
 
 	@RequestMapping(value = "/checkFollowStatus", method = RequestMethod.GET)
 	public @ResponseBody BaseResponse checkFollowStatus(HttpServletRequest req, HttpServletResponse resp) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		User user = (User) session.getAttribute(LOGGED_USER);
 
 		if (user == null) {
@@ -488,7 +491,7 @@ public class UserController {
 
 	@RequestMapping(value = "/updateFollow", method = RequestMethod.GET)
 	public @ResponseBody BaseResponse updateFollow(HttpServletRequest req, HttpServletResponse resp) {
-
+		ValidatorUtil.noBackspaceLogin(response);
 		User user = (User) session.getAttribute(LOGGED_USER);
 
 		if (user == null) {
@@ -512,6 +515,13 @@ public class UserController {
 		BaseResponse response = new BaseResponse();
 		response.setStatus(ResponseStatus.OK);
 		return response;
+	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public  String logout(HttpServletRequest req, HttpServletResponse resp) {
+
+		session.invalidate();
+		return Pages.LOGIN;
 	}
 
 }
