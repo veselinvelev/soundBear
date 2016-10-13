@@ -108,7 +108,7 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/listMySongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse listMySongs(HttpServletResponse resp) {
+	public @ResponseBody SongsResponse listMySongs(HttpServletResponse resp, HttpServletRequest req) {
 
 		
 
@@ -121,10 +121,20 @@ public class SongController {
 				e.printStackTrace();
 			}
 		}
+		
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		int id = 0;
+		User user = null;
+		ArrayList<Song> userSongs = null;
+		
+		if (req.getParameter("id") != null ) {
+			id = Integer.parseInt(req.getParameter("id"));
+			userSongs = (ArrayList<Song>) songRepository.listSongs(id);
+		}else{
+			user = (User) session.getAttribute(UserController.LOGGED_USER);
+			userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
+		}
 
-		ArrayList<Song> userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
 		
 		userSongs.sort(SongUtil.getComaparator(ARTIST));
 

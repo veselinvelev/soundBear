@@ -42,15 +42,17 @@ img {
 	$(document).ready(function() {
 
 		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
-
+		$(".followed-user-songs").hide();
 		var values = parameter.split("=");
+		var showSongs = false;
 
-	//	alert(values[1]);
+		//	alert(values[1]);
 
 		$.ajax({
 			type : 'GET',
 			url : 'checkFollowStatus?id=' + values[1],
 			dataType : 'json',
+			async : false,
 			success : function(data) {
 
 				if (data.status == 'OK') {
@@ -64,61 +66,95 @@ img {
 
 				}
 
+				if ($('#follow').css('display') == 'none') {
+					$(".followed-user-songs").show();
+					showSongs = true;
+				} else {
+					showSongs = false;
+				}
+
 			},
 			error : function(code, message) {
 			}
 		});
+		
+		
+		$.ajax({
+			type : 'GET',
+			url : 'listMySongs?id=' + values[1],
+			dataType : 'json',
+			success : function(data) {
+
+				$.each(data.songs, function(index, song) {
+
+					$("#tbody").append("<tr>" +
+						     " <th scope=\"row\">"+(index+1)+"</th>"+
+						      "<td>"+song.artist+"</td>"+
+						      "<td>"+song.songName+"</td>"+
+						      "<td>"+song.genre+"</td>"+
+						      "<td><audio controls>"+
+						      "<source src="+song.path+" type=\"audio/mpeg\">"+
+						    "</audio></td>"+
+						    "</tr>");
+
+				});
+
+			},
+			error : function(code, message) {
+				$('#error').html(
+						'Error Code: ' + code + ', Error Message: '
+								+ message);
+			}
+		});
+		
 
 	});
-	
-	
+
 	function follow() {
-		
+
 		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
 
 		var values = parameter.split("=");
-		
-			$.ajax({
-				url : 'updateFollow?id=' + values[1] + '&action=follow',
-				type : 'GET',
-				contentType : "application/json; charset=utf-8",
-				dataType : "json",
-				success : function(data) {
-					
-					window.location = 'viewProfile?id=' + values[1];
-			
-				},
-				error : function(data) {
-					window.location = 'error';
-				}
 
-			});
+		$.ajax({
+			url : 'updateFollow?id=' + values[1] + '&action=follow',
+			type : 'GET',
+			contentType : "application/json; charset=utf-8",
+			dataType : "json",
+			success : function(data) {
+
+				window.location = 'viewProfile?id=' + values[1];
+
+			},
+			error : function(data) {
+				window.location = 'error';
+			}
+
+		});
 	}
-	
-function unfollow() {
-		
+
+	function unfollow() {
+
 		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
 
 		var values = parameter.split("=");
-		
-			$.ajax({
-				url : 'updateFollow?id=' + values[1] + '&action=unfollow',
-				type : 'GET',
-				contentType : "application/json; charset=utf-8",
-				dataType : "json",
-				success : function(data) {
-					window.location = 'viewProfile?id=' + values[1];
-			
-				},
-				error : function(data) {
-				
-					window.location = 'error';
-				}
 
-			});
+		$.ajax({
+			url : 'updateFollow?id=' + values[1] + '&action=unfollow',
+			type : 'GET',
+			contentType : "application/json; charset=utf-8",
+			dataType : "json",
+			success : function(data) {
+				window.location = 'viewProfile?id=' + values[1];
+
+			},
+			error : function(data) {
+
+				window.location = 'error';
+			}
+
+		});
 	}
-	
-	
 </script>
 
 <link
@@ -151,43 +187,30 @@ function unfollow() {
 							style="display: none" onclick="unfollow()">Unfollow</button>
 					</div>
 				</div>
-
-
-
-
-
-
-
-
-
-
-			</div>
-
-
-
-
-
-
-			<!--
-				<button class="btn btn-success btn-block">
-					<span class="fa fa-plus-circle"></span> Follow
-				</button>
-			</div>
-			<div class="col-xs-12 col-sm-4 emphasis">
-				<br>
-				<h2>
-					<strong>245</strong>
-				</h2>
-				<p>
-					<small>Following</small>
-				</p>
-				<button class="btn btn-info btn-block">
-					<span class="fa fa-user"></span> View Profile
-				</button>
 			</div>
 
 		</div>
-		-->
+
+		<div style="display: none" class="followed-user-songs">
+			<table class="table table-hover" id="table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Artist</th>
+						<th>Song</th>
+						<th>Genre</th>
+						<th>Play</th>
+					</tr>
+				</thead>
+
+				<tbody id="tbody">
+
+
+
+				</tbody>
+
+			</table>
+
 		</div>
 	</div>
 </body>

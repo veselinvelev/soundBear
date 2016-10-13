@@ -221,14 +221,15 @@ img {
 
 				<div class="span2 col-md-6">
 					<div class="btn-group">
-						<button class="btn  btn-primary btn-info btn-sm "
+						<button class="  btn-primary btn-info btn-xs "
 							onclick="showUpload()">Update Photo</button>
+							<button class=" btn-primary btn-info btn-xs"
+						onclick="showPasswdUpdate()">Update Password</button>
 					</div>
 				</div>
 
 				<div class="btn-group span2  col-md-4">
-					<button class="btn btn-primary btn-info btn-sm"
-						onclick="showPasswdUpdate()">Update Password</button>
+					
 				</div>
 
 			</div>

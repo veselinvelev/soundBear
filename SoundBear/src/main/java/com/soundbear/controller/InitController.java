@@ -39,8 +39,7 @@ public class InitController {
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String register(Model model) {
-		return getPage(Pages.PLAY);
-
+		return Pages.REGISTER;
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.GET)

@@ -36,9 +36,9 @@ public class UserRepository implements UserDAO {
 	private static final String DELETE_USER_SQL = "DELETE FROM users WHERE username = ?";
 	private static final String LIST_USERS_SQL = "SELECT * FROM users";
 	private static final String GET_USER_SQL = "SELECT * FROM users WHERE username = ? AND password = md5(?)";
-	private static final String GET_USER_BY_NAME_SQL = GET_USER_BY_ID;
+	private static final String GET_USER_BY_NAME_SQL = "SELECT * FROM users WHERE username = ?";;
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?),?,?,?)";
-	private static final String VALID_USERNAME_SQL = GET_USER_BY_ID;
+	private static final String VALID_USERNAME_SQL = "SELECT * FROM users WHERE username = ?";;
 	private static final String VALID_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
 	private static final String DELETE_INACTIVE_USERS_SQL = "DELETE FROM users WHERE is_active = 0 AND DATE_SUB(registration_date, INTERVAL ? MINUTE)";
 

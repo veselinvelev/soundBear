@@ -310,7 +310,6 @@ public class UserController {
 			// Update DB
 			if (!user.isActive()) {
 				userRepository.updateActiveStatus(username);
-				HttpSession session = request.getSession();
 				session.setAttribute(LOGGED_USER, user);
 				returnValue = Pages.PLAY;
 
