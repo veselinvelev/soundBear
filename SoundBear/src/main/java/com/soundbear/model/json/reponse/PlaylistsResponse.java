@@ -1,12 +1,11 @@
 package com.soundbear.model.json.reponse;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.soundbear.model.app.Playlist;
 
-public class PlaylistsResponse extends BaseResponse{
+public class PlaylistsResponse extends BaseResponse {
 	/**
 	 * 
 	 */

@@ -46,8 +46,6 @@
 		<input id="searchButton" type="submit"
 			value="Search" onclick="searchArtist()" />
 
-
-
 		<div id="success">
 			<div id="artistName"></div>
 			<div id="artistImage"></div>

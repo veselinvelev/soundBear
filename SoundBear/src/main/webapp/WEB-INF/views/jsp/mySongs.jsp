@@ -28,6 +28,7 @@
 								      "<td><audio controls>"+
 								      "<source src="+song.path+" type=\"audio/mpeg\">"+
 								    "</audio></td>"+
+								    "<td><button class=\"btn-success\" id="+song.songId+">Add to</button></td>"+
 								    "</tr>");
 
 						});
@@ -64,6 +65,7 @@
 						      "<td><audio controls>"+
 						      "<source src="+song.path+" type=\"audio/mpeg\">"+
 						    "</audio></td>"+
+						    "<td><button class=\"btn-success\" id="+song.songId+">Add to</button></td>"+
 						    "</tr>");
 
 				});
@@ -78,7 +80,63 @@
 		
 		
 	} 
+ 	
+ 	$(document).ready(
+			function() {
+				$.ajax({
+					type : 'GET',
+					url : 'listPlaylists',
+					dataType : 'json',
+					success : function(data) {
+
+						$.each(data.playlists, function(index, playlist) {
+
+							$("#playlists").append("<option value="+playlist.playlistId+">"+playlist.playlistName+"</option>");
+
+						});
+
+					},
+					error : function(code, message) {
+						$('#error').html(
+								'Error Code: ' + code + ', Error Message: '
+										+ message);
+					}
+				});
+
+			});
 	
+ 	$(document).ready(function(){
+ 	    $("table").delegate("button", "click", function(){
+ 	        
+ 	    	var songId = this.id;
+ 	    	var playlistId = $("#playlists").val();
+ 	    	
+ 	    	if(playlistId == 'empty'){
+ 	    		$('#select-playlist').fadeIn().delay(2000).fadeOut();
+ 	    		return;
+ 	    	}
+ 	    	
+ 	    	
+ 			$.ajax({
+ 				type : 'GET',
+ 				url : 'addSongToPlaylist?pid='+playlistId+'&sid='+songId,
+ 				dataType : 'json',
+ 				success : function(data) {
+					if(data.status == 'NO'){
+						$('#error-msg').fadeIn().delay(2000).fadeOut();
+					}
+					else{
+						$('#success').fadeIn().delay(2000).fadeOut();
+					}
+ 				},
+ 				error : function(data) {
+
+ 				}
+ 			});
+ 	    	
+ 	    });
+ 	});
+ 	
 	
 </script>
 
@@ -96,6 +154,18 @@
 
 					</select>
 					
+		</div>
+		
+		 <div class="col-xs-2 col-md-push-10" style="position:fixed; top: 50%;left: 83%;">
+		 
+			<select class="form-control" id="playlists">
+				<option value="empty"></option>	
+			
+			
+			</select>
+			<span id="error-msg" style="display:none;color:red">The song is already in the selected playlist.</span>
+			<span id ="select-playlist" style="display:none;color:red">Please select a playlist first.</span>
+			<span id="success" style="display:none;color:green">Song was added to the selected playlist.</span>
 		</div>
 		
 		<table class="table table-hover" id="table">

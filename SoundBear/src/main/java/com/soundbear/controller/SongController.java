@@ -46,7 +46,7 @@ public class SongController {
 	private HttpSession session;
 
 	@Autowired
-	SongDAO songRepository;
+	private SongDAO songRepository;
 
 	@RequestMapping(value = "/songUpload", method = RequestMethod.POST)
 	public String songUplaod(@RequestParam("song") MultipartFile multipartFile, HttpServletRequest request) {
