@@ -42,8 +42,8 @@
 	<div class="container">
 
 		Artist: <input type="text" id="artist"  onkeydown = "if (event.keyCode == 13)
-                        document.getElementById('searchButton').click()"/> 
-		<input id="searchButton" type="submit"
+                        document.getElementById('apiSearch').click()"/> 
+		<input id="apiSearch" type="submit"
 			value="Search" onclick="searchArtist()" />
 
 		<div id="success">
