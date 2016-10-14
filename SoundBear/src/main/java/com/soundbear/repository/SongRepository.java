@@ -19,6 +19,7 @@ import com.soundbear.model.app.Song;
 
 @Repository
 public class SongRepository implements SongDAO {
+	private static final String DELETE_SONG_SQL = "DELETE FROM songs WHERE song_id = ?";
 	private static final String GET_GENRE_SQL = "SELECT genre_id FROM genres WHERE genre_name = ?";
 	private static final String GET_ARTIST_SQL = "SELECT artist_id FROM artists WHERE artist_name = ?";
 	private static final String ADD_ARTIST_SQL = "INSERT INTO artists values (null, ?)";
@@ -131,9 +132,14 @@ public class SongRepository implements SongDAO {
 
 	@Override
 	public List<Song> listSongsByPlaylist(int playlistId) {
-		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_PLAYLIST_SQL, new Object[] { playlistId }, new SongMapper());
+		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_PLAYLIST_SQL, new Object[] { playlistId },
+				new SongMapper());
 
 		return songs;
+	}
+
+	public void deleteSong(int songId) {
+		jdbcTemplate.update(DELETE_SONG_SQL, songId);
 	}
 
 	public class SongMapper implements RowMapper<Song> {

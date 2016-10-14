@@ -28,6 +28,7 @@
 								      "<td><audio controls>"+
 								      "<source src="+song.path+" type=\"audio/mpeg\">"+
 								    "</audio></td>"+
+								    "<td><input type=\"button\" id="+song.songId+" class=\"btn-danger\" value=\"Delete\"/>"+
 								    "<td><button class=\"btn-success\" id="+song.songId+">Add to</button></td>"+
 								    "</tr>");
 
@@ -65,6 +66,7 @@
 						      "<td><audio controls>"+
 						      "<source src="+song.path+" type=\"audio/mpeg\">"+
 						    "</audio></td>"+
+						    "<td><input type=\"button\" id="+song.songId+" class=\"btn-danger\" value=\"Delete\"/>"+
 						    "<td><button class=\"btn-success\" id="+song.songId+">Add to</button></td>"+
 						    "</tr>");
 
@@ -137,6 +139,42 @@
  	    });
  	});
  	
+ 	$(document).ready(function(){
+ 	    $("table").delegate("input", "click", function(){
+ 	        
+ 	    	$("#tbody").html("");
+ 	    	var songId = this.id;
+ 	    	
+ 			$.ajax({
+ 				type : 'GET',
+ 				url : 'deleteSong?sid='+songId,
+ 				dataType : 'json',
+ 				success : function(data) {
+ 					
+ 					$.each(data.songs, function(index, song) {
+
+						$("#tbody").append("<tr>" +
+							     " <th scope=\"row\">"+(index+1)+"</th>"+
+							      "<td>"+song.artist+"</td>"+
+							      "<td>"+song.songName+"</td>"+
+							      "<td>"+song.genre+"</td>"+
+							      "<td><audio controls>"+
+							      "<source src="+song.path+" type=\"audio/mpeg\">"+
+							    "</audio></td>"+
+							    "<td><input type=\"button\" id="+song.songId+" class=\"btn-danger\" value=\"Delete\"/>"+
+							    "<td><button class=\"btn-success\" id="+song.songId+">Add to</button></td>"+
+							    "</tr>");
+
+					});
+ 					
+ 				},
+ 				error : function(data) {
+
+ 				}
+ 			});
+ 	    	
+ 	    });
+ 	});
 	
 </script>
 
@@ -156,7 +194,7 @@
 					
 		</div>
 		
-		 <div class="col-xs-2 col-md-push-10" style="position:fixed; top: 50%;left: 83%;">
+		 <div class="col-xs-2 col-md-push-10" style="position:fixed; top: 28%;left: 83%;">
 		 
 			<select class="form-control" id="playlists">
 				<option value="empty"></option>	

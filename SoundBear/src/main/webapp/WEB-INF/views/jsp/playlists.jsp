@@ -4,14 +4,20 @@
 <script>
 	$(document).ready(
 			function() {
+				$("#table").hide();
+				
 				$.ajax({
 					type : 'GET',
 					url : 'listPlaylists',
 					dataType : 'json',
 					success : function(data) {
 
+						if(Object.keys(data.playlists).length > 0){
+							$("#table").show();
+						}
+						
 						$.each(data.playlists, function(index, playlist) {
-
+							
 							$("#tbody").append("<tr>" +
 								     " <th scope=\"row\">"+(index+1)+"</th>"+
 								      "<td>"+playlist.playlistName+"</td>"+
@@ -58,7 +64,8 @@
 						    "</tr>");
 
 				});
-
+				
+				$("#table").show();
 			},
 			error : function(code, message) {
 				$('#error').html(
@@ -73,6 +80,7 @@
  	    $("table").delegate("input", "click", function(){
  	        
  	    	var playlistId = this.id;
+ 	    	$("#table").hide();
  	    	
  	    	$("#tbody").html("");
  			
@@ -82,8 +90,12 @@
  				dataType : 'json',
  				success : function(data) {
 
+ 					if(Object.keys(data.playlists).length > 0){
+						$("#table").show();
+					}
+ 					
  					$.each(data.playlists, function(index, playlist) {
-
+ 						
  						$("#tbody").append("<tr>" +
 							     " <th scope=\"row\">"+(index+1)+"</th>"+
 							      "<td>"+playlist.playlistName+"</td>"+

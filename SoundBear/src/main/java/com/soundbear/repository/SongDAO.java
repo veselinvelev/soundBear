@@ -23,5 +23,7 @@ public interface SongDAO {
 	List<Song> listSongsByGenre(String genreName);
 
 	List<Song> listSongsByPlaylist(int playlistId);
+	
+	public void deleteSong(int songId);
 
 }

@@ -1,8 +1,10 @@
 package com.soundbear.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +40,17 @@ public class PlaylistController {
 	PlaylistDAO playlistRepository;
 
 	@RequestMapping(value = "/listPlaylists", method = RequestMethod.GET)
-	public @ResponseBody PlaylistsResponse listPlaylists() {
+	public @ResponseBody PlaylistsResponse listPlaylists(HttpServletResponse httpResponse) {
 
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				httpResponse.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		ArrayList<Playlist> userPlaylists = (ArrayList<Playlist>) playlistRepository.listPlaylists(user.getUserId());
@@ -52,8 +63,18 @@ public class PlaylistController {
 	}
 
 	@RequestMapping(value = "/addPlaylist/{playlistName}", method = RequestMethod.GET)
-	public @ResponseBody PlaylistsResponse addPlaylist(@PathVariable("playlistName") String playlistName) {
+	public @ResponseBody PlaylistsResponse addPlaylist(@PathVariable("playlistName") String playlistName,HttpServletRequest request,HttpServletResponse httpResponse) {
 
+		if (ValidatorUtil.isSessionOver(session)){
+			 try {
+					httpResponse.sendRedirect(request.getContextPath().toString());
+					return null;
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+		
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		if (ValidatorUtil.isStringValid(playlistName)) {
@@ -70,8 +91,18 @@ public class PlaylistController {
 	}
 
 	@RequestMapping(value = "/deletePlaylist/{playlistId}", method = RequestMethod.GET)
-	public @ResponseBody PlaylistsResponse deletePlaylist(@PathVariable("playlistId") int playlistId) {
+	public @ResponseBody PlaylistsResponse deletePlaylist(@PathVariable("playlistId") int playlistId,HttpServletRequest request, HttpServletResponse httpResponse) {
 
+		if (ValidatorUtil.isSessionOver(session)){
+			 try {
+					httpResponse.sendRedirect(request.getContextPath().toString());
+					return null;
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+		
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		playlistRepository.deletePlaylist(playlistId);
@@ -86,59 +117,37 @@ public class PlaylistController {
 	}
 
 	@RequestMapping(value = "/openPlaylist", method = RequestMethod.GET)
-	public String openPlaylist(HttpServletRequest request) {
+	public String openPlaylist(HttpServletRequest request, HttpServletResponse response) {
 
-	/*	if (ValidatorUtil.isSessionOver(session)) {
-			
-			System.out.println("====================================================================================");
-				System.out.println("----------------------------------------------------------------------------------------");
-				
-				System.err.println("URL" + request.getRequestURL().toString());
-				System.err.println("URI" + request.getRequestURI().toString());
-				
-				System.err.println("Context" + request.getContextPath().toString());
-				
-		
-		 try {
-					//request.getRequestDispatcher("login").forward(request,response);
-					response.sendRedirect(request.getContextPath().toString());
-					//return "";
-				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-		}*/
-		
-		//session
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				response.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
 		
 		Playlist playlist = playlistRepository.getPlaylist(playlistId);
 
 		request.setAttribute("playlist", playlist);
-	/*	try {
-			response.sendRedirect(request.getContextPath().toString() + "/playlist");
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			response.sendRedirect(request.getContextPath()+"/playlist");
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		
 		return Pages.PLAYLIST;
 	}
 	
 	@RequestMapping(value = "/showSongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse showSongs (HttpServletRequest request) {
+	public @ResponseBody SongsResponse showSongs (HttpServletRequest request, HttpServletResponse httpResponse) {
+		
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				httpResponse.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
 
@@ -154,7 +163,16 @@ public class PlaylistController {
 	}
 	
 	@RequestMapping(value = "/sortPlaylistSongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse sortPlaylistSongs (HttpServletRequest request) {
+	public @ResponseBody SongsResponse sortPlaylistSongs (HttpServletRequest request, HttpServletResponse httpResponse) {
+		
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				httpResponse.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
 		
@@ -172,7 +190,16 @@ public class PlaylistController {
 	}
 	
 	@RequestMapping(value = "/deleteSongFromPlaylist", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse deleteSongFromPlaylist (HttpServletRequest request) {
+	public @ResponseBody SongsResponse deleteSongFromPlaylist (HttpServletRequest request, HttpServletResponse httpResponse) {
+		
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				httpResponse.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
 		
@@ -192,7 +219,16 @@ public class PlaylistController {
 	}
 
 	@RequestMapping(value = "/addSongToPlaylist", method = RequestMethod.GET)
-	public @ResponseBody BaseResponse addSongToPlaylist (HttpServletRequest request) {
+	public @ResponseBody BaseResponse addSongToPlaylist (HttpServletRequest request, HttpServletResponse httpResponse) {
+		
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				httpResponse.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
 		

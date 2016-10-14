@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -49,8 +48,17 @@ public class SongController {
 	private SongDAO songRepository;
 
 	@RequestMapping(value = "/songUpload", method = RequestMethod.POST)
-	public String songUplaod(@RequestParam("song") MultipartFile multipartFile, HttpServletRequest request) {
+	public String songUplaod(@RequestParam("song") MultipartFile multipartFile, HttpServletRequest request,HttpServletResponse response) {
 
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				response.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		String artist = request.getParameter("artist").trim();
@@ -59,8 +67,6 @@ public class SongController {
 
 		if (ValidatorUtil.isStringValid(artist) && ValidatorUtil.isStringValid(songName)
 				&& ValidatorUtil.isStringValid(genre)) {
-
-			
 
 			new Thread() {
 				AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
@@ -110,15 +116,12 @@ public class SongController {
 
 	@RequestMapping(value = "/listMySongs", method = RequestMethod.GET)
 	public @ResponseBody SongsResponse listMySongs(HttpServletResponse resp, HttpServletRequest req) {
-
 		
-
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {
 				resp.sendRedirect(Pages.LOGIN);
 				return null;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -149,17 +152,17 @@ public class SongController {
 	@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
 	public @ResponseBody SongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria, HttpServletResponse resp, HttpServletRequest req ) {
 
-		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
-		if (user == null) {
-			
-				try {
-					req.getRequestDispatcher(Pages.LOGIN).forward(req, resp);
-				} catch (ServletException | IOException e) {
-					// TODO Auto-generated catch block
+		if (ValidatorUtil.isSessionOver(session)){
+			 try {
+					resp.sendRedirect(req.getContextPath().toString());
+					return null;
+				}
+				catch (IOException e) {
 					e.printStackTrace();
-				};
-		
+				}
 		}
+		
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		ArrayList<Song> userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
 		
@@ -172,6 +175,34 @@ public class SongController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/deleteSong", method = RequestMethod.GET)
+	public @ResponseBody SongsResponse deleteSong(HttpServletRequest request, HttpServletResponse response) {
 
+		if (ValidatorUtil.isSessionOver(session)) {
+			try {
+				response.sendRedirect(Pages.LOGIN);
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
+		
+		int songId = Integer.parseInt(request.getParameter("sid"));
+		
+		songRepository.deleteSong(songId);
+		
+		ArrayList<Song> userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
+		
+		userSongs.sort(SongUtil.getComaparator(ARTIST));
+
+		SongsResponse resp = new SongsResponse();
+
+		resp.setSongs(userSongs);
+
+		return resp;
+		
+	}
 
 }
