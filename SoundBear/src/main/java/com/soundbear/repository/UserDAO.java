@@ -14,7 +14,7 @@ public interface UserDAO {
 
 	public User getUser(String username, String password);
 
-	public List<User> listUsers();
+	public ArrayList<User> listUsers(String search);
 
 	public void deleteUser(String username);
 

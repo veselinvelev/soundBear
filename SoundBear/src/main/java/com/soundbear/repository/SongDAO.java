@@ -16,7 +16,7 @@ public interface SongDAO {
 
 	List<Song> listSongs();
 
-	List<Song> listSongs(String key);
+	List<Song> listSongs(String search);
 
 	List<Song> listSongs(int userId);
 

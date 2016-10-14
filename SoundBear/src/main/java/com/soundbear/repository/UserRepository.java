@@ -20,6 +20,7 @@ import com.soundbear.model.app.exceptions.UserException;
 
 @Repository
 public class UserRepository implements UserDAO {
+	private static final String UNFOLLOW_SQL = "DELETE FROM follows where user_id = ? and following = ?;";
 	private static final String FOLLOW_SQL = "INSERT INTO follows VALUES (? , ?);";
 	private static final String GET_FOLLOW_STATUS_SQL = "SELECT following from follows where user_id = ? and following = ?";
 	private static final String LIST_FOLLOWING_SQL = "SELECT * FROM users WHERE user_id IN (SELECT following FROM follows where user_id = ?);";
@@ -34,7 +35,7 @@ public class UserRepository implements UserDAO {
 	private static final String UPDATE_USER = "UPDATE users SET username = ?, email = ?, password = md5(?) WHERE username = ?";
 	private static final String DELETE_USERS_SQL = "DELETE FROM users";
 	private static final String DELETE_USER_SQL = "DELETE FROM users WHERE username = ?";
-	private static final String LIST_USERS_SQL = "SELECT * FROM users";
+	private static final String LIST_USERS_SQL = "SELECT * FROM users WHERE username LIKE ?";
 	private static final String GET_USER_SQL = "SELECT * FROM users WHERE username = ? AND password = md5(?)";
 	private static final String GET_USER_BY_NAME_SQL = "SELECT * FROM users WHERE username = ?";
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?, ?, md5(?),?,?,?)";
@@ -97,8 +98,9 @@ public class UserRepository implements UserDAO {
 	}
 
 	@Override
-	public List<User> listUsers() {
-		List<User> users = jdbcTemplate.query(LIST_USERS_SQL, new UserMapper());
+	public ArrayList<User> listUsers(String search) {
+		
+		ArrayList<User> users = new ArrayList<User>( jdbcTemplate.query(LIST_USERS_SQL, new Object[] { "%" + search.trim() + "%" }, new UserMapper()));
 
 		return users;
 	}
@@ -229,8 +231,8 @@ public class UserRepository implements UserDAO {
 		int value = 0;
 
 		try {
-			value = jdbcTemplate.queryForObject(GET_FOLLOW_STATUS_SQL,
-					new Object[] { user.getUserId(), id }, Integer.class);
+			value = jdbcTemplate.queryForObject(GET_FOLLOW_STATUS_SQL, new Object[] { user.getUserId(), id },
+					Integer.class);
 
 		} catch (EmptyResultDataAccessException e) {
 			e.printStackTrace();
@@ -247,8 +249,8 @@ public class UserRepository implements UserDAO {
 
 	@Override
 	public void unfollow(User user, int id) {
-		jdbcTemplate.update("DELETE FROM follows where user_id = ? and following = ?;", user.getUserId(), id);
-		
+		jdbcTemplate.update(UNFOLLOW_SQL, user.getUserId(), id);
+
 	}
 
 }

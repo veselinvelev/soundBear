@@ -39,6 +39,8 @@ img {
 </style>
 
 <script type="text/javascript">
+	var showSongs = false;
+
 	$(document).ready(function() {
 
 		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
@@ -51,22 +53,28 @@ img {
 			type : 'GET',
 			url : 'checkFollowStatus?id=' + values[1],
 			dataType : 'json',
+			async : false,
 			success : function(data) {
 
 				if (data.status == 'OK') {
 					$("#follow").hide();
 					$("#unfollow").show();
+					showSongs = true;
 
 				} else {
 
 					$("#follow").show();
 					$("#unfollow").hide();
+					showSongs = false;
 
 				}
 
 			},
 			error : function(code, message) {
 			}
+			
+		
+			
 		});
 		
 		
@@ -76,7 +84,7 @@ img {
 			dataType : 'json',
 			success : function(data) {
 				
-				if(Object.keys(data.songs).length > 0){
+				if(Object.keys(data.songs).length > 0 && showSongs){
 					$(".followed-user-songs").show();
 				}
 

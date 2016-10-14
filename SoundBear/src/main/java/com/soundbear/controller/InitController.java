@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.soundbear.model.app.User;
 import com.soundbear.repository.UserDAO;
 import com.soundbear.utils.Pages;
+import com.soundbear.utils.UserUtil;
 import com.soundbear.utils.ValidatorUtil;
 
 @Controller
@@ -53,7 +54,7 @@ public class InitController {
 			return Pages.LOGIN;
 		}
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 		user.setFollowers(userRepository.getNumFollowers(user));
 		user.setFollowing(userRepository.getNumFollowing(user));
 
@@ -134,7 +135,7 @@ public class InitController {
 	}
 
 	private String getPage(String page) {
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 		return (user != null) ? page : Pages.LOGIN;
 
 	}

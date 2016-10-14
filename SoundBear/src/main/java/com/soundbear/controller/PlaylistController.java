@@ -21,6 +21,7 @@ import com.soundbear.repository.PlaylistDAO;
 import com.soundbear.repository.SongDAO;
 import com.soundbear.utils.Pages;
 import com.soundbear.utils.SongUtil;
+import com.soundbear.utils.UserUtil;
 import com.soundbear.utils.ValidatorUtil;
 
 @Controller
@@ -37,7 +38,7 @@ public class PlaylistController {
 	@RequestMapping(value = "/listPlaylists", method = RequestMethod.GET)
 	public @ResponseBody PlaylistsResponse listPlaylists() {
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		ArrayList<Playlist> userPlaylists = (ArrayList<Playlist>) playlistRepository.listPlaylists(user.getUserId());
 
@@ -51,7 +52,7 @@ public class PlaylistController {
 	@RequestMapping(value = "/addPlaylist/{playlistName}", method = RequestMethod.GET)
 	public @ResponseBody PlaylistsResponse addPlaylist(@PathVariable("playlistName") String playlistName) {
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		if (ValidatorUtil.isStringValid(playlistName)) {
 			playlistRepository.addPlaylist(new Playlist(0, playlistName, user.getUserId()));
@@ -69,7 +70,7 @@ public class PlaylistController {
 	@RequestMapping(value = "/deletePlaylist/{playlistId}", method = RequestMethod.GET)
 	public @ResponseBody PlaylistsResponse deletePlaylist(@PathVariable("playlistId") int playlistId) {
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		playlistRepository.deletePlaylist(playlistId);
 
@@ -85,62 +86,57 @@ public class PlaylistController {
 	@RequestMapping(value = "/openPlaylist", method = RequestMethod.GET)
 	public String openPlaylist(HttpServletRequest request) {
 
-	/*	if (ValidatorUtil.isSessionOver(session)) {
-			
-			System.out.println("====================================================================================");
-				System.out.println("----------------------------------------------------------------------------------------");
-				
-				System.err.println("URL" + request.getRequestURL().toString());
-				System.err.println("URI" + request.getRequestURI().toString());
-				
-				System.err.println("Context" + request.getContextPath().toString());
-				
-		
-		 try {
-					//request.getRequestDispatcher("login").forward(request,response);
-					response.sendRedirect(request.getContextPath().toString());
-					//return "";
-				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		/*
+		 * if (ValidatorUtil.isSessionOver(session)) {
+		 * 
+		 * System.out.println(
+		 * "===================================================================================="
+		 * ); System.out.println(
+		 * "----------------------------------------------------------------------------------------"
+		 * );
+		 * 
+		 * System.err.println("URL" + request.getRequestURL().toString());
+		 * System.err.println("URI" + request.getRequestURI().toString());
+		 * 
+		 * System.err.println("Context" + request.getContextPath().toString());
+		 * 
+		 * 
+		 * try {
+		 * //request.getRequestDispatcher("login").forward(request,response);
+		 * response.sendRedirect(request.getContextPath().toString()); //return
+		 * ""; } catch (IOException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 * 
+		 * }
+		 */
 
-		}*/
-		
-		//session
+		// session
 
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
-		
+
 		Playlist playlist = playlistRepository.getPlaylist(playlistId);
 
 		request.setAttribute("playlist", playlist);
-	/*	try {
-			response.sendRedirect(request.getContextPath().toString() + "/playlist");
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			response.sendRedirect(request.getContextPath()+"/playlist");
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
+		/*
+		 * try { response.sendRedirect(request.getContextPath().toString() +
+		 * "/playlist"); } catch (IOException e) { // TODO Auto-generated catch
+		 * block e.printStackTrace(); }
+		 * 
+		 * try { response.sendRedirect(request.getContextPath()+"/playlist"); }
+		 * catch (IOException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
+
 		return Pages.PLAYLIST;
 	}
-	
+
 	@RequestMapping(value = "/showSongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse showSongs (HttpServletRequest request) {
-		
+	public @ResponseBody SongsResponse showSongs(HttpServletRequest request) {
+
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
 
 		ArrayList<Song> playlistSongs = (ArrayList<Song>) songRepository.listSongsByPlaylist(playlistId);
-		
+
 		playlistSongs.sort(SongUtil.getComaparator(SongController.ARTIST));
 
 		SongsResponse response = new SongsResponse();
@@ -149,16 +145,16 @@ public class PlaylistController {
 
 		return response;
 	}
-	
+
 	@RequestMapping(value = "/sortPlaylistSongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse sortPlaylistSongs (HttpServletRequest request) {
-		
+	public @ResponseBody SongsResponse sortPlaylistSongs(HttpServletRequest request) {
+
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
-		
+
 		String criteria = request.getParameter("criteria");
 
 		ArrayList<Song> playlistSongs = (ArrayList<Song>) songRepository.listSongsByPlaylist(playlistId);
-		
+
 		playlistSongs.sort(SongUtil.getComaparator(criteria));
 
 		SongsResponse response = new SongsResponse();
@@ -167,18 +163,18 @@ public class PlaylistController {
 
 		return response;
 	}
-	
+
 	@RequestMapping(value = "/deleteSongFromPlaylist", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse deleteSongFromPlaylist (HttpServletRequest request) {
-		
+	public @ResponseBody SongsResponse deleteSongFromPlaylist(HttpServletRequest request) {
+
 		int playlistId = Integer.parseInt(request.getParameter("pid"));
-		
+
 		int songId = Integer.parseInt(request.getParameter("sid"));
-		
+
 		playlistRepository.deleteSong(playlistId, songId);
 
 		ArrayList<Song> playlistSongs = (ArrayList<Song>) songRepository.listSongsByPlaylist(playlistId);
-		
+
 		playlistSongs.sort(SongUtil.getComaparator(SongController.ARTIST));
 
 		SongsResponse response = new SongsResponse();

@@ -34,6 +34,7 @@ import com.soundbear.repository.SongDAO;
 import com.soundbear.utils.AWSConstants;
 import com.soundbear.utils.Pages;
 import com.soundbear.utils.SongUtil;
+import com.soundbear.utils.UserUtil;
 import com.soundbear.utils.ValidatorUtil;
 
 @Controller
@@ -50,7 +51,7 @@ public class SongController {
 	@RequestMapping(value = "/songUpload", method = RequestMethod.POST)
 	public String songUplaod(@RequestParam("song") MultipartFile multipartFile, HttpServletRequest request) {
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
 		String artist = request.getParameter("artist").trim();
 		String songName = request.getParameter("name").trim();
@@ -131,7 +132,7 @@ public class SongController {
 			id = Integer.parseInt(req.getParameter("id"));
 			userSongs = (ArrayList<Song>) songRepository.listSongs(id);
 		}else{
-			user = (User) session.getAttribute(UserController.LOGGED_USER);
+			user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 			userSongs = (ArrayList<Song>) songRepository.listSongs(user.getUserId());
 		}
 
@@ -148,7 +149,7 @@ public class SongController {
 	@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
 	public @ResponseBody SongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria, HttpServletResponse resp, HttpServletRequest req ) {
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 		if (user == null) {
 			
 				try {

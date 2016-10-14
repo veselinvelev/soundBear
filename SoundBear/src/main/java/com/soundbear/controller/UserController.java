@@ -3,7 +3,6 @@ package com.soundbear.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.mail.MessagingException;
@@ -35,7 +34,6 @@ import com.soundbear.model.app.User;
 import com.soundbear.model.app.exceptions.UserException;
 import com.soundbear.model.json.reponse.BaseResponse;
 import com.soundbear.model.json.reponse.BaseResponse.ResponseStatus;
-import com.soundbear.model.json.reponse.FollowersResponse;
 import com.soundbear.model.json.reponse.RegisterFormResponse;
 import com.soundbear.model.json.request.LoginRequest;
 import com.soundbear.model.json.request.ResetPasswordRequest;
@@ -46,6 +44,7 @@ import com.soundbear.utils.EmailUtil;
 import com.soundbear.utils.EncryptionUtil;
 import com.soundbear.utils.ErrorMsgs;
 import com.soundbear.utils.Pages;
+import com.soundbear.utils.UserUtil;
 import com.soundbear.utils.ValidatorUtil;
 
 @Controller
@@ -74,8 +73,6 @@ public class UserController {
 	private static final int MIN_USERNAME_LENGTH = 4;
 
 	private static final String THERE_ARE_EMPTY_FIELDS = "Please fill out all fields";
-
-	public static final String LOGGED_USER = "loggedUser";
 
 	private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -165,7 +162,7 @@ public class UserController {
 			if (user != null) {
 				user.setFollowers(userRepository.getNumFollowers(user));
 				user.setFollowing(userRepository.getNumFollowing(user));
-				session.setAttribute(LOGGED_USER, user);
+				session.setAttribute(UserUtil.LOGGED_USER, user);
 
 				status = ResponseStatus.OK;
 			} else {
@@ -303,6 +300,7 @@ public class UserController {
 		String username = EncryptionUtil.decrypt(encryptUsername);
 
 		String returnValue = null;
+		
 
 		User user = userRepository.getUserByName(username);
 
@@ -310,7 +308,7 @@ public class UserController {
 			// Update DB
 			if (!user.isActive()) {
 				userRepository.updateActiveStatus(username);
-				session.setAttribute(LOGGED_USER, user);
+				session.setAttribute(UserUtil.LOGGED_USER, user);
 				returnValue = Pages.PLAY;
 
 			} else {
@@ -349,7 +347,7 @@ public class UserController {
 
 		// System.err.println("======"+multipartFile.getSize()+"=====");
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 		new Thread() {
 			AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
 
@@ -410,7 +408,7 @@ public class UserController {
 		// TODO
 		// VALIDATE PASSWORD FORMAT AND LENGTH
 
-		User user = (User) session.getAttribute(LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 		try {
 			user.setPassword(password1);
 		} catch (UserException e) {
@@ -426,96 +424,8 @@ public class UserController {
 
 	}
 
-	@RequestMapping(value = "/listFollowers", method = RequestMethod.GET)
-	public @ResponseBody FollowersResponse listFollowers(HttpServletRequest req, HttpServletResponse resp) {
-
-		User user = (User) session.getAttribute(LOGGED_USER);
-
-		if (user == null) {
-			try {
-				resp.sendRedirect(Pages.LOGIN);
-				return null;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		ArrayList<User> followers = null;
-		if (req.getParameter("item").equals("Followers")) {
-			followers = userRepository.listFollowers(user);
-		} else {
-			followers = userRepository.listFollowing(user);
-		}
-
-		FollowersResponse response = new FollowersResponse();
-
-		response.setFollowers(followers);
-
-		return response;
-	}
-
-	@RequestMapping(value = "/checkFollowStatus", method = RequestMethod.GET)
-	public @ResponseBody BaseResponse checkFollowStatus(HttpServletRequest req, HttpServletResponse resp) {
-
-		User user = (User) session.getAttribute(LOGGED_USER);
-
-		if (user == null) {
-			try {
-				resp.sendRedirect(Pages.LOGIN);
-				return null;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		int id = Integer.parseInt(req.getParameter("id"));
-
-		int followStatus = 0;
-		ResponseStatus status = ResponseStatus.NO;
-
-		followStatus = userRepository.getFollowStatus(user, id);
-
-		if (followStatus != 0) {
-			status = ResponseStatus.OK;
-		}
-
-		BaseResponse response = new BaseResponse();
-		response.setStatus(status);
-		return response;
-	}
-
-	@RequestMapping(value = "/updateFollow", method = RequestMethod.GET)
-	public @ResponseBody BaseResponse updateFollow(HttpServletRequest req, HttpServletResponse resp) {
-
-		User user = (User) session.getAttribute(LOGGED_USER);
-
-		if (user == null) {
-			try {
-				resp.sendRedirect(Pages.LOGIN);
-				return null;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		int id = Integer.parseInt(req.getParameter("id"));
-		String action = req.getParameter("action");
-
-		if (action.equals("follow")) {
-			userRepository.follow(user, id);
-		} else {
-			userRepository.unfollow(user, id);
-		}
-		BaseResponse response = new BaseResponse();
-		response.setStatus(ResponseStatus.OK);
-		return response;
-	}
-	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public  String logout(HttpServletRequest req, HttpServletResponse resp) {
+	public String logout(HttpServletRequest req, HttpServletResponse resp) {
 
 		session.invalidate();
 		return Pages.LOGIN;

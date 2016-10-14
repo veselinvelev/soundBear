@@ -108,9 +108,9 @@ public class SongRepository implements SongDAO {
 	}
 
 	@Override
-	public List<Song> listSongs(String key) {
+	public List<Song> listSongs(String search) {
 		List<Song> songs = jdbcTemplate.query(LIST_SONGS_BY_KEY_SQL,
-				new Object[] { "%" + key.trim() + "%", "%" + key.trim() + "%" }, new SongMapper());
+				new Object[] { "%" + search.trim() + "%", "%" + search.trim() + "%" }, new SongMapper());
 
 		return songs;
 	}

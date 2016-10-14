@@ -1,9 +1,7 @@
 package com.soundbear.utils;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.soundbear.controller.UserController;
 import com.soundbear.model.app.User;
 
 public class ValidatorUtil {
@@ -15,7 +13,7 @@ public class ValidatorUtil {
 
 	public static boolean isSessionOver(HttpSession session) {
 
-		User user = (User) session.getAttribute(UserController.LOGGED_USER);
+		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 		if (user == null) {
 			return true;
 		}
