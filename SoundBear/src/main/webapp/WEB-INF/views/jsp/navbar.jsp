@@ -7,29 +7,10 @@
 <script type="text/javascript">
 	function searching() {
 		var search = $("#search-text").val();
-		alert(search);
-
-		$.ajax({
-			url : 'search',
-			type : 'POST',
-			data : JSON.stringify({
-				"search" : search,
-			}),
-			contentType : "application/json; charset=utf-8",
-			dataType : "json",
-			success : function(data) {
-
-				if (data.status === 'OK') {
-					
-				} else {
-			
-				}
-			},
-			error : function(data) {
-				alert(data);
-			}
-
-		});
+		
+		if (search) {
+			window.location = "search?search=" + search;
+		}
 	}
 </script>
 
@@ -80,10 +61,11 @@
 				<li>
 					<div class="search col-md-pull-2">
 						<input type="text" id="search-text" class="form-control input-sm " maxlength="64"
-							placeholder="Search" />
-						<button type="submit"
+							placeholder="Search" onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('searchButton').click()" />
+						<button type="submit" id="searchButton"
 							class="searching btn btn-warning btn-sm glyphicon glyphicon-search "
-							onclick="searching()"></button>
+							onclick="searching()" ></button>
 					</div>
 				</li>
 

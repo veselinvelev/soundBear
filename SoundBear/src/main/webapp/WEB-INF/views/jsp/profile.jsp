@@ -198,13 +198,13 @@ img {
 
 				<div class="col-md-2  row  ">
 					<div class=" col-sm-2 inline">
-						<p>
+						
 						<h2>
 							<strong> <c:out value="${loggedUser.followers}" /></strong>
 						</h2>
 
 						<strong><a href="follow?item=Followers">Followers</a></strong>
-						</p>
+				
 
 					</div>
 					<div class=" col-sm-4 col-sm-push-8">

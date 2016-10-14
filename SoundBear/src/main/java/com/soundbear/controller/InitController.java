@@ -41,6 +41,11 @@ public class InitController {
 	public String register(Model model) {
 		return Pages.REGISTER;
 	}
+	
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String search(Model model) {
+		return getPage(Pages.SEARCH);
+	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.GET)
 	public String upload(Model model) {

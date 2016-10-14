@@ -33,8 +33,6 @@ public class SearchController {
 		String search = request.getSearch();
 		
 		
-		
-		
 		ArrayList<User> users = new ArrayList<>(userRepository.listUsers(search));
 		ArrayList<Song> songs = new ArrayList<>(songRepository.listSongs(search));
 		

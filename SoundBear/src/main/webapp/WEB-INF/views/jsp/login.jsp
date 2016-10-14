@@ -26,13 +26,16 @@
                 <div class="wrap">
                     <p class="form-title">Sign In</p>
                     <div class="login">
-                        <input id="username" name="username" type="text" placeholder="Username" required="required" />
-                        <input id="password" name="password" type="password" placeholder="Password" required="required" />
-                        <div class="btn-group btn-group-justified">
+                        <input id="username" name="username" type="text" placeholder="Username" required="required" onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('loginButton').click()"  /> <input id="password" name="password"
+							type="password" placeholder="Password" required="required"
+							onkeydown="if (event.keyCode == 13)
+                        document.getElementById('loginButton').click()" />
+						<div class="btn-group btn-group-justified">
                             <div class="btn-group">
                                 <span id="login-error" class="login-error">Inalid
 									username or password</span>
-                                <button class="btn btn-primary btn-warning btn-sm" onclick="login()">SIGN IN</button>
+                                <button class="btn btn-primary btn-warning btn-sm" id="loginButton"onclick="login()">SIGN IN</button>
                             </div>
                         </div>
 

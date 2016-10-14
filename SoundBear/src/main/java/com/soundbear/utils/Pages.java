@@ -14,6 +14,6 @@ public interface Pages{
 	String ANOTHEUSER = "another_user";
 	String PLAYLISTS = "playlists";
 	String PLAYLIST = "playlist";
-	String INDEX = "/";
+	String SEARCH = "search";
 	
 }
