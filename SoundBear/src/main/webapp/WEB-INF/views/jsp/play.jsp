@@ -10,7 +10,7 @@ a.song-a {
 }
 
 #playlist {
-	background: black;
+	background: #404040;
 	width: 400px;
 	padding: 20px;
 	list-style-type: none;
@@ -28,7 +28,7 @@ li.active a.song-a {
 }
 
 li a.song-a {
-	background: black;
+	background: #404040;
 	padding: 5px;
 	display: block;
 	text-decoration: none;
@@ -85,6 +85,13 @@ li a.song-a {
 				dataType : 'json',
 				success : function(data) {
 
+					if(Object.keys(data.playlists).length == 0){
+						$(".audioPlayer").hide();
+						return;
+					}
+					
+					$(".audioPlayer").show();
+					
 					$.each(data.playlists, function(index, playlist) {
 
 						$("#playlists").append(
@@ -159,9 +166,12 @@ li a.song-a {
 	
 		var playlistId = $("#playlists").val();
 		
+		
 		$("#audio").html("");
 		$("#playlist").html("");
-		
+		if (playlistId == 'empty') {
+			return;
+		}
 		$.ajax({
 			type : 'GET',
 			url : 'showSongs?pid='+playlistId,
@@ -222,7 +232,7 @@ li a.song-a {
 
 
 				</div>
-				<div class="col-xs-4" style="overflow-y: scroll; height:110px; width:432; background-color:black">
+				<div class=" col-xs-4" style="overflow-y: scroll; height:110px; width:432; background-color:#404040">
 
 					<ul id="playlist">
 					
