@@ -165,7 +165,9 @@ li a.song-a {
 	function loadPlaylist(){
 	
 		var playlistId = $("#playlists").val();
-		
+		document.getElementById("audio").removeAttribute("src");
+		document.getElementById("audio").load();
+		document.getElementById("audio").play();
 		
 		$("#audio").html("");
 		$("#playlist").html("");
@@ -185,7 +187,9 @@ li a.song-a {
 				$.each(data.songs, function(index, song) {
 
 					if(index == 0){
+						
 						$("#audio").append("<source type=\"audio/mp3\" src=\" "     + song.path +  "\">");
+						
 						
 						$("#playlist").append("<li class=\"active\"><a class=\"song-a\" href=\" " + song.path +"\">" +song.artist + " - " + song.songName +"</a></li>");
 						

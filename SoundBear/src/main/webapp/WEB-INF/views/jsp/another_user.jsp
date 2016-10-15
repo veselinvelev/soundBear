@@ -45,6 +45,7 @@ img {
 
 		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
 		$(".followed-user-songs").hide();
+		$("#playlists").hide();
 		var values = parameter.split("=");
 
 		//	alert(values[1]);
@@ -86,6 +87,7 @@ img {
 				
 				if(Object.keys(data.songs).length > 0 && showSongs){
 					$(".followed-user-songs").show();
+					$("#playlists").show();
 				}
 
 				$.each(data.songs, function(index, song) {
@@ -98,6 +100,7 @@ img {
 						      "<td><audio controls>"+
 						      "<source src="+song.path+" type=\"audio/mpeg\">"+
 						    "</audio></td>"+
+						    "<td><button class=\"btn-success\" id="+song.songId+">Add to</button></td>"+
 						    "</tr>");
 
 				});
@@ -110,9 +113,33 @@ img {
 			}
 		});
 		
+		$.ajax({
+			type : 'GET',
+			url : 'listPlaylists',
+			dataType : 'json',
+			success : function(data) {
+
+				$.each(data.playlists, function(index, playlist) {
+
+					$("#playlists").append("<option value="+playlist.playlistId+">"+playlist.playlistName+"</option>");
+
+				});
+
+			},
+			error : function(code, message) {
+				$('#error').html(
+						'Error Code: ' + code + ', Error Message: '
+								+ message);
+			}
+		});
+		
+		
 
 	});
 
+	
+	
+	
 	function follow() {
 
 		var parameter = window.location.search.replace("?", ""); // will return the GET parameter 
@@ -158,6 +185,39 @@ img {
 
 		});
 	}
+	
+	$(document).ready(function(){
+ 	    $("table").delegate("button", "click", function(){
+ 	        
+ 	    	var songId = this.id;
+ 	    	var playlistId = $("#playlists").val();
+ 	    	
+ 	    	if(playlistId == 'empty'){
+ 	    		$('#select-playlist').fadeIn().delay(2000).fadeOut();
+ 	    		return;
+ 	    	}
+ 	    	
+ 	    	
+ 			$.ajax({
+ 				type : 'GET',
+ 				url : 'addSongToPlaylist?pid='+playlistId+'&sid='+songId,
+ 				dataType : 'json',
+ 				success : function(data) {
+					if(data.status == 'NO'){
+						$('#error-msg').fadeIn().delay(2000).fadeOut();
+					}
+					else{
+						$('#success').fadeIn().delay(2000).fadeOut();
+					}
+ 				},
+ 				error : function(data) {
+
+ 				}
+ 			});
+ 	    	
+ 	    });
+ 	});
+	
 </script>
 
 <link
@@ -194,7 +254,23 @@ img {
 
 		</div>
 
-		<div style="display: none" class="followed-user-songs">
+		
+
+		<div style="display: none" class="followed-user-songs col-md-11">
+		
+		<div class="col-xs-2 col-md-push-10" style="position:fixed; top: 70%;left: 83%;">
+				
+						 
+							<select class="form-control" id="playlists">
+								<option value="empty"></option>	
+							
+							
+							</select>
+							<span id="error-msg" style="display:none;color:red">The song is already in the selected playlist.</span>
+							<span id ="select-playlist" style="display:none;color:red">Please select a playlist first.</span>
+							<span id="success" style="display:none;color:green">Song was added to the selected playlist.</span>
+				</div>
+		
 			<table class="table table-hover" id="table">
 				<thead>
 					<tr>
