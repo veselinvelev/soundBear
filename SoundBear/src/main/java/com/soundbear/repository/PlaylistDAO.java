@@ -20,4 +20,5 @@ public interface PlaylistDAO {
 
 	boolean isSongInPlaylist(int playlistId, int songId);
 
+	boolean isPlaylistTaken(String playlistName, int userId);
 }

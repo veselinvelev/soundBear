@@ -76,14 +76,22 @@ public class PlaylistController {
 		}
 		
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
-
-		if (ValidatorUtil.isStringValid(playlistName)) {
-			playlistRepository.addPlaylist(new Playlist(0, playlistName, user.getUserId()));
+		
+		PlaylistsResponse response = new PlaylistsResponse();
+		
+		if(playlistRepository.isPlaylistTaken(playlistName, user.getUserId())){
+			response.setStatus(ResponseStatus.NO);
+			
+		}
+		else{
+			if (ValidatorUtil.isStringValid(playlistName)) {
+				playlistRepository.addPlaylist(new Playlist(0, playlistName, user.getUserId()));
+			}
+			
+			response.setStatus(ResponseStatus.OK);
 		}
 
 		ArrayList<Playlist> userPlaylists = (ArrayList<Playlist>) playlistRepository.listPlaylists(user.getUserId());
-
-		PlaylistsResponse response = new PlaylistsResponse();
 
 		response.setPlaylists((userPlaylists));
 

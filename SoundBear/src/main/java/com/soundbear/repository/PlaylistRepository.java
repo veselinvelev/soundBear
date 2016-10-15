@@ -15,6 +15,7 @@ import com.soundbear.model.app.Playlist;
 
 @Repository
 public class PlaylistRepository implements PlaylistDAO {
+	private static final String IS_PLAYLIST_TAKEN_SQL = "SELECT count(*) FROM playlists WHERE playlist_name = ? AND user_id = ?";
 	private static final String IS_SONG_IN_PLAYLIST_SQL = "SELECT count(*) FROM playlists_has_songs WHERE playlist_id = ? AND song_id = ?";
 	private static final String DELETE_SONG_FROM_PLAYLIST_SQL = "DELETE FROM playlists_has_songs WHERE playlist_id = ? AND song_id = ?";
 	private static final String DELETE_PLAYLIST_SQL = "DELETE FROM playlists WHERE playlist_id = ?";
@@ -70,6 +71,14 @@ public class PlaylistRepository implements PlaylistDAO {
 	@Override
 	public boolean isSongInPlaylist(int playlistId, int songId) {
 		Integer result = jdbcTemplate.queryForObject(IS_SONG_IN_PLAYLIST_SQL, new Object[] { playlistId, songId },
+				Integer.class);
+
+		return result != 0 ? true : false;
+	}
+
+	@Override
+	public boolean isPlaylistTaken(String playlistName, int userId) {
+		Integer result = jdbcTemplate.queryForObject(IS_PLAYLIST_TAKEN_SQL, new Object[] { playlistName, userId },
 				Integer.class);
 
 		return result != 0 ? true : false;
