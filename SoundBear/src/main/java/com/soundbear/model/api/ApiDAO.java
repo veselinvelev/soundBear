@@ -13,6 +13,7 @@ import com.google.gson.stream.JsonReader;
 @Component
 public class ApiDAO {
 
+	private static final int MIN_TIME_BETWEEN_REQUESTS = 300;
 	private static final String A_TAG_START = "<a";
 
 	public TrackInfo getTrackInfo(String songName, String artist) {
@@ -49,7 +50,7 @@ public class ApiDAO {
 		}
 
 		try {
-			Thread.sleep(300);
+			Thread.sleep(MIN_TIME_BETWEEN_REQUESTS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

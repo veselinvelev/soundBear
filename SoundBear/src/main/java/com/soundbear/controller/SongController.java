@@ -51,72 +51,7 @@ public class SongController {
 	@Autowired
 	private SongDAO songRepository;
 
-	@RequestMapping(value = "/songUpload", method = RequestMethod.POST)
-	public String songUplaod(@RequestParam("song") MultipartFile multipartFile, HttpServletRequest request,
-			HttpServletResponse response) {
-
-		if (ValidatorUtil.isSessionOver(session)) {
-			try {
-				response.sendRedirect(Pages.LOGIN);
-				return null;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
-
-		String artist = request.getParameter("artist").trim();
-		String songName = request.getParameter("name").trim();
-		String genre = request.getParameter("genre").trim();
-
-		if (ValidatorUtil.isStringValid(artist) && ValidatorUtil.isStringValid(songName)
-				&& ValidatorUtil.isStringValid(genre)) {
-
-			new Thread() {
-				AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-				@Override
-				public void run() {
-					InputStream is = null;
-
-					try {
-						is = multipartFile.getInputStream();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-					String songCloudName = (songName.replaceAll(AWSConstants.AWS_FILE_NAME_REGEX, "") + user.getUserId()
-							+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
-
-					// save song on s3 with public read access
-					s3client.putObject(
-							new PutObjectRequest(AWSConstants.BUCKET_NAME, songCloudName, is, new ObjectMetadata())
-									.withCannedAcl(CannedAccessControlList.PublicRead));
-
-					// get referance to the song object
-					S3Object s3Object = s3client
-							.getObject(new GetObjectRequest(AWSConstants.BUCKET_NAME, songCloudName));
-
-					// get song url
-					String songURL = s3Object.getObjectContent().getHttpRequest().getURI().toString();
-
-					songRepository.addSong(new Song(0, songName, songURL, user.getUserId(), genre, artist));
-
-					try {
-						is.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}.start();
-
-		} else {
-
-		}
-
-		return Pages.UPLOAD;
-	}
+	
 
 	@RequestMapping(value = "/listMySongs", method = RequestMethod.GET)
 	public SongsResponse listMySongs(HttpServletResponse resp, HttpServletRequest req) {
@@ -233,5 +168,7 @@ public class SongController {
 
 		return response;
 	}
+
+	
 
 }

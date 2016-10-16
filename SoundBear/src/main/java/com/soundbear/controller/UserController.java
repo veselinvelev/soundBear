@@ -60,8 +60,6 @@ public class UserController {
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final String RESET_MSG = "Your password has been reset to : ";
 	private static final String PASSWORD_RESET = "Password Reset";
-	// private static final int VALID_STRING_LENGTH = 45;
-	// private static final int INTERVAL_OF_DB_CLEAN = 10800000;
 	private static final String USERNAME_REGEX = "^[a-zA-Z]+[a-zA-Z0-9_.]*$";
 
 	@Autowired
@@ -95,18 +93,9 @@ public class UserController {
 				e1.printStackTrace();
 			}
 			userRepository.updatePassword(user);
-
-			new Thread() {
-				public void run() {
-					try {
-						EmailUtil.sendEmail(email, RESET_MSG + newPassword, PASSWORD_RESET);
-					} catch (AddressException e) {
-						e.printStackTrace();
-					} catch (MessagingException e) {
-						e.printStackTrace();
-					}
-				};
-			}.start();
+			
+			new Thread(() -> sendEmail(email, RESET_MSG + newPassword, PASSWORD_RESET)).start();
+		
 		}
 
 		BaseResponse response = new BaseResponse();
@@ -161,12 +150,10 @@ public class UserController {
 	@RequestMapping(value = "/registerSubmit", method = RequestMethod.POST)
 	public BaseResponse register(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
-		// if (request != null) {
 		String username = request.getUsername();
 		String password1 = request.getPassword1();
 		String password2 = request.getPassword2();
 		String email = request.getEmail();
-		// }
 
 		BaseResponse response = new BaseResponse();
 		ResponseStatus status;
@@ -219,18 +206,7 @@ public class UserController {
 			status = ResponseStatus.OK;
 			msg = REGISTRATION_SUCCESSFUL;
 			String activationURL = generateActivationURL(httpRequest, username);
-			new Thread() {
-				@Override
-				public void run() {
-					try {
-						EmailUtil.sendEmail(email, ACTIVATION_MSG + activationURL, ACC_ACTIVATION);
-					} catch (AddressException e) {
-						e.printStackTrace();
-					} catch (MessagingException e) {
-						e.printStackTrace();
-					}
-				};
-			}.start();
+			new Thread(() -> sendEmail(email, ACTIVATION_MSG + activationURL, ACC_ACTIVATION)).start();
 
 		} else {
 			status = ResponseStatus.NO;
@@ -327,4 +303,14 @@ public class UserController {
 
 	}
 
+	private void sendEmail(String email, String activationURL, String subject) {
+		try {
+			EmailUtil.sendEmail(email, activationURL, subject);
+		} catch (AddressException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+
+	}
 }

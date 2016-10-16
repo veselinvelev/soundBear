@@ -32,7 +32,7 @@ import com.soundbear.utils.UserUtil;
 
 @Controller
 public class AccountController {
-	
+
 	@Autowired
 	private UserDAO userRepository;
 	@Autowired
@@ -72,44 +72,40 @@ public class AccountController {
 	@RequestMapping(value = "/photoUpload", method = RequestMethod.POST)
 	public String photoUpload(@RequestParam("photo") MultipartFile multipartFile, HttpServletRequest request) {
 
-
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
-		new Thread() {
-			AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-			@Override
-			public void run() {
-				InputStream is = null;
-
-				try {
-					is = multipartFile.getInputStream();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				String photoCloudName = ("profilepicture" + user.getUserId()
-						+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
-
-				s3client.putObject(
-						new PutObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName, is, new ObjectMetadata())
-								.withCannedAcl(CannedAccessControlList.PublicRead));
-
-				S3Object s3Object = s3client.getObject(new GetObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName));
-
-				String photoURL = s3Object.getObjectContent().getHttpRequest().getURI().toString();
-
-				user.setPhoto(photoURL);
-				userRepository.addPhoto(user);
-
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
+		new Thread(() -> uploadProfilePicture(multipartFile, user)).start();
 
 		return Pages.PROFILE;
+	}
+
+	private void uploadProfilePicture(MultipartFile multipartFile, User user) {
+		AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+		InputStream is = null;
+
+		try {
+			is = multipartFile.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		String photoCloudName = ("profilepicture" + user.getUserId()
+				+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
+
+		s3client.putObject(new PutObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName, is, new ObjectMetadata())
+				.withCannedAcl(CannedAccessControlList.PublicRead));
+
+		S3Object s3Object = s3client.getObject(new GetObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName));
+
+		String photoURL = s3Object.getObjectContent().getHttpRequest().getURI().toString();
+
+		user.setPhoto(photoURL);
+		userRepository.addPhoto(user);
+
+		try {
+			is.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
