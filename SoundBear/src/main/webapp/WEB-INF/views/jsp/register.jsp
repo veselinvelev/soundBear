@@ -34,7 +34,7 @@
 							placeholder="Confirm Password" required="required" maxlength="45"
 							onblur="validate()" onkeydown = "if (event.keyCode == 13)
 		                        document.getElementById('signup').click()" /> <span class="password-error">Passwords
-							don't match. </span> <span class="password-success">Passwords
+							don't match or are too short. </span> <span class="password-success">Passwords
 							match. </span>
 
 

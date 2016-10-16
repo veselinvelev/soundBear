@@ -92,6 +92,7 @@
     function validate() {
         var usernameRegex = new RegExp("^[a-zA-Z]+[a-zA-Z0-9_.]*$");
         var emailRegex = new RegExp("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        var passwordRegex = new RegExp ("[a-zA-Z0-9_.!@#$%^&*()]*$");
 
         var username = $("#username").val();
         var email = $("#email").val();
@@ -157,7 +158,7 @@
             }
         });
 
-        if (password1 == password2) {
+        if (password1 == password2 && passwordRegex.test(password1) && password1.length > 4) {
             isValidPassword = true;
 
             $(".password-success").show();

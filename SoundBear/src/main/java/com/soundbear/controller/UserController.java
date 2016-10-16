@@ -36,14 +36,6 @@ public class UserController {
 
 	private static final String PASSWORD_UPDATED = "Password Updated!";
 
-	private static final String USRNAME_TOO_SHORT = "The username is too short";
-
-	private static final String INVALID_USERNAME = "Username must contain only latin letters and digits, must not start with a digit.";
-
-	private static final String INVALID_EMAIL = "Email is not in a valid format.";
-
-	private static final String PASSWRDS_DONT_MATCH = "Passwords are different";
-
 	private static final String ACC_ACTIVATION = "SoundBear Activation";
 
 	private static final String ACTIVATION_MSG = "To activate the account: ";
@@ -52,15 +44,8 @@ public class UserController {
 
 	private static final String REGISTRATION_SUCCESSFUL = "Registration successful. Please check your email for account activation.";
 
-	private static final int MIN_USERNAME_LENGTH = 4;
-
-	private static final String THERE_ARE_EMPTY_FIELDS = "Please fill out all fields";
-
-	private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final String RESET_MSG = "Your password has been reset to : ";
 	private static final String PASSWORD_RESET = "Password Reset";
-	private static final String USERNAME_REGEX = "^[a-zA-Z]+[a-zA-Z0-9_.]*$";
 
 	@Autowired
 	private UserDAO userRepository;
@@ -76,7 +61,7 @@ public class UserController {
 		User user = null;
 
 		boolean isEmpty = email.isEmpty();
-		boolean isValid = email.matches(EMAIL_REGEX);
+		boolean isValid = email.matches(ValidatorUtil.EMAIL_REGEX);
 		boolean isFree = userRepository.isValidEmail(email);
 
 		ResponseStatus status = null;
@@ -93,9 +78,9 @@ public class UserController {
 				e1.printStackTrace();
 			}
 			userRepository.updatePassword(user);
-			
+
 			new Thread(() -> sendEmail(email, RESET_MSG + newPassword, PASSWORD_RESET)).start();
-		
+
 		}
 
 		BaseResponse response = new BaseResponse();
@@ -159,45 +144,22 @@ public class UserController {
 		ResponseStatus status;
 		String msg = null;
 
-		if (!ValidatorUtil.isStringValid(username) || !ValidatorUtil.isStringValid(password1)
-				|| !ValidatorUtil.isStringValid(password2) || !ValidatorUtil.isStringValid(email)) {
-			response.setStatus(ResponseStatus.NO);
-			response.setMsg(THERE_ARE_EMPTY_FIELDS);
+		ValidatorUtil.checkInput(username, password1, password2, email, response);
+
+		ValidatorUtil.checkUsernam(username, response);
+
+		ValidatorUtil.checkEmail(email, response);
+
+		ValidatorUtil.checkPassword(password1, password2, response);
+
+		if (response.getStatus() == ResponseStatus.NO) {
 			return response;
 		}
-
-		if (!password1.equals(password2)) {
-			response.setStatus(ResponseStatus.NO);
-			response.setMsg(PASSWRDS_DONT_MATCH);
-			return response;
-		}
-
-		if (username.length() < MIN_USERNAME_LENGTH) {
-			response.setStatus(ResponseStatus.NO);
-			response.setMsg(USRNAME_TOO_SHORT);
-			return response;
-		}
-
-		if (!username.matches(USERNAME_REGEX)) {
-			response.setStatus(ResponseStatus.NO);
-			response.setMsg(INVALID_USERNAME);
-			return response;
-		}
-
-		if (!email.matches(EMAIL_REGEX)) {
-			response.setStatus(ResponseStatus.NO);
-			response.setMsg(INVALID_EMAIL);
-			return response;
-		}
-
-		// TODO
-		// VALIDATE PASSWORD FORMAT AND LENGTH
 
 		int success = 0;
 		try {
 			success = userRepository.addUser(new User(0, username, email, password1, 0, new Date(), null));
 		} catch (UserException e1) {
-			// TODO Auto-generated catch block
 			System.out.println("User can not be created");
 			e1.printStackTrace();
 		}
@@ -236,7 +198,7 @@ public class UserController {
 		boolean isUsernameFree = false;
 		boolean isEmailFree = false;
 
-		if (isEmailValid && email.matches(EMAIL_REGEX)) {
+		if (isEmailValid && email.matches(ValidatorUtil.EMAIL_REGEX)) {
 			isEmailFree = userRepository.isValidEmail(email);
 		}
 
@@ -278,20 +240,18 @@ public class UserController {
 
 		BaseResponse response = new BaseResponse();
 
-		if (!password1.equals(password2)) {
-			response.setStatus(ResponseStatus.NO);
-			response.setMsg(PASSWRDS_DONT_MATCH);
+		ValidatorUtil.checkPassword(password1, password2, response);
+		
+		if (response.getStatus() == ResponseStatus.NO) {
 			return response;
 		}
 
-		// TODO
-		// VALIDATE PASSWORD FORMAT AND LENGTH
+		
 
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 		try {
 			user.setPassword(password1);
 		} catch (UserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
