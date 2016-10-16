@@ -85,12 +85,12 @@ li a.song-a {
 				dataType : 'json',
 				success : function(data) {
 
-					if(Object.keys(data.playlists).length == 0){
+				/* 	if(Object.keys(data.playlists).length == 0){
 						$(".audioPlayer").hide();
 						return;
 					}
 					
-					$(".audioPlayer").show();
+					$(".audioPlayer").show(); */
 					
 					$.each(data.playlists, function(index, playlist) {
 

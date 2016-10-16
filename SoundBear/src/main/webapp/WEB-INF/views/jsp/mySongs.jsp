@@ -6,6 +6,8 @@
 				
 				$("#table").hide();
 				$("#sort").hide();
+				$("#playlists").hide();
+				$("#sorting").hide();
 				
 				$.ajax({
 					type : 'GET',
@@ -16,6 +18,8 @@
 						if(Object.keys(data.songs).length > 0){
 							$("#table").show();
 							$("#sort").show();
+							$("#playlists").show();
+							$("#sorting").show();
 						}
 
 						$.each(data.songs, function(index, song) {
@@ -183,7 +187,7 @@
 
 <body>
 	<div class="col-md-9 col-md-push-1" id="mySongs">
-		<div class="form-inline">
+		<div class="form-inline" id = "sorting">
 		<label>Sort by:</label> <select class="form-control" id="sortBy" name="sortBy" onchange="sortSongs()">
 
 						<option value="artist">Artist</option>
