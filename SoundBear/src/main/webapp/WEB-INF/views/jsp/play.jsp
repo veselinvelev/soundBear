@@ -213,6 +213,32 @@ li a.song-a {
 	}
 	
 	
+	function loadSongsInfo(){
+		
+		var playlistId = $("#playlists").val();
+		
+		
+		$("#audio").html("");
+		$("#playlist").html("");
+		if (playlistId == 'empty') {
+			return;
+		}
+		$.ajax({
+			type : 'GET',
+			url : 'showSongInfo?pid='+playlistId,
+			dataType : 'json',
+			success : function(data) {
+	
+			},
+			error : function(code, message) {
+				$('#error').html(
+						'Error Code: ' + code + ', Error Message: '
+								+ message);
+			}
+		});
+		
+	}
+	
 	
 
 </script>
@@ -259,7 +285,7 @@ li a.song-a {
 
 				<div class="col-xs-2 col-xs-push-1">
 
-					<select class="form-control" id="playlists" onchange="loadPlaylist()">
+					<select class="form-control" id="playlists" onchange="loadPlaylist(); loadSongsInfo();">
 						<option value="empty"></option>
 
 

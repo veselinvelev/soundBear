@@ -31,6 +31,10 @@ public class InitController {
 	public String login(Model model) {
 		return getPage(Pages.PLAY);
 	}
+	@RequestMapping(value = "/showSongInfo", method = RequestMethod.GET)
+	public String songInfo(Model model) {
+		return getPage(Pages.PLAY);
+	}
 
 	@RequestMapping(value = "/play", method = RequestMethod.GET)
 	public String play(Model model) {

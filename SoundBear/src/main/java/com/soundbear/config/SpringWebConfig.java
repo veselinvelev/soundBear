@@ -42,7 +42,7 @@ import com.soundbear.repository.UserRepository;
 @EnableWebMvc
 // @ComponentScan("com.soundbear.controller")
 @EnableTransactionManagement // Transactions
-@ComponentScan(basePackages = { "com.soundbear.controller", "com.soundbear.repository", "com.soundbear.utils" })
+@ComponentScan(basePackages = { "com.soundbear.controller", "com.soundbear.repository", "com.soundbear.utils", "com.soundbear.model.api" })
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 
 	@Override
