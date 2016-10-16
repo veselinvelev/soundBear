@@ -13,6 +13,8 @@ import com.google.gson.stream.JsonReader;
 @Component
 public class ApiDAO {
 
+	private static final String A_TAG_START = "<a";
+
 	public TrackInfo getTrackInfo(String songName, String artist) {
 
 		songName = songName.replace(' ', '+');
@@ -23,17 +25,28 @@ public class ApiDAO {
 
 		String gsonString = getJsonString(trackURL).trim();
 
+		if (gsonString.contains("error")) {
+			return null;
+		}
+
 		Gson gson = new Gson();
 		JsonReader reader = new JsonReader(new StringReader(gsonString));
 		reader.setLenient(true);
-		TrackInfo track = gson.fromJson(reader, TrackInfo.class);
-
-		System.err.println("JSON STRING METHOD==========   " + gsonString);
+		TrackInfo track = null;
+		try {
+			track = gson.fromJson(reader, TrackInfo.class);
+		} catch (com.google.gson.JsonSyntaxException e) {
+			e.printStackTrace();
+			return null;
+		}
 
 		String summary = track.getTrack().getWiki().getSummary();
-		int start = summary.indexOf("<a");
-		summary = summary.substring(0, start - 1) + ".";
-		track.getTrack().getWiki().setSummary(summary);
+		if (summary != null && summary.contains(A_TAG_START)) {
+			int start = summary.indexOf(A_TAG_START);
+			summary = summary.substring(0, start - 1) + ".";
+			track.getTrack().getWiki().setSummary(summary);
+
+		}
 
 		try {
 			Thread.sleep(300);

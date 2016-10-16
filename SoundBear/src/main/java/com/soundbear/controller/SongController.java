@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -120,7 +119,7 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/listMySongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse listMySongs(HttpServletResponse resp, HttpServletRequest req) {
+	public SongsResponse listMySongs(HttpServletResponse resp, HttpServletRequest req) {
 
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {
@@ -153,8 +152,8 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/sortMySongs/{sortCriteria}", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria,
-			HttpServletResponse resp, HttpServletRequest req) {
+	public SongsResponse sortMySongs(@PathVariable("sortCriteria") String criteria, HttpServletResponse resp,
+			HttpServletRequest req) {
 
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {
@@ -179,7 +178,7 @@ public class SongController {
 	}
 
 	@RequestMapping(value = "/deleteSong", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse deleteSong(HttpServletRequest request, HttpServletResponse response) {
+	public SongsResponse deleteSong(HttpServletRequest request, HttpServletResponse response) {
 
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {

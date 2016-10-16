@@ -2,7 +2,6 @@ package com.soundbear.model.app;
 
 import java.util.Date;
 
-import com.soundbear.controller.UserController;
 import com.soundbear.model.app.exceptions.UserException;
 import com.soundbear.utils.ValidatorUtil;
 

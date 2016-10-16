@@ -8,10 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.soundbear.model.app.User;
 import com.soundbear.model.json.reponse.BaseResponse;
@@ -22,7 +21,7 @@ import com.soundbear.utils.Pages;
 import com.soundbear.utils.UserUtil;
 import com.soundbear.utils.ValidatorUtil;
 
-@Controller
+@RestController
 public class FollowingController {
 	
 	@Autowired
@@ -32,7 +31,7 @@ public class FollowingController {
 	
 	
 	@RequestMapping(value = "/updateFollow", method = RequestMethod.GET)
-	public @ResponseBody BaseResponse updateFollow(HttpServletRequest req, HttpServletResponse resp) {
+	public  BaseResponse updateFollow(HttpServletRequest req, HttpServletResponse resp) {
 
 		
 
@@ -61,7 +60,7 @@ public class FollowingController {
 	}
 	
 	@RequestMapping(value = "/checkFollowStatus", method = RequestMethod.GET)
-	public @ResponseBody BaseResponse checkFollowStatus(HttpServletRequest req, HttpServletResponse resp) {
+	public  BaseResponse checkFollowStatus(HttpServletRequest req, HttpServletResponse resp) {
 
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 
@@ -93,7 +92,7 @@ public class FollowingController {
 	
 	
 	@RequestMapping(value = "/listFollowers", method = RequestMethod.GET)
-	public @ResponseBody FollowersResponse listFollowers(HttpServletRequest req, HttpServletResponse resp) {
+	public  FollowersResponse listFollowers(HttpServletRequest req, HttpServletResponse resp) {
 
 		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
 

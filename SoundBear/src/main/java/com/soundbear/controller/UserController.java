@@ -1,35 +1,20 @@
 package com.soundbear.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.soundbear.model.app.User;
 import com.soundbear.model.app.exceptions.UserException;
 import com.soundbear.model.json.reponse.BaseResponse;
@@ -38,16 +23,13 @@ import com.soundbear.model.json.reponse.RegisterFormResponse;
 import com.soundbear.model.json.request.LoginRequest;
 import com.soundbear.model.json.request.ResetPasswordRequest;
 import com.soundbear.repository.UserDAO;
-import com.soundbear.utils.AWSConstants;
 import com.soundbear.utils.DBCleaner;
 import com.soundbear.utils.EmailUtil;
 import com.soundbear.utils.EncryptionUtil;
-import com.soundbear.utils.ErrorMsgs;
-import com.soundbear.utils.Pages;
 import com.soundbear.utils.UserUtil;
 import com.soundbear.utils.ValidatorUtil;
 
-@Controller
+@RestController
 public class UserController {
 
 	private static final String DEFAULT_STRING = "Default";
@@ -90,7 +72,7 @@ public class UserController {
 	private HttpSession session;
 
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
+	public BaseResponse resetPassword(@RequestBody ResetPasswordRequest request) {
 		String email = request.getEmail();
 
 		User user = null;
@@ -135,7 +117,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse login(@RequestBody LoginRequest request, Model model) {
+	public BaseResponse login(@RequestBody LoginRequest request, Model model) {
 
 		if (!dbCleaner.isAlive()) {
 			dbCleaner.start();
@@ -177,7 +159,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/registerSubmit", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse register(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+	public BaseResponse register(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
 		// if (request != null) {
 		String username = request.getUsername();
@@ -262,7 +244,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/validateRegisterForm", method = RequestMethod.POST)
-	public @ResponseBody RegisterFormResponse validateRegisterForm(@RequestBody LoginRequest request) {
+	public RegisterFormResponse validateRegisterForm(@RequestBody LoginRequest request) {
 
 		String email = null;
 		String username = null;
@@ -293,38 +275,6 @@ public class UserController {
 		return response;
 	}
 
-	@RequestMapping(value = "/activation", method = RequestMethod.GET)
-	public String activateAcc(HttpServletRequest request) {
-
-		String encryptUsername = request.getParameter("data").replace(' ', '+');
-		String username = EncryptionUtil.decrypt(encryptUsername);
-
-		String returnValue = null;
-		
-
-		User user = userRepository.getUserByName(username);
-
-		if (user != null) {
-			// Update DB
-			if (!user.isActive()) {
-				userRepository.updateActiveStatus(username);
-				session.setAttribute(UserUtil.LOGGED_USER, user);
-				returnValue = Pages.PLAY;
-
-			} else {
-				returnValue = Pages.LOGIN;
-			}
-
-		} else {
-
-			returnValue = Pages.ERROR;
-			request.setAttribute(ErrorMsgs.ERROR_REDIRECT, Pages.REGISTER);
-			request.setAttribute(ErrorMsgs.ERROR_MSG, ErrorMsgs.ACTIVATION_FAILED);
-		}
-
-		return returnValue;
-	}
-
 	private String genPassword() {
 		int length = 8;
 		boolean useLetters = true;
@@ -342,55 +292,8 @@ public class UserController {
 		return activationURL;
 	}
 
-	@RequestMapping(value = "/photoUpload", method = RequestMethod.POST)
-	public String photoUpload(@RequestParam("photo") MultipartFile multipartFile, HttpServletRequest request) {
-
-		// System.err.println("======"+multipartFile.getSize()+"=====");
-
-		User user = (User) session.getAttribute(UserUtil.LOGGED_USER);
-		new Thread() {
-			AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-			@Override
-			public void run() {
-				InputStream is = null;
-
-				try {
-					is = multipartFile.getInputStream();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				String photoCloudName = ("profilepicture" + user.getUserId()
-						+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
-
-				// save song on s3 with public read access
-				s3client.putObject(
-						new PutObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName, is, new ObjectMetadata())
-								.withCannedAcl(CannedAccessControlList.PublicRead));
-
-				// get referance to the song object
-				S3Object s3Object = s3client.getObject(new GetObjectRequest(AWSConstants.BUCKET_NAME, photoCloudName));
-
-				// get song url
-				String photoURL = s3Object.getObjectContent().getHttpRequest().getURI().toString();
-
-				user.setPhoto(photoURL);
-				userRepository.addPhoto(user);
-
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
-		return Pages.PROFILE;
-	}
-
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse changePassword(@RequestBody LoginRequest request) {
+	public BaseResponse changePassword(@RequestBody LoginRequest request) {
 
 		// if (request != null) {
 		String password1 = request.getPassword1();
@@ -422,13 +325,6 @@ public class UserController {
 
 		return response;
 
-	}
-
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public String logout(HttpServletRequest req, HttpServletResponse resp) {
-
-		session.invalidate();
-		return Pages.LOGIN;
 	}
 
 }

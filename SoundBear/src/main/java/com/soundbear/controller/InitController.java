@@ -1,6 +1,7 @@
 package com.soundbear.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,7 @@ public class InitController {
 	public String login(Model model) {
 		return getPage(Pages.PLAY);
 	}
-	@RequestMapping(value = "/showSongInfo", method = RequestMethod.GET)
-	public String songInfo(Model model) {
-		return getPage(Pages.PLAY);
-	}
+
 
 	@RequestMapping(value = "/play", method = RequestMethod.GET)
 	public String play(Model model) {
@@ -140,6 +138,13 @@ public class InitController {
 	@RequestMapping(value = "/registerSubmit", method = RequestMethod.GET)
 	public String registerSubmit(Model model) {
 
+		return Pages.LOGIN;
+	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logout(HttpServletRequest req, HttpServletResponse resp) {
+
+		session.invalidate();
 		return Pages.LOGIN;
 	}
 

@@ -8,11 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.soundbear.model.app.Playlist;
 import com.soundbear.model.app.Song;
@@ -28,7 +27,7 @@ import com.soundbear.utils.SongUtil;
 import com.soundbear.utils.UserUtil;
 import com.soundbear.utils.ValidatorUtil;
 
-@Controller
+@RestController
 public class PlaylistController {
 	@Autowired
 	private HttpSession session;
@@ -40,7 +39,7 @@ public class PlaylistController {
 	PlaylistDAO playlistRepository;
 
 	@RequestMapping(value = "/listPlaylists", method = RequestMethod.GET)
-	public @ResponseBody PlaylistsResponse listPlaylists(HttpServletResponse httpResponse) {
+	public  PlaylistsResponse listPlaylists(HttpServletResponse httpResponse) {
 
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {
@@ -63,7 +62,7 @@ public class PlaylistController {
 	}
 
 	@RequestMapping(value = "/addPlaylist/{playlistName}", method = RequestMethod.GET)
-	public @ResponseBody PlaylistsResponse addPlaylist(@PathVariable("playlistName") String playlistName,HttpServletRequest request,HttpServletResponse httpResponse) {
+	public  PlaylistsResponse addPlaylist(@PathVariable("playlistName") String playlistName,HttpServletRequest request,HttpServletResponse httpResponse) {
 
 		if (ValidatorUtil.isSessionOver(session)){
 			 try {
@@ -99,7 +98,7 @@ public class PlaylistController {
 	}
 
 	@RequestMapping(value = "/deletePlaylist/{playlistId}", method = RequestMethod.GET)
-	public @ResponseBody PlaylistsResponse deletePlaylist(@PathVariable("playlistId") int playlistId,HttpServletRequest request, HttpServletResponse httpResponse) {
+	public  PlaylistsResponse deletePlaylist(@PathVariable("playlistId") int playlistId,HttpServletRequest request, HttpServletResponse httpResponse) {
 
 		if (ValidatorUtil.isSessionOver(session)){
 			 try {
@@ -124,29 +123,9 @@ public class PlaylistController {
 		return response;
 	}
 
-	@RequestMapping(value = "/openPlaylist", method = RequestMethod.GET)
-	public String openPlaylist(HttpServletRequest request, HttpServletResponse response) {
 
-		if (ValidatorUtil.isSessionOver(session)) {
-			try {
-				response.sendRedirect(Pages.LOGIN);
-				return null;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		int playlistId = Integer.parseInt(request.getParameter("pid"));
-		
-		Playlist playlist = playlistRepository.getPlaylist(playlistId);
-
-		request.setAttribute("playlist", playlist);
-		
-		return Pages.PLAYLIST;
-	}
-	
 	@RequestMapping(value = "/showSongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse showSongs (HttpServletRequest request, HttpServletResponse httpResponse) {
+	public  SongsResponse showSongs (HttpServletRequest request, HttpServletResponse httpResponse) {
 		
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {
@@ -171,7 +150,7 @@ public class PlaylistController {
 	}
 	
 	@RequestMapping(value = "/sortPlaylistSongs", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse sortPlaylistSongs (HttpServletRequest request, HttpServletResponse httpResponse) {
+	public  SongsResponse sortPlaylistSongs (HttpServletRequest request, HttpServletResponse httpResponse) {
 		
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {
@@ -198,7 +177,7 @@ public class PlaylistController {
 	}
 	
 	@RequestMapping(value = "/deleteSongFromPlaylist", method = RequestMethod.GET)
-	public @ResponseBody SongsResponse deleteSongFromPlaylist (HttpServletRequest request, HttpServletResponse httpResponse) {
+	public  SongsResponse deleteSongFromPlaylist (HttpServletRequest request, HttpServletResponse httpResponse) {
 		
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {
@@ -227,7 +206,7 @@ public class PlaylistController {
 	}
 
 	@RequestMapping(value = "/addSongToPlaylist", method = RequestMethod.GET)
-	public @ResponseBody BaseResponse addSongToPlaylist (HttpServletRequest request, HttpServletResponse httpResponse) {
+	public  BaseResponse addSongToPlaylist (HttpServletRequest request, HttpServletResponse httpResponse) {
 		
 		if (ValidatorUtil.isSessionOver(session)) {
 			try {

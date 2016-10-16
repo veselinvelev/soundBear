@@ -1,6 +1,5 @@
 package com.soundbear.model.json.reponse;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

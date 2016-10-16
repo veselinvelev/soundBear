@@ -12,12 +12,13 @@
 
                     <div class="pass-reset">
 
-                        <label> Enter the email you signed up with</label> <input id="email" type="email" placeholder="Email" />
+                        <label> Enter the email you signed up with</label> <input id="email" type="email" placeholder="Email" onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('restore-pass').click()" />
                         <div class="btn-group btn-group-justified">
                             <div class="btn-group">
                                 <span id="email-not-found" class="email-not-found">Please
 									enter valid email.</span>
-                                <button class="btn btn-primary btn-warning btn-sm" onclick="restorePassword()">SUBMIT</button>
+                                <button class="btn btn-primary btn-warning btn-sm" id="restore-pass" onclick="restorePassword()">SUBMIT</button>
                             </div>
                         </div>
 
