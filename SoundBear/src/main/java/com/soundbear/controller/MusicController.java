@@ -86,17 +86,17 @@ public class MusicController {
 		if (ValidatorUtil.isStringValid(artist) && ValidatorUtil.isStringValid(songName)
 				&& ValidatorUtil.isStringValid(genre)) {
 
-			new Thread(() -> uploadSong(multipartFile, user, artist, songName, genre)).start();
+			new Thread(() -> upSong(multipartFile, user, artist, songName, genre)).start();
 
 		}
 
 		return Pages.UPLOAD;
 	}
 
-	private void uploadSong(MultipartFile multipartFile, User user, String artist, String songName, String genre) {
+	private void upSong(MultipartFile multipartFile, User user, String artist, String songName, String genre) {
 		
 		
-		AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+	
 		InputStream is = null;
 
 		try {
@@ -109,6 +109,7 @@ public class MusicController {
 				+ ("" + LocalDateTime.now().withNano(0)).replaceAll("[T:-]", ""));
 
 		// save song on s3 with public read access
+		AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
 		s3client.putObject(new PutObjectRequest(AWSConstants.BUCKET_NAME, songCloudName, is, new ObjectMetadata())
 				.withCannedAcl(CannedAccessControlList.PublicRead));
 
