@@ -148,7 +148,8 @@
 <div class="col-md-6 col-md-push-1" id="Playlists">
 		<div class="form-inline">
 		<label>Playlist name:</label> 
-		<input type="text" id = "name" class = "form-control" maxlength = "45"/>
+		<input type="text" id = "name" class = "form-control" maxlength = "45" onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('add').click()" />
 		<input type ="button" style="width:60px;height:30px;" class = "btn-success" id = "add" value = "Add" onclick="addPlaylist()"/>
 		<span id="add-problem" style="display:none;color:red"> There is already a playlist with this name.</span>
 					

@@ -18,7 +18,7 @@
                             <div class="btn-group">
                                 <span id="email-not-found" class="email-not-found">Please
 									enter valid email.</span>
-                                <button class="btn btn-primary btn-warning btn-sm" id="restore-pass" onclick="restorePassword()">SUBMIT</button>
+                                <button class="btn btn-primary btn-info btn-sm" id="restore-pass" onclick="restorePassword()">SUBMIT</button>
                             </div>
                         </div>
 
@@ -36,7 +36,7 @@
                             <div class="btn-group">
                                 <span id="login-error" class="login-error">Inalid
 									username or password</span>
-                                <button class="btn btn-primary btn-warning btn-sm" id="loginButton"onclick="login()">SIGN IN</button>
+                                <button class="btn  btn-primary btn-info btn-sm" id="loginButton"onclick="login()">SIGN IN</button>
                             </div>
                         </div>
 

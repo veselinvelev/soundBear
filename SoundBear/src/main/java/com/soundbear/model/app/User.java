@@ -18,7 +18,7 @@ public class User {
 	
 	
 	public User(int userId, String username, String email, String password, int isActive, Date registrationDate, String photo) throws UserException {
-		//TODO VALIDATION!
+		
 		setUserId(userId);
 		setUsername(username);
 		setEmail(email);

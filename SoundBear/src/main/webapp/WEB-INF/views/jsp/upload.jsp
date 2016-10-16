@@ -81,7 +81,7 @@
             <br />
             <form name="form" enctype="multipart/form-data" method="post" action="songUpload">
                 <div class="row">
-                    <h2 class="text-warning col-md-6 col-md-push-4">Upload a song</h2>
+                    <h2 class="text-primary col-md-6 col-md-push-4">Upload a song</h2>
                 </div>
 
                 <br />
@@ -89,7 +89,7 @@
                 <div class="row">
                     <div class="form-group col-xs-3 col-md-push-4">
 
-                        <label class="text-warning"> Artist: </label> <input type="text" class="form-control" id="artist" name="artist" maxlength="45" />
+                        <label class="text-primary"> Artist: </label> <input type="text" class="form-control" id="artist" name="artist" maxlength="45" />
 
                     </div>
                 </div>
@@ -97,14 +97,14 @@
                 <div class="row">
                     <div class="form-group col-xs-3 col-md-push-4">
 
-                        <label class="text-warning"> Song name: </label> <input type="text" class="form-control" id="name" name="name" maxlength="45"/>
+                        <label class="text-primary"> Song name: </label> <input type="text" class="form-control" id="name" name="name" maxlength="45"/>
 
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-xs-3 col-md-push-4">
-                        <label class="text-warning"> Genre: </label>
+                        <label class="text-primary"> Genre: </label>
                         <select class="form-control" id="genre" name="genre">
 
 						<option value="empty"></option>
@@ -124,13 +124,13 @@
 
                 <div class="row">
                     <div class="btn-group col-xs-3 col-xs-push-4">
-                        <label class=" btn  btn-warning btn-sm" for="my-file-selector"> <input
+                        <label class=" btn  btn-primary btn-sm" for="my-file-selector"> <input
 						id="my-file-selector" type="file" name ="song" accept="audio/*"
 						style="display: none;" onchange="validate(this.value)">
 						Choose file
 					</label>
 
-                        <button id="submit" type="submit" class="btn btn-warning btn-sm col-xs-push-5" onclick="uploadSong()">Upload</button>
+                        <button id="submit" type="submit" class="btn btn-primary btn-sm col-xs-push-5" onclick="uploadSong()">Upload</button>
 
                     </div>
 
@@ -140,7 +140,7 @@
                 <div class="row">
                     <br /> <br />
                     <div class="col-md-9 col-md-push-4">
-                        <span class='label label-warning' id="upload-file-info"></span>
+                        <span class='label label-primary' id="upload-file-info"></span>
                     </div>
 
                     <br />

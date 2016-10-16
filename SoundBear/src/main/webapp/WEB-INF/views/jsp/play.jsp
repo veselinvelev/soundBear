@@ -217,9 +217,10 @@ li a.song-a {
 		
 		var playlistId = $("#playlists").val();
 		
+		$("#1b").html("");
 		
-		$("#audio").html("");
-		$("#playlist").html("");
+		//$("#audio").html("");
+		//$("#playlist").html("");
 		if (playlistId == 'empty') {
 			return;
 		}
@@ -228,7 +229,35 @@ li a.song-a {
 			url : 'showSongInfo?pid='+playlistId,
 			dataType : 'json',
 			success : function(data) {
-	
+			
+				$.each(data.songsInfo, function(index, songInfo){
+					
+					var sName = document.createElement("p");
+					var sImage = document.createElement("img");
+					var sWiki = document.createElement("p");
+					var sNameDiv = document.createElement("div");
+					var sImageDiv = document.createElement("div");
+					var sWikiDiv = document.createElement("div");
+					
+					sName.setAttribute("style","font-size:22px");
+					sName.setAttribute("class","glyphicon glyphicon-headphones");
+					sImage.setAttribute("class","class=\"img-rounded img-responsive\"");
+					
+					sName.innerHTML = songInfo.track.name;
+					sImage.setAttribute("src",songInfo.track.album.image[2]['#text']);
+					sWiki.innerHTML = songInfo.track.wiki.summary;
+					
+					sNameDiv.appendChild(sName);
+					sImageDiv.appendChild(sImage);
+					sWikiDiv.appendChild(sWiki);
+				
+					
+					$("#1b").append(sNameDiv);
+					$("#1b").append(sImageDiv);
+					$("#1b").append(sWikiDiv);
+					$("#1b").append("<hr/>")
+				});
+			
 			},
 			error : function(code, message) {
 				$('#error').html(
@@ -239,6 +268,35 @@ li a.song-a {
 		
 	}
 	
+	function searchArtist() {
+		var artistName = $("#artist").val().trim().replace(/ /g,"+");
+
+		if(artistName){
+			$.ajax({
+				type : 'POST',
+				url : 'http://ws.audioscrobbler.com/2.0/',
+				data : 'method=artist.getinfo&' + 'artist='+artistName+'&'
+						+ 'api_key=57ee3318536b23ee81d6b27e36997cde&' + 'format=json',
+				dataType : 'jsonp',
+				success : function(data) {
+					$('#success #artistName').html(data.artist.name);
+					$('#success #artistImage').html(
+							'<img class=\"img-rounded img-responsive\" style=\"float:left\;padding:10px;" src="' + data.artist.image[2]['#text'] + '" />');
+					$('#success #artistBio').html(data.artist.bio.content);
+					
+					
+				},
+				error : function(code, message) {
+					$('#error').html(
+							'Error Code: ' + code + ', Error Message: ' + message);
+				}
+			});
+		}
+		else{
+			alert("Please enter a name.");
+		}
+
+	}
 	
 
 </script>
@@ -300,19 +358,38 @@ li a.song-a {
 		<hr />
 
 		<ul class="nav nav-pills">
-			<li class="active"><a href="#1b" data-toggle="tab">Player</a></li>
-			<li><a href="#2b" data-toggle="tab">Using nav-pills</a></li>
-			<li><a href="#3b" data-toggle="tab">Applying clearfix</a></li>
-			<li><a href="#4a" data-toggle="tab">Background color</a></li>
+			<li class="active"><a href="#1b" data-toggle="tab">Songs</a></li>
+			<li><a href="#2b" data-toggle="tab">Find an artist</a></li>
+			<!-- <li><a href="#3b" data-toggle="tab">Applying clearfix</a></li>
+			<li><a href="#4a" data-toggle="tab">Background color</a></li> -->
 		</ul>
 
 		<div class="tab-content clearfix">
 			<br> <br>
-			<div class="tab-pane active" id="1b"></div>
-			<div class="tab-pane" id="2b">
-				<h3>We use the class nav-pills instead of nav-tabs which
-					automatically creates a background color for the tab</h3>
+			
+			<div class="tab-pane active " style="overflow-y: scroll; height:330px; width:1130px;" id="1b">
+			
+			
 			</div>
+			
+			<div class="tab-pane" style="overflow-y: scroll; height:330px; width:1130px;" id="2b">
+			
+			<label>Artist:</label>	
+			<div class = "form-group form-inline">
+				 <input type="text" class="form-control col-xs-3" id="artist" maxlength="45"  onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('apiSearch').click()"/> 
+				<button id="apiSearch" type="submit" class="btn-sm btn-primary glyphicon glyphicon-search"  onclick="searchArtist()" ></button>				
+			</div>
+			
+			<div id="success">
+			<div id="artistName"></div>
+			<div id="artistImage"></div>
+			<div id="artistBio"></div>
+			<div id="categories"></div>
+			</div>
+			<div id="error"></div>
+
+		<!-- 	</div>
 			<div class="tab-pane" id="3b">
 				<h3>We applied clearfix to the tab-content to rid of the gap
 					between the tab and the content</h3>
@@ -320,7 +397,7 @@ li a.song-a {
 			<div class="tab-pane" id="4b">
 				<h3>We use css to change the background color of the content to
 					be equal to the tab</h3>
-			</div>
+			</div> -->
 		</div>
 
 

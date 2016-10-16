@@ -40,7 +40,7 @@
 
 						<div class="btn-group btn-group-justified">
 							<div class="btn-group">
-								<button id="signup" class="btn btn-primary btn-warning btn-sm"
+								<button id="signup" class="btn btn-primary btn-info btn-sm"
 									onclick="register()">SIGN UP</button>
 							</div>
 						</div>

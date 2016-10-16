@@ -54,9 +54,6 @@
 
 				<li><a class="mysongs glyphicon glyphicon-cd" href="mySongs">
 						MySongs </a></li>
-				<li><a class="mysongs glyphicon glyphicon-cd" href="mySongs">
-						Logout </a></li>
-
 
 				<li>
 					<div class="search col-md-pull-2">
